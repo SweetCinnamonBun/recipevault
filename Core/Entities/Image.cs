@@ -20,7 +20,7 @@ namespace Core.Entities
         public required string FilePath { get; set; }
 
         // Aggregates
-        public int RecipeId { get; set; }
-        public required Recipe Recipe { get; set; }
+        // public int RecipeId { get; set; }
+        // public required Recipe Recipe { get; set; }
     }
 }

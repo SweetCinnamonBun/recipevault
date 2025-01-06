@@ -18,7 +18,7 @@ namespace Infrastructure.Data
 
         public required DbSet<Recipe> Recipes { get; set; }
 
-        public required DbSet<Image> Images { get; set; }
+        // public required DbSet<Image> Images { get; set; }
 
 
     }

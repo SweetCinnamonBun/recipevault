@@ -11,7 +11,9 @@ namespace Core.Entities
         public required string Name { get; set; }
         public required string CookingTime { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public ICollection<Image> Images { get; set; } = [];
+        public required string ImageFileName { get; set; }
+
+        // public ICollection<Image> Images { get; set; } = [];
         public ICollection<Category> Categories { get; set; } = [];
     }
 }
