@@ -32,6 +32,16 @@ namespace API.Controllers
             return Ok(recipes);
         }
 
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetRecipe([FromRoute] int id)
+        {
+            var recipe = await context.Recipes.FirstOrDefaultAsync((x) => x.Id == id);
+
+            if (recipe == null) return NotFound();
+
+            return Ok(recipe);
+        }
+
 
 
         [HttpPost]
@@ -55,6 +65,7 @@ namespace API.Controllers
             {
                 Name = recipeDto.Name,
                 CookingTime = recipeDto.CookingTime,
+                Description = recipeDto.Description,
                 ImageFileName = imageFileName
             };
 
