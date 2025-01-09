@@ -43,7 +43,7 @@ const RecipePage = () => {
           </div>
         </div>
       </div>
-      <figure className="w-3/4">
+      <figure className="w-3/5">
         <img
           src={`http://localhost:5028/images/recipes/${recipe?.imageFileName}`}
           alt={recipe?.name}

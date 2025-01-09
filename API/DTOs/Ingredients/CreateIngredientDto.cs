@@ -3,16 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Core.Entities
+namespace API.DTOs.Ingredients
 {
-    public class Ingredient
+    public class CreateIngredientDto
     {
-        public int Id { get; set; }
         public required string Name { get; set; }
         public required string Quantity { get; set; }
         public required string Unit { get; set; }
-
-        public int RecipeId { get; set; }
-        public Recipe? Recipe { get; set; }
     }
 }

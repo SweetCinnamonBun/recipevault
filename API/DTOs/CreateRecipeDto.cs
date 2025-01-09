@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.DTOs.Ingredients;
 using Core.Entities;
 
 namespace API.DTOs
@@ -14,7 +15,7 @@ namespace API.DTOs
         public IFormFile? ImageFile { get; set; }
 
         // public ICollection<Category> Categories { get; set; } = [];
-        public ICollection<Ingredient> Ingredients { get; set; } = [];
-        public ICollection<Instruction> Instructions { get; set; } = [];
+        // public List<IngredientDto> Ingredients { get; set; }
+        // public List<InstructionDto> Instructions { get; set; }
     }
 }
