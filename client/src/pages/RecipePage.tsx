@@ -63,6 +63,28 @@ const RecipePage = () => {
         <FaHeart className="w-7 h-7" />
         <span>Add to your favorites</span>
       </div>
+      <section className="grid w-11/12 grid-cols-2 border border-blue-500 h-[750px] gap-x-8 p-4">
+        <div className="p-6 border border-red-600 rounded-lg">
+          <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
+          <ul className="p-2 space-y-4 list-disc">
+            {recipe?.ingredients.map((ingredient) => (
+              <li className="space-x-2 text-xl">
+                <span>{ingredient.quantity}</span>
+                <span>{ingredient.unit}</span>
+                <span>{ingredient.name}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="p-6 border border-green-700 rounded-lg ">
+          <h2 className="my-2 text-2xl font-bold">Instructions</h2>
+          <ul className="p-2 space-y-4 list-disc">
+            {recipe?.instructions.map((instruction) => (
+              <li className="text-xl">{instruction.text}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
     </div>
   );
 };
