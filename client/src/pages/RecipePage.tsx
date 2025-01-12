@@ -63,6 +63,16 @@ const RecipePage = () => {
         <FaHeart className="w-7 h-7" />
         <span>Add to your favorites</span>
       </div>
+      <section className="my-10">
+        <div className="w-11/12 p-8 mx-auto text-xl border border-yellow-600 h-96 rounded-xl">
+          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellat sit
+          aperiam ea eligendi quam optio minima, error consectetur odio natus
+          animi mollitia aspernatur ut adipisci excepturi inventore? Voluptas
+          aliquid sunt quibusdam sint aliquam earum ipsam impedit ab amet esse
+          officia porro iste, tempora in velit omnis expedita ducimus voluptate
+          fugit commodi maxime, debitis magnam. Reiciendis!
+        </div>
+      </section>
       <section className="grid w-11/12 grid-cols-2 border border-blue-500 h-[750px] gap-x-8 p-4">
         <div className="p-6 border border-red-600 rounded-lg">
           <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
@@ -81,6 +91,20 @@ const RecipePage = () => {
           <ul className="p-2 space-y-4 list-disc">
             {recipe?.instructions.map((instruction) => (
               <li className="text-xl">{instruction.text}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+      <section className="w-full my-10 border border-blue-600">
+        <div className="w-11/12 p-8 mx-auto border border-red-700 rounded-lg">
+          <h2 className="text-2xl font-bold">Shopping List</h2>
+          <ul className="mt-6 space-y-3">
+            {recipe?.ingredients.map((ingredient) => (
+              <li className="text-xl list-square">
+
+                <span>{ingredient.name}</span>
+                <span className="ml-2 mr-1">({ingredient.quantity} {ingredient.unit})</span>
+              </li>
             ))}
           </ul>
         </div>
