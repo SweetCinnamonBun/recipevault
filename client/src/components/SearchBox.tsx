@@ -8,11 +8,12 @@ import {
 } from "@headlessui/react";
 import { FaSearch } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { Recipe } from "@/types/Recipe";
 
 export default function SearchBox() {
   const [query, setQuery] = useState("");
   const [debouncedQuery] = useDebounce(query, 300);
-  const [memories, setMemories] = useState([]);
+  const [recipes, setRecipes] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,49 +21,48 @@ export default function SearchBox() {
       const controller = new AbortController();
       (async () => {
         const url =
-          "http://localhost:5100/api/memories?filterColumn=title&filterValue=" +
+          "http://localhost:5028/api/recipes?search=" +
           encodeURIComponent(debouncedQuery);
         const response = await fetch(url, { signal: controller.signal });
-        const memories = await response.json();
-        setMemories(memories.data);
+        const recipes = await response.json();
+        console.log(recipes);
+        setRecipes(recipes);
       })();
       return () => controller.abort();
     } else {
-      setMemories([]);
+      setRecipes([]);
     }
   }, [debouncedQuery]);
 
-  const handleSelect = (recipe) => {
-    navigate(`/memory-view/${recipe._id}`);
+  const handleSelect = (recipe: Recipe) => {
+    if (recipe?.id)
+    {
+      navigate(`/recipe/${recipe?.id}`);
+    }
   };
 
   return (
-    <div className="w-full">
+    <div className="relative">
       <Combobox onChange={handleSelect} onClose={() => setQuery("")}>
         <div className="relative">
-          <FaSearch className="absolute left-4 top-[16px] h-6 w-6" />
+          <FaSearch className="absolute left-4 top-[12px] h-6 w-6" />
           <ComboboxInput
             placeholder="Search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="h-14 w-full rounded-full border border-[#D3CECE] bg-[#e9e7e7] px-12 text-lg leading-8 tracking-tight text-black placeholder:text-black max-sm:pr-4"
+            className="w-[400px] px-12 text-lg leading-8 tracking-tight text-black bg-white border rounded-full h-11 placeholder:text-black max-sm:pr-4"
           />
         </div>
         <ComboboxOptions className="absolute w-full py-2 mt-3 overflow-y-scroll text-lg bg-white border border-gray-400 max-h-80 rounded-xl">
-          {memories.map((memory, index) => (
+          {recipes?.map((recipe: Recipe, index) => (
             <ComboboxOption
-              key={memory.title}
-              value={memory}
+              key={recipe.name}
+              value={recipe}
               className={`group flex gap-2 px-5 py-2 bg-white data-[focus]:bg-blue-100 ${
-                index !== memories.length - 1 ? 'border-b-2' : ''
+                index !== recipes.length - 1 ? 'border-b-2' : ''
               }`}
             >
-              <img
-                src={memory.imageUrl}
-                alt={memory.title}
-                className="object-cover w-10 h-10 border border-gray-200 rounded-full"
-              />
-              {memory.title}
+              {recipe.name}
             </ComboboxOption>
           ))}
         </ComboboxOptions>

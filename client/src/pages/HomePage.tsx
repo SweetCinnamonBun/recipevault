@@ -5,6 +5,9 @@ import { MdAccessTime } from "react-icons/md";
 import { PiForkKnifeFill } from "react-icons/pi";
 import { FaStar } from "react-icons/fa";
 import { Link } from "react-router";
+import SearchBox from "@/components/SearchBox";
+import { CiFilter } from "react-icons/ci";
+import { FaSort } from "react-icons/fa";
 
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
@@ -33,16 +36,39 @@ const HomePage = () => {
 
   return (
     <div>
-      <h1>Hello there, this is the home page!</h1>
-      <Button variant="destructive" className="bg-blue-600">
-        Click me
-      </Button>
-
-      <div className="h-screen px-20">
+      <section className="flex items-center justify-between mt-10 mb-16">
+        <div className="space-x-2">
+          <label htmlFor="itemsPerPage">Items per page: </label>
+          <select
+            name="itemsPerPage"
+            id="itemsPerPage"
+            className="px-2 py-3 bg-white border border-gray-600 rounded-lg"
+          >
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+        </div>
+        <div className="flex items-center space-x-3">
+        <SearchBox />
+          <div className="flex items-center px-4 py-2 space-x-1 bg-blue-400 rounded-lg">
+            <CiFilter className="w-5 h-5" />
+            <span>Filters</span>
+          </div>
+          <div className="flex items-center px-4 py-2 space-x-1 bg-blue-400 rounded-lg">
+            <FaSort className="w-5 h-5" />
+            <span>Sort</span>
+          </div>
+        </div>
+      </section>
+      <div className="h-screen 2xl:px-20">
         <div className="grid h-full grid-cols-3 border border-blue-700 justify-items-center">
           {recipes.map((recipe: Recipe) => (
             <Link to={`/recipe/${recipe.id}`} key={recipe.name}>
-              <div key={recipe.id} className=" w-96 h-[382px] bg-white rounded-xl cursor-pointer">
+              <div
+                key={recipe.id}
+                className=" w-96 h-[382px] bg-white rounded-xl cursor-pointer"
+              >
                 <figure className="w-full h-60 ">
                   <img
                     src={`http://localhost:5028/images/recipes/${recipe.imageFileName}`}

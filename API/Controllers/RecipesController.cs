@@ -30,9 +30,16 @@ namespace API.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetRecipes()
+        public async Task<IActionResult> GetRecipes([FromQuery] string? search, [FromQuery] List<string>? categories)
         {
-            var recipes = await context.Recipes.ToListAsync();
+            var query = context.Recipes.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(recipe => recipe.Name.Contains(search));
+            }
+
+            var recipes = await query.ToListAsync();
 
             return Ok(recipes);
         }
