@@ -39,6 +39,13 @@ namespace API.Controllers
                 query = query.Where(recipe => recipe.Name.Contains(search));
             }
 
+            if (categories != null && categories.Count != 0)
+            {
+                query = query.Where(recipe =>
+                    recipe.Categories.Any(category => categories.Contains(category.Name)));
+            }
+
+
             var recipes = await query.ToListAsync();
 
             return Ok(recipes);

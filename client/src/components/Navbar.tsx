@@ -7,7 +7,7 @@ const Navbar = () => {
     <div className='flex justify-between px-20 py-4 bg-white'>
       <div className='flex items-center'>
         <figure>
-          <Link to="/">
+          <Link to="/">-
             Logo
           </Link>
         </figure>
