@@ -21,6 +21,17 @@ namespace API.Controllers
             this.context = context;
         }
 
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetCategories()
+        {
+            var categories = await context.Categories.ToListAsync();
+
+            return Ok(categories);
+        }
+
+
         [HttpPost("bulk")]
         public async Task<IActionResult> AddMultipleCategories([FromBody] List<CreateCategoryDto> categoryDtos)
         {

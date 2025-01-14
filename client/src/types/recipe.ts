@@ -23,3 +23,10 @@ export type Instruction = {
   text: string;
   recipeId: number;
 };
+
+
+export type Category = {
+  id: number;
+  name: string;
+  slug: string;
+}

@@ -34,7 +34,7 @@ export default function Modal({ children, onClose }) {
             <IoMdClose className="h-7 w-7" />
           </button>
         </div>
-        <div className="px-5 text-center">
+        <div>
           {children}
         </div>
       </div>

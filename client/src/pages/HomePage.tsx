@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Recipe } from "@/types/Recipe";
+import { Category, Recipe } from "@/types/Recipe";
 import React, { useEffect, useState } from "react";
 import { MdAccessTime } from "react-icons/md";
 import { PiForkKnifeFill } from "react-icons/pi";
@@ -8,15 +8,25 @@ import { Link } from "react-router";
 import SearchBox from "@/components/SearchBox";
 import { CiFilter } from "react-icons/ci";
 import { FaSort } from "react-icons/fa";
+import Modal from "@/components/Modal";
 
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
   const [error, setError] = useState<string>();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [appliedCategories, setAppliedCategories] = useState<string[]>([]);
+  const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchRecipes = async () => {
+      const categoryQuery = appliedCategories
+        .map((category: string) => `categories=${category}`)
+        .join("&");
       try {
-        const response = await fetch("http://localhost:5028/api/recipes");
+        const response = await fetch(
+          `http://localhost:5028/api/recipes?${categoryQuery}`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch recipes");
         }
@@ -24,7 +34,7 @@ const HomePage = () => {
         setRecipes(recipes);
       } catch (error) {
         if (error instanceof Error) {
-          setError(error.message); // Access the `message` property safely
+          setError(error.message);
         } else {
           setError("An unknown error occurred");
         }
@@ -32,7 +42,41 @@ const HomePage = () => {
     };
 
     fetchRecipes();
+  }, [appliedCategories]); // Trigger only when appliedCategories changes
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("http://localhost:5028/api/categories");
+        if (!response.ok) {
+          throw new Error("Failed to fetch categories");
+        }
+        const categories = await response.json();
+        setCategories(categories);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCategories();
   }, []);
+
+  const handleFiltersModalClose = () => {
+    setIsFiltersModalOpen(false);
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategories((prevSelected) =>
+      prevSelected.includes(category)
+        ? prevSelected.filter((cat) => cat !== category)
+        : [...prevSelected, category]
+    );
+  };
+
+  const applyFilters = () => {
+    setAppliedCategories(selectedCategories); // Apply filters to trigger API call
+    setIsFiltersModalOpen(false);
+  };
 
   return (
     <div>
@@ -50,15 +94,18 @@ const HomePage = () => {
           </select>
         </div>
         <div className="flex items-center space-x-3">
-        <SearchBox />
-          <div className="flex items-center px-4 py-2 space-x-1 bg-blue-400 rounded-lg">
+          <SearchBox />
+          <button
+            className="flex items-center px-4 py-2 space-x-1 bg-blue-400 rounded-lg"
+            onClick={() => setIsFiltersModalOpen(true)}
+          >
             <CiFilter className="w-5 h-5" />
             <span>Filters</span>
-          </div>
-          <div className="flex items-center px-4 py-2 space-x-1 bg-blue-400 rounded-lg">
+          </button>
+          <button className="flex items-center px-4 py-2 space-x-1 bg-blue-400 rounded-lg">
             <FaSort className="w-5 h-5" />
             <span>Sort</span>
-          </div>
+          </button>
         </div>
       </section>
       <div className="h-screen 2xl:px-20">
@@ -101,6 +148,35 @@ const HomePage = () => {
           ))}
         </div>
       </div>
+      {/* MODALS */}
+      {isFiltersModalOpen && (
+        <Modal onClose={handleFiltersModalClose}>
+          <h1 className="mb-4 text-2xl font-bold">Filter by Categories</h1>
+          <div className="grid grid-cols-4 my-16 gap-y-4">
+            {categories.map((category: Category) => (
+              <div key={category.id} className="flex items-center text-lg">
+                <input
+                  type="checkbox"
+                  id={category.name}
+                  value={category.name}
+                  checked={selectedCategories.includes(category.name)}
+                  onChange={() => handleCategoryChange(category.name)}
+                  className="w-5 h-5 mr-2"
+                />
+                <label htmlFor={category.name}>{category.name}</label>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end mt-4">
+            <button
+              className="px-4 py-2 text-white bg-blue-500 rounded-lg"
+              onClick={applyFilters}
+            >
+              Apply Filters
+            </button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };
