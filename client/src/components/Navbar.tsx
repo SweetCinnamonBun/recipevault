@@ -19,6 +19,8 @@ const Navbar = () => {
         <span>Home</span>
         <span>Favorites</span>
         <span>Profile</span>
+        <Link to="/create-recipe">Create Recipe</Link>
+        <Link to="/add-categories">Category selection</Link>
       </div>
       <div className='space-x-4'>
         <button className='px-4 py-2 border border-blue-600 rounded-full text-md'>

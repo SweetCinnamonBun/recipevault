@@ -116,8 +116,8 @@ const HomePage = () => {
           </button>
         </div>
       </section>
-      <div className="h-screen 2xl:px-20">
-        <div className="grid h-full grid-cols-3 border border-blue-700 justify-items-center">
+      <div className="2xl:px-20">
+        <div className="grid grid-cols-3 border border-blue-700 gap-y-10 justify-items-center">
           {recipes.map((recipe: Recipe) => (
             <Link to={`/recipe/${recipe.id}`} key={recipe.name}>
               <div
