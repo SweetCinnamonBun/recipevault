@@ -17,6 +17,7 @@ const HomePage = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [appliedCategories, setAppliedCategories] = useState<string[]>([]);
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -25,13 +26,13 @@ const HomePage = () => {
         .join("&");
       try {
         const response = await fetch(
-          `http://localhost:5028/api/recipes?${categoryQuery}`
+          `http://localhost:5028/api/recipes?${categoryQuery}&pageSize=${itemsPerPage}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch recipes");
         }
-        const recipes = await response.json();
-        setRecipes(recipes);
+        const data = await response.json();
+        setRecipes(data.recipes);
       } catch (error) {
         if (error instanceof Error) {
           setError(error.message);
@@ -42,7 +43,7 @@ const HomePage = () => {
     };
 
     fetchRecipes();
-  }, [appliedCategories]); // Trigger only when appliedCategories changes
+  }, [appliedCategories, itemsPerPage]); // Trigger only when appliedCategories changes
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -78,6 +79,10 @@ const HomePage = () => {
     setIsFiltersModalOpen(false);
   };
 
+  const handlePageSize = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setItemsPerPage(Number(event.target.value))
+  }
+
   return (
     <div>
       <section className="flex items-center justify-between mt-10 mb-16">
@@ -87,10 +92,13 @@ const HomePage = () => {
             name="itemsPerPage"
             id="itemsPerPage"
             className="px-2 py-3 bg-white border border-gray-600 rounded-lg"
+            onChange={handlePageSize}
+            value={itemsPerPage}
           >
+            <option value="5">5</option>
             <option value="10">10</option>
+            <option value="15">15</option>
             <option value="20">20</option>
-            <option value="50">50</option>
           </select>
         </div>
         <div className="flex items-center space-x-3">

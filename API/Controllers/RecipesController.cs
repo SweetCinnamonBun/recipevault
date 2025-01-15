@@ -30,7 +30,8 @@ namespace API.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetRecipes([FromQuery] string? search, [FromQuery] List<string>? categories)
+        public async Task<IActionResult> GetRecipes([FromQuery] string? search, [FromQuery] List<string>? categories,
+        [FromQuery] int? page, [FromQuery] int pageSize = 5, [FromQuery] bool isAscending = true, [FromQuery] string? sortBy = null)
         {
             var query = context.Recipes.AsQueryable();
 
@@ -45,10 +46,39 @@ namespace API.Controllers
                     recipe.Categories.Any(category => categories.Contains(category.Name)));
             }
 
+            if (string.IsNullOrWhiteSpace(sortBy) == false)
+            {
+                if (sortBy.Equals("name", StringComparison.OrdinalIgnoreCase))
+                {
+                    query = isAscending ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name);
+                }
+                else if (sortBy.Equals("Id", StringComparison.OrdinalIgnoreCase))
+                {
+                    query = isAscending ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id);
+                }
+            }
+
+
+            if (page == null || page < 1) page = 1;
+
+            int totalPages = 0;
+
+            decimal count = query.Count();
+            totalPages = (int)Math.Ceiling(count / pageSize);
+
+            query = query.Skip((int)(page - 1) * pageSize).Take(pageSize);
+
 
             var recipes = await query.ToListAsync();
 
-            return Ok(recipes);
+            var response = new
+            {
+                Recipes = recipes,
+                PageSize = pageSize,
+                TotalPages = totalPages
+            };
+
+            return Ok(response);
         }
 
         [HttpGet("{id:int}")]

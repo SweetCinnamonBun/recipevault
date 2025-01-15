@@ -24,9 +24,8 @@ export default function SearchBox() {
           "http://localhost:5028/api/recipes?search=" +
           encodeURIComponent(debouncedQuery);
         const response = await fetch(url, { signal: controller.signal });
-        const recipes = await response.json();
-        console.log(recipes);
-        setRecipes(recipes);
+        const data = await response.json();
+        setRecipes(data.recipes);
       })();
       return () => controller.abort();
     } else {
