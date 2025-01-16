@@ -84,7 +84,7 @@ namespace API.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetRecipe([FromRoute] int id)
         {
-            var recipe = await context.Recipes.Include(x => x.Ingredients).Include(x => x.Instructions).FirstOrDefaultAsync((x) => x.Id == id);
+            var recipe = await context.Recipes.Include(x => x.Categories).Include(x => x.Ingredients).Include(x => x.Instructions).FirstOrDefaultAsync((x) => x.Id == id);
 
             if (recipe == null) return NotFound();
 

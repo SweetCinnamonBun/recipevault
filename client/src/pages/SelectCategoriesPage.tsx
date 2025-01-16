@@ -1,11 +1,14 @@
 import { Category } from "@/types/Recipe";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import { RootState } from "@/store/store";
 
 const SelectCategoriesPage = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const navigate = useNavigate();
+  const recipeId = useSelector((state: RootState) => state.recipe.id);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -33,7 +36,7 @@ const SelectCategoriesPage = () => {
 
     // Create the JSON body
     const requestBody = {
-      recipeId: 4, // Replace with the actual recipe ID
+      recipeId: recipeId, // Replace with the actual recipe ID
       categoryIds: categoryIds,
     };
 

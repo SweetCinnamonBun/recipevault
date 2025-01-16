@@ -21,6 +21,7 @@ const Navbar = () => {
         <span>Profile</span>
         <Link to="/create-recipe">Create Recipe</Link>
         <Link to="/add-categories">Category selection</Link>
+        <Link to="/ingredients-and-instructions">Instructions and Ingredients</Link>
       </div>
       <div className='space-x-4'>
         <button className='px-4 py-2 border border-blue-600 rounded-full text-md'>

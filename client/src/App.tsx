@@ -6,6 +6,9 @@ import HomePage from "./pages/HomePage";
 import RecipePage from "./pages/RecipePage";
 import CreateRecipePage from "./pages/CreateRecipePage";
 import SelectCategoriesPage from "./pages/SelectCategoriesPage";
+import CreateIngredientsAndInstructionsPage from "./pages/CreateIngredientsAndInstructionsPage";
+import { Provider } from "react-redux";
+import store from "./store/store";
 
 
 const router = createBrowserRouter([
@@ -28,7 +31,11 @@ const router = createBrowserRouter([
       {
         path: "/add-categories",
         element: <SelectCategoriesPage />
-      }
+      },
+      {
+        path: "/ingredients-and-instructions",
+        element: <CreateIngredientsAndInstructionsPage />
+      },
     ],
   },
   // {
@@ -45,9 +52,11 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
+    <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
       </QueryClientProvider>
+    </Provider>
   );
 }
 

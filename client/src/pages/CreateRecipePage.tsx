@@ -1,10 +1,14 @@
 import React, { useState } from 'react'
+import { useDispatch } from 'react-redux';
+import { setRecipe } from '@/store/recipeSlice';
 
 const CreateRecipePage = () => {
     const [name, setName] = useState("");
     const [cookingTime, setCookingTime] = useState("");
     const [description, setDescription] = useState("");
     const [imageFile, setImageFile] = useState(null);
+
+    const dispatch = useDispatch()
   
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -25,6 +29,8 @@ const CreateRecipePage = () => {
         });
   
         if (response.ok) {
+          const data = await response.json();
+          dispatch(setRecipe(data));
           console.log("Recipe created successfully!");
         } else {
           console.error("Failed to create recipe.");

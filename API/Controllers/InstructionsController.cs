@@ -43,7 +43,6 @@ namespace API.Controllers
             var instructions = instructionDtos.Select(dto => new Instruction
             {
 
-                Step = dto.Step,
                 Text = dto.Text,
                 RecipeId = recipeId
             }).ToList();

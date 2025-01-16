@@ -1,6 +1,7 @@
 export type Recipe = {
   id: number;
   name: string;
+  description: string;
   cookingTime: string;
   imageFileName: string;
   createdAt: string;
@@ -29,4 +30,14 @@ export type Category = {
   id: number;
   name: string;
   slug: string;
+}
+
+export type AddIngredient = {
+  name: string;
+  quantity: string;
+  unit: string;
+}
+
+export type AddInstruction = {
+  text: string;
 }
