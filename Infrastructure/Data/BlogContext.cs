@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data
 {
-    public class BlogContext : DbContext
+    public class BlogContext : IdentityDbContext<AppUser>
     {
-        public BlogContext(DbContextOptions options) : base(options)
+        public BlogContext(DbContextOptions<BlogContext> options) : base(options)
         {
 
         }
