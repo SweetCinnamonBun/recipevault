@@ -4,15 +4,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.DTOs.Account;
 using Core.Entities;
+using Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AccountsController(SignInManager<AppUser> signInManager) : ControllerBase
+    public class AccountsController : ControllerBase
     {
+        private readonly SignInManager<AppUser> signInManager;
+        private readonly BlogContext context;
+
+        public AccountsController(SignInManager<AppUser> signInManager, BlogContext context)
+        {
+
+            this.signInManager = signInManager;
+            this.context = context;
+        }
 
 
         [HttpPost("register")]
@@ -22,7 +33,7 @@ namespace API.Controllers
             {
                 FirstName = registerDto.FirstName,
                 LastName = registerDto.LastName,
-                UserName = registerDto.UserName,
+                UserName = registerDto.Email,
                 Email = registerDto.Email
             };
 
@@ -40,6 +51,14 @@ namespace API.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpGet("users")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = await context.Users.ToListAsync();
+
+            return Ok(users);
         }
     }
 }
