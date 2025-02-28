@@ -51,7 +51,7 @@ const SelectCategoriesPage = () => {
 
       if (response.ok) {
         console.log("Categories added successfully!");
-        navigate("/");
+        navigate("/ingredients-and-instructions");
 
       } else {
         console.error("Failed to add categories.");

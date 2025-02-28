@@ -11,6 +11,7 @@ namespace Core.Entities
         public required string Name { get; set; }
         public required string Description { get; set; }
         public required string CookingTime { get; set; }
+        public required string Difficulty { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public required string ImageFileName { get; set; }
 

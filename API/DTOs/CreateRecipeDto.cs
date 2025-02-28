@@ -11,6 +11,7 @@ namespace API.DTOs
     {
         public required string Name { get; set; }
         public required string CookingTime { get; set; }
+        public required string Difficulty { get; set; }
         public required string Description { get; set; }
         public IFormFile? ImageFile { get; set; }
 

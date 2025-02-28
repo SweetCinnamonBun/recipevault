@@ -38,7 +38,7 @@ const RecipePage = () => {
         <div className="">
           <div className="flex flex-col items-center">
             <PiShootingStarLight className="w-8 h-8" />
-            <span className="text-lg">Easy</span>
+            <span className="text-lg">{recipe?.difficulty}</span>
             <span className="text-md">Difficulty</span>
           </div>
         </div>

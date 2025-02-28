@@ -126,6 +126,7 @@ namespace API.Controllers
                 Name = recipeDto.Name,
                 Description = recipeDto.Description,
                 CookingTime = recipeDto.CookingTime,
+                Difficulty = recipeDto.Difficulty,
                 ImageFileName = imageFileName,
                 CreatedAt = DateTime.Now
             };

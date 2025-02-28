@@ -3,6 +3,7 @@ export type Recipe = {
   name: string;
   description: string;
   cookingTime: string;
+  difficulty: string;
   imageFileName: string;
   createdAt: string;
   categories: [];
