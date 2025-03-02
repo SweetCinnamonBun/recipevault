@@ -1,7 +1,7 @@
 import { RootState } from "@/store/store";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-
+import { useNavigate } from "react-router";
 
 type AddIngredient = {
   quantity: string;
@@ -25,8 +25,8 @@ const CreateIngredientsAndInstructionsPage = () => {
     text: "",
   });
 
-  const recipeId = useSelector((state: RootState) => state.recipe.id)
-
+  const recipeId = useSelector((state: RootState) => state.recipe.id);
+  const navigate = useNavigate();
 
   const handleAddIngredient = () => {
     if (newIngredient.name.trim()) {
@@ -46,25 +46,33 @@ const CreateIngredientsAndInstructionsPage = () => {
     try {
       // Make POST requests for ingredients and instructions
       const [ingredientsResponse, instructionsResponse] = await Promise.all([
-        fetch(`http://localhost:5028/api/ingredients/bulk?recipeId=${recipeId}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(ingredients),
-        }),
-        fetch(`http://localhost:5028/api/instructions/bulk?recipeId=${recipeId}`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(instructions),
-        }),
+        fetch(
+          `http://localhost:5028/api/ingredients/bulk?recipeId=${recipeId}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(ingredients),
+          }
+        ),
+        fetch(
+          `http://localhost:5028/api/instructions/bulk?recipeId=${recipeId}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(instructions),
+          }
+        ),
       ]);
-  
+
       if (ingredientsResponse.ok && instructionsResponse.ok) {
         console.log("Ingredients and instructions added successfully!");
         // Navigate or update state as needed
+        navigate("/recipe-preview");
+        
       } else {
         console.error("Failed to add ingredients or instructions.");
       }
@@ -73,13 +81,11 @@ const CreateIngredientsAndInstructionsPage = () => {
     }
   };
 
-  
-
   return (
-    <div className="flex flex-col items-center w-full">
-      <section className="grid w-11/12 h-auto grid-cols-2 p-4 border border-blue-500 gap-x-8">
+    <div className="flex flex-col items-center justify-center w-full min-h-screen p-4">
+      <section className="grid w-11/12 grid-cols-2 p-4 border border-blue-500 gap-x-8 min-h-[700px]">
         {/* Ingredients Section */}
-        <div className="p-6 border border-red-600 rounded-lg">
+        <div className="p-6 bg-white border border-red-600 rounded-lg">
           <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
           {/* Preview Section */}
           <ul className="p-2 space-y-4 list-disc">
@@ -102,15 +108,27 @@ const CreateIngredientsAndInstructionsPage = () => {
               }
               className="p-2 border border-gray-400 rounded"
             />
-            <input
-              type="text"
-              placeholder="Unit"
+            <select
               value={newIngredient.unit}
               onChange={(e) =>
                 setNewIngredient({ ...newIngredient, unit: e.target.value })
               }
-              className="p-2 border border-gray-400 rounded"
-            />
+              className="h-10 p-2 border rounded-md focus:ring-2 focus:ring-green-400 focus:outline-none"
+            >
+              <option value="" disabled>
+                Select Unit
+              </option>
+              <option value="g">Grams (g)</option>
+              <option value="kg">Kilograms (kg)</option>
+              <option value="ml">Milliliters (ml)</option>
+              <option value="L">Liters (L)</option>
+              <option value="tsp">Teaspoon (tsp)</option>
+              <option value="tbsp">Tablespoon (tbsp)</option>
+              <option value="cup">Cup</option>
+              <option value="oz">Ounces (oz)</option>
+              <option value="lb">Pounds (lb)</option>
+              <option value="pcs">Pieces (pcs)</option>
+            </select>
             <input
               type="text"
               placeholder="Name"
@@ -130,7 +148,7 @@ const CreateIngredientsAndInstructionsPage = () => {
         </div>
 
         {/* Instructions Section */}
-        <div className="p-6 border border-green-700 rounded-lg">
+        <div className="p-6 bg-white border border-green-700 rounded-lg">
           <h2 className="my-2 text-2xl font-bold">Instructions</h2>
           {/* Preview Section */}
           <ul className="p-2 space-y-4 list-disc">
@@ -159,11 +177,9 @@ const CreateIngredientsAndInstructionsPage = () => {
           </div>
         </div>
       </section>
-      <div className="my-5 ">
-        <button onClick={handleSubmit} className="px-4 py-2 text-lg bg-green-400">Confirm</button>
+      <div className="my-10">
+        <button onClick={handleSubmit} className="px-4 py-2 text-lg bg-green-400 rounded-lg">Confirm</button>
       </div>
-      {JSON.stringify(ingredients)}
-      {JSON.stringify(instructions)}
     </div>
   );
 };

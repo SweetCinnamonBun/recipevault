@@ -9,6 +9,7 @@ import SelectCategoriesPage from "./pages/SelectCategoriesPage";
 import CreateIngredientsAndInstructionsPage from "./pages/CreateIngredientsAndInstructionsPage";
 import { Provider } from "react-redux";
 import store from "./store/store";
+import RecipePreviewPage from "./pages/RecipePreviewPage";
 
 
 const router = createBrowserRouter([
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
       {
         path: "/ingredients-and-instructions",
         element: <CreateIngredientsAndInstructionsPage />
+      },
+      {
+        path: "/recipe-preview",
+        element: <RecipePreviewPage />
       },
     ],
   },
