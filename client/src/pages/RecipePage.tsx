@@ -1,6 +1,6 @@
 import { Recipe } from "@/types/Recipe";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { MdAccessTime } from "react-icons/md";
 import { PiShootingStarLight } from "react-icons/pi";
 import { FaStar } from "react-icons/fa";
@@ -27,6 +27,9 @@ const RecipePage = () => {
   return (
     <div className="flex flex-col items-center">
       <h1 className="my-5 text-3xl">{recipe?.name}</h1>
+      <Link to={`/update-recipe/${recipe?.id}`}>
+      Update Recipe
+      </Link>
       <div className="flex justify-between px-5 py-5 mt-2 mb-8 w-72">
         <div className="">
           <div className="flex flex-col items-center">

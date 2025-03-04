@@ -10,6 +10,7 @@ import CreateIngredientsAndInstructionsPage from "./pages/CreateIngredientsAndIn
 import { Provider } from "react-redux";
 import store from "./store/store";
 import RecipePreviewPage from "./pages/RecipePreviewPage";
+import UpdateRecipePage from "./pages/UpdateRecipePage";
 
 
 const router = createBrowserRouter([
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
         path: "/recipe-preview",
         element: <RecipePreviewPage />
       },
+      {
+        path: "/update-recipe/:id",
+        element: <UpdateRecipePage />
+      }
     ],
   },
   // {

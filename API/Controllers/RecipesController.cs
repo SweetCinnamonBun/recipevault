@@ -142,6 +142,49 @@ namespace API.Controllers
         }
 
 
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateRecipe(int id, [FromForm] UpdateRecipeDto recipeDto)
+        {
+            var recipe = await context.Recipes.Include(x => x.Categories).Include(x => x.Ingredients).Include(x => x.Instructions).FirstOrDefaultAsync(r => r.Id == id);
+
+            if (recipe == null)
+            {
+                return NotFound();
+            }
+
+            // Update recipe properties
+            recipe.Name = recipeDto.Name;
+            recipe.Description = recipeDto.Description;
+            recipe.CookingTime = recipeDto.CookingTime;
+            recipe.Difficulty = recipeDto.Difficulty;
+
+            if (recipeDto.ImageFile != null)
+            {
+                // Delete old image
+                string imagesFolder = Path.Combine(env.WebRootPath, "images", "recipes");
+                string oldImagePath = Path.Combine(imagesFolder, recipe.ImageFileName);
+                if (System.IO.File.Exists(oldImagePath))
+                {
+                    System.IO.File.Delete(oldImagePath);
+                }
+
+                // Save new image
+                string imageFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + Path.GetExtension(recipeDto.ImageFile.FileName);
+                string newImagePath = Path.Combine(imagesFolder, imageFileName);
+                using (var stream = new FileStream(newImagePath, FileMode.Create))
+                {
+                    await recipeDto.ImageFile.CopyToAsync(stream);
+                }
+                recipe.ImageFileName = imageFileName;
+            }
+
+            context.Entry(recipe).State = EntityState.Modified;
+            await context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
