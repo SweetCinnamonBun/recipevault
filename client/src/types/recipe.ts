@@ -6,29 +6,28 @@ export type Recipe = {
   difficulty: string;
   imageFileName: string;
   createdAt: string;
-  categories: [];
+  categories: Category[];
   ingredients: Ingredient[];
   instructions: Instruction[];
 };
 
 export type Ingredient = {
-  id: number;
+  id?: number;
   name: string;
   quantity: string;
   unit: string;
-  recipeId: number;
+  recipeId?: number;
 };
 
 export type Instruction = {
-  id: number;
-  step: number;
+  id?: number;
   text: string;
-  recipeId: number;
+  recipeId?: number;
 };
 
 
 export type Category = {
-  id: number;
+  id?: number;
   name: string;
   slug: string;
 }

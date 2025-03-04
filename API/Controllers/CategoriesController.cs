@@ -31,6 +31,30 @@ namespace API.Controllers
             return Ok(categories);
         }
 
+        [HttpGet("recipes-categories/{recipeId}")]
+        public async Task<IActionResult> GetCategoriesForRecipe([FromRoute] int recipeId)
+        {
+            var recipe = await context.Recipes
+                .Include(r => r.Categories) // Include related categories
+                .FirstOrDefaultAsync(r => r.Id == recipeId);
+
+            if (recipe == null)
+            {
+                return NotFound("Recipe not found");
+            }
+
+            var categories = recipe.Categories
+                .Select(c => new CategoryDto // Use a DTO to return only necessary data
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Slug = c.Slug
+                })
+                .ToList();
+
+            return Ok(categories);
+        }
+
 
         [HttpPost("bulk")]
         public async Task<IActionResult> AddMultipleCategories([FromBody] List<CreateCategoryDto> categoryDtos)

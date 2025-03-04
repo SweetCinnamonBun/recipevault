@@ -1,14 +1,18 @@
 import { Category } from "@/types/Recipe";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { RootState } from "@/store/store";
+import { addCategories } from "@/store/recipeSlice";
+
 
 const SelectCategoriesPage = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const navigate = useNavigate();
   const recipeId = useSelector((state: RootState) => state.recipe.id);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -33,14 +37,15 @@ const SelectCategoriesPage = () => {
   const handleSubmit = async () => {
     // Extract selected category IDs
     const categoryIds = selectedCategories.map((category) => category.id);
-
+  
     // Create the JSON body
     const requestBody = {
-      recipeId: recipeId, // Replace with the actual recipe ID
+      recipeId: recipeId,
       categoryIds: categoryIds,
     };
-
+  
     try {
+      // Step 1: POST request to add categories
       const response = await fetch("http://localhost:5028/api/categories/add-to-recipe", {
         method: "POST",
         headers: {
@@ -48,19 +53,30 @@ const SelectCategoriesPage = () => {
         },
         body: JSON.stringify(requestBody),
       });
-
-      if (response.ok) {
-        console.log("Categories added successfully!");
-        navigate("/ingredients-and-instructions");
-
-      } else {
+  
+      if (!response.ok) {
         console.error("Failed to add categories.");
+        return;
       }
+  
+      console.log("Categories added successfully!");
+  
+      const categoriesResponse = await fetch(`http://localhost:5028/api/categories/recipes-categories/${recipeId}`);
+      
+      if (!categoriesResponse.ok) {
+        console.error("Failed to fetch updated categories.");
+        return;
+      }
+      const updatedCategories = await categoriesResponse.json();
+      dispatch(addCategories(updatedCategories));
+      navigate("/ingredients-and-instructions");
+  
     } catch (error) {
       console.error("An error occurred:", error);
     }
   };
 
+  
   return (
     <>
     <div className="flex items-center justify-center h-screen">

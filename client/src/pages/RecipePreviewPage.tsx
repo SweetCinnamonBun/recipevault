@@ -5,29 +5,67 @@ import { PiShootingStarLight } from "react-icons/pi";
 import { FaHeart, FaStar } from "react-icons/fa";
 import { Recipe } from "@/types/Recipe";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router";
 
 const RecipePreviewPage = () => {
-  const recipes = useSelector((state: RootState) => state.recipe);
+  const recipe = useSelector((state: RootState) => state.recipe);
+  const ingredients = useSelector((state:RootState) => state.recipe.ingredients)
+  const instructions = useSelector((state:RootState) => state.recipe.instructions);
+  const recipeId = useSelector((state: RootState) => state.recipe.id);
 
-  const [recipe, setRecipe] = useState<Recipe | null>(null);
-  const id = 1;
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchRecipe = async () => {
-      try {
-        const response = await fetch(`http://localhost:5028/api/recipes/${id}`);
-        const data = await response.json();
-        console.log(data);
-        setRecipe(data);
-      } catch (err) {
-        console.log(err);
+  // const [recipe, setRecipe] = useState<Recipe | null>(null);
+  // const id = 1;
+
+  // useEffect(() => {
+  //   const fetchRecipe = async () => {
+  //     try {
+  //       const response = await fetch(`http://localhost:5028/api/recipes/${id}`);
+  //       const data = await response.json();
+  //       console.log(data);
+  //       setRecipe(data);
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
+  //   fetchRecipe();
+  // }, [id]);
+
+  const handleSubmit = async () => {
+    try {
+      // Make POST requests for ingredients and instructions
+      const [ingredientsResponse, instructionsResponse] = await Promise.all([
+        fetch(`http://localhost:5028/api/ingredients/bulk?recipeId=${recipeId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(ingredients),
+        }),
+        fetch(`http://localhost:5028/api/instructions/bulk?recipeId=${recipeId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(instructions),
+        }),
+      ]);
+  
+      if (ingredientsResponse.ok && instructionsResponse.ok) {
+        console.log("Ingredients and instructions added successfully!");
+        navigate("/");
+      } else {
+        console.error("Failed to add ingredients or instructions.");
       }
-    };
-    fetchRecipe();
-  }, [id]);
+    } catch (error) {
+      console.error("An error occurred:", error);
+    }
+  }
 
   return (
     <div className="flex flex-col items-center">
+      <h1 className="w-full py-2 mt-5 mb-20 text-4xl italic text-center bg-white rounded-lg">Recipe Preview</h1>
       <h1 className="my-5 text-3xl">{recipe?.name}</h1>
       <div className="flex justify-between px-5 py-5 mt-2 mb-8 w-72">
         <div className="">
@@ -52,12 +90,9 @@ const RecipePreviewPage = () => {
           className="w-full h-full rounded-xl"
         />
       </figure>
-      <section className="my-10">
-        <div className="w-11/12 p-8 mx-auto text-xl bg-white shadow-lg h-96 rounded-xl">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis officia
-          maiores repellat hic reiciendis delectus magnam quisquam! Ipsum magni
-          recusandae accusamus exercitationem repellat. Libero reprehenderit hic
-          laborum expedita, ab eaque. Quod, sequi.
+      <section className="w-11/12 my-10">
+        <div className="w-full p-8 mx-auto text-xl bg-white shadow-lg h-96 rounded-xl">
+          {recipe?.description}
         </div>
       </section>
       <section className="grid w-11/12 grid-cols-2  h-[750px] gap-x-8 p-4 ">
@@ -97,6 +132,7 @@ const RecipePreviewPage = () => {
           </ul>
         </div>
       </section>
+      <button className="px-6 py-3 my-5 text-xl bg-green-400 rounded-lg" onClick={handleSubmit}>Create Recipe</button>
     </div>
   );
 };

@@ -2,6 +2,8 @@ import { RootState } from "@/store/store";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import { addIngredients, addInstructions } from "@/store/recipeSlice";
+import { useDispatch } from "react-redux";
 
 type AddIngredient = {
   quantity: string;
@@ -24,6 +26,15 @@ const CreateIngredientsAndInstructionsPage = () => {
   const [newInstruction, setNewInstruction] = useState<AddInstruction>({
     text: "",
   });
+
+  const dispatch = useDispatch();
+
+  const handleSubmit2 = () => {
+    dispatch(addIngredients(ingredients));
+    dispatch(addInstructions(instructions));
+    console.log("Ingredients and instructions added to Redux store!");
+    navigate("/recipe-preview");
+  };
 
   const recipeId = useSelector((state: RootState) => state.recipe.id);
   const navigate = useNavigate();
@@ -178,7 +189,7 @@ const CreateIngredientsAndInstructionsPage = () => {
         </div>
       </section>
       <div className="my-10">
-        <button onClick={handleSubmit} className="px-4 py-2 text-lg bg-green-400 rounded-lg">Confirm</button>
+        <button onClick={handleSubmit2} className="px-4 py-2 text-lg bg-green-400 rounded-lg">Confirm</button>
       </div>
     </div>
   );
