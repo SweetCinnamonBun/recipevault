@@ -9,55 +9,81 @@ import { Recipe } from "@/types/Recipe";
 
 const UpdateRecipePage = () => {
 
+  type AddIngredient = {
+    quantity: string;
+    unit: string;
+    name: string;
+  };
+  
+  type AddInstruction = {
+    text: string;
+  };
 
   const [recipe, setRecipe] = useState<Recipe | null>(null);
+   const [newIngredient, setNewIngredient] = useState<AddIngredient>({
+      quantity: "",
+      unit: "",
+      name: "",
+    });
+    const [newInstruction, setNewInstruction] = useState<AddInstruction>({
+      text: "",
+    });
 
   const navigate = useNavigate();
 
-  const {id} = useParams();
+  const { id } = useParams();
 
   useEffect(() => {
     const fetchRecipe = async () => {
-        try {
-            const response = await fetch(`http://localhost:5028/api/recipes/${id}`);
-            const data = await response.json();
-            console.log(data);
-            setRecipe(data);
-          } catch (err) {
-            console.log(err);
-          }
-    }
+      try {
+        const response = await fetch(`http://localhost:5028/api/recipes/${id}`);
+        const data = await response.json();
+        console.log(data);
+        setRecipe(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
     fetchRecipe();
-  }, [id])
+  }, [id]);
 
   const handleUpdateRecipe = async () => {
     try {
       // Handle recipe update logic
-      const recipeResponse = await fetch(`http://localhost:5028/api/recipes/${recipeId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(recipe),
-      });
+      const recipeResponse = await fetch(
+        `http://localhost:5028/api/recipes/${recipeId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(recipe),
+        }
+      );
 
       if (recipeResponse.ok) {
         // Update ingredients and instructions as well
         const [ingredientsResponse, instructionsResponse] = await Promise.all([
-          fetch(`http://localhost:5028/api/ingredients/bulk?recipeId=${recipeId}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(ingredients),
-          }),
-          fetch(`http://localhost:5028/api/instructions/bulk?recipeId=${recipeId}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(instructions),
-          }),
+          fetch(
+            `http://localhost:5028/api/ingredients/bulk?recipeId=${recipeId}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(ingredients),
+            }
+          ),
+          fetch(
+            `http://localhost:5028/api/instructions/bulk?recipeId=${recipeId}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(instructions),
+            }
+          ),
         ]);
 
         if (ingredientsResponse.ok && instructionsResponse.ok) {
@@ -74,9 +100,43 @@ const UpdateRecipePage = () => {
     }
   };
 
+  const handleDeleteIngredient = (indexToDelete: number) => {
+    if (!recipe) return;
+
+    const updatedIngredients = recipe.ingredients.filter(
+      (_, index) => index !== indexToDelete
+    );
+    setRecipe({ ...recipe, ingredients: updatedIngredients });
+  };
+
+  const handleDeleteInstruction = (indexToDelete: number) => {
+    if (!recipe) return;
+
+    const updatedInstructions = recipe.instructions.filter(
+      (_, index) => index !== indexToDelete
+    );
+    setRecipe({ ...recipe, instructions: updatedInstructions });
+  };
+
+  const handleAddIngredient = () => {
+    if (newIngredient.name.trim()) {
+      setIngredients([...ingredients, newIngredient]);
+      setNewIngredient({ quantity: "", unit: "", name: "" });
+    }
+  };
+
+  const handleAddInstruction = () => {
+    if (newInstruction.text.trim()) {
+      setInstructions([...instructions, newInstruction]);
+      setNewInstruction({ text: "" });
+    }
+  };
+
   return (
     <div className="flex flex-col items-center">
-      <h1 className="w-full py-2 mt-5 mb-20 text-4xl italic text-center bg-white rounded-lg">Update Recipe</h1>
+      <h1 className="w-full py-2 mt-5 mb-20 text-4xl italic text-center bg-white rounded-lg">
+        Update Recipe
+      </h1>
       <h1 className="my-5 text-3xl">{recipe?.name}</h1>
 
       <div className="flex justify-between px-5 py-5 mt-2 mb-8 w-72">
@@ -104,44 +164,101 @@ const UpdateRecipePage = () => {
         <textarea
           className="w-full p-4 text-xl bg-white shadow-lg h-36 rounded-xl"
           value={recipe?.description}
-          onChange={(e) => setUpdatedRecipe({ ...recipe, description: e.target.value })}
+          onChange={(e) => {
+            if (!recipe) return;
+            setRecipe({ ...recipe, description: e.target.value })
+          }
+          }
           placeholder="Recipe description"
         />
       </section>
-
+      <section>
+      <div className="flex flex-col mt-4 gap-y-2">
+            <input
+              type="text"
+              placeholder="Quantity"
+              value={newIngredient.quantity}
+              onChange={(e) =>
+                setNewIngredient({ ...newIngredient, quantity: e.target.value })
+              }
+              className="p-2 border border-gray-400 rounded"
+            />
+            <select
+              value={newIngredient.unit}
+              onChange={(e) =>
+                setNewIngredient({ ...newIngredient, unit: e.target.value })
+              }
+              className="h-10 p-2 border rounded-md focus:ring-2 focus:ring-green-400 focus:outline-none"
+            >
+              <option value="" disabled>
+                Select Unit
+              </option>
+              <option value="g">Grams (g)</option>
+              <option value="kg">Kilograms (kg)</option>
+              <option value="ml">Milliliters (ml)</option>
+              <option value="L">Liters (L)</option>
+              <option value="tsp">Teaspoon (tsp)</option>
+              <option value="tbsp">Tablespoon (tbsp)</option>
+              <option value="cup">Cup</option>
+              <option value="oz">Ounces (oz)</option>
+              <option value="lb">Pounds (lb)</option>
+              <option value="pcs">Pieces (pcs)</option>
+            </select>
+            <input
+              type="text"
+              placeholder="Name"
+              value={newIngredient.name}
+              onChange={(e) =>
+                setNewIngredient({ ...newIngredient, name: e.target.value })
+              }
+              className="p-2 border border-gray-400 rounded"
+            />
+            <button
+              onClick={handleAddIngredient}
+              className="px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
+            >
+              Add Ingredient
+            </button>
+          </div>
+      </section>    
       <section className="grid w-11/12 grid-cols-2 gap-x-8 p-4 h-[750px]">
+        {/* Ingredients Section */}
         <div className="p-6 shadow-lg rounded-lg bg-[#F8FAE5]">
           <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
           <ul className="p-2 space-y-4 list-disc">
             {recipe?.ingredients.map((ingredient, index) => (
-              <li key={index} className="space-x-2 text-xl">
-                <span>{ingredient.quantity}</span>
-                <span>{ingredient.unit}</span>
-                <span>{ingredient.name}</span>
+              <li key={index} className="flex justify-between text-xl">
+                <div>
+                  <span>{ingredient.quantity} </span>
+                  <span>{ingredient.unit} </span>
+                  <span>{ingredient.name}</span>
+                </div>
+                <button
+                  onClick={() => handleDeleteIngredient(index)}
+                  className="px-2 py-1 ml-4 text-white bg-red-500 rounded"
+                >
+                  Delete
+                </button>
               </li>
             ))}
           </ul>
         </div>
+
+        {/* Instructions Section */}
         <div className="p-6 shadow-lg rounded-lg bg-[#F8FAE5]">
           <h2 className="my-2 text-2xl font-bold">Instructions</h2>
           <ul className="p-2 space-y-4 list-disc">
             {recipe?.instructions.map((instruction, index) => (
-              <li key={index} className="text-xl">{instruction.text}</li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="w-full my-10">
-        <div className="w-11/12 p-8 mx-auto rounded-lg bg-[#FFF7F3] shadow-lg">
-          <h2 className="text-2xl font-bold">Shopping List</h2>
-          <ul className="mt-6 space-y-3">
-            {recipe?.ingredients.map((ingredient, index) => (
-              <li key={index} className="text-xl list-square">
-                <span>{ingredient.name}</span>
-                <span className="ml-2 mr-1">
-                  ({ingredient.quantity} {ingredient.unit})
-                </span>
+              <li key={index} className="text-xl">
+                <div className="flex justify-between">
+                  <span>{instruction.text}</span>
+                  <button
+                    onClick={() => handleDeleteInstruction(index)}
+                    className="px-2 py-1 ml-4 text-white bg-red-500 rounded"
+                  >
+                    Delete
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
