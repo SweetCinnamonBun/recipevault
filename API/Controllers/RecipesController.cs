@@ -4,6 +4,9 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using API.DTOs;
+using API.DTOs.Category;
+using API.DTOs.Ingredients;
+using API.DTOs.Instructions;
 using AutoMapper;
 using Core.Entities;
 using Infrastructure.Data;
@@ -142,47 +145,45 @@ namespace API.Controllers
         }
 
 
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> UpdateRecipe(int id, [FromForm] UpdateRecipeDto recipeDto)
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateRecipe(int id, [FromBody] UpdateRecipeDto updatedRecipeDto)
         {
-            var recipe = await context.Recipes.Include(x => x.Categories).Include(x => x.Ingredients).Include(x => x.Instructions).FirstOrDefaultAsync(r => r.Id == id);
-
-            if (recipe == null)
+            if (updatedRecipeDto == null)
             {
-                return NotFound();
+                return BadRequest("Invalid data.");
             }
 
-            // Update recipe properties
-            recipe.Name = recipeDto.Name;
-            recipe.Description = recipeDto.Description;
-            recipe.CookingTime = recipeDto.CookingTime;
-            recipe.Difficulty = recipeDto.Difficulty;
+            // Fetch the existing recipe from the database
+            var existingRecipe = await context.Recipes
+                .Include(r => r.Ingredients)
+                .Include(r => r.Categories)
+                .Include(r => r.Instructions)
+                .FirstOrDefaultAsync(r => r.Id == id);
 
-            if (recipeDto.ImageFile != null)
+            if (existingRecipe == null)
             {
-                // Delete old image
-                string imagesFolder = Path.Combine(env.WebRootPath, "images", "recipes");
-                string oldImagePath = Path.Combine(imagesFolder, recipe.ImageFileName);
-                if (System.IO.File.Exists(oldImagePath))
-                {
-                    System.IO.File.Delete(oldImagePath);
-                }
-
-                // Save new image
-                string imageFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + Path.GetExtension(recipeDto.ImageFile.FileName);
-                string newImagePath = Path.Combine(imagesFolder, imageFileName);
-                using (var stream = new FileStream(newImagePath, FileMode.Create))
-                {
-                    await recipeDto.ImageFile.CopyToAsync(stream);
-                }
-                recipe.ImageFileName = imageFileName;
+                return NotFound("Recipe not found.");
             }
 
-            context.Entry(recipe).State = EntityState.Modified;
+            // Update scalar properties
+            existingRecipe.Name = updatedRecipeDto.Name;
+            existingRecipe.Description = updatedRecipeDto.Description;
+            existingRecipe.CookingTime = updatedRecipeDto.CookingTime;
+            existingRecipe.Difficulty = updatedRecipeDto.Difficulty;
+            existingRecipe.ImageFileName = updatedRecipeDto.ImageFileName;
+
+            // Update navigation properties
+            UpdateIngredients(existingRecipe, updatedRecipeDto.Ingredients);
+            UpdateCategories(existingRecipe, updatedRecipeDto.Categories);
+            UpdateInstructions(existingRecipe, updatedRecipeDto.Instructions);
+
+            // Save changes to the database
             await context.SaveChangesAsync();
 
-            return NoContent();
+            return NoContent(); // 204 No Content
         }
+
 
 
         [HttpDelete("{id:int}")]
@@ -203,6 +204,115 @@ namespace API.Controllers
 
             return Ok();
 
+        }
+
+        private void UpdateIngredients(Recipe existingRecipe, ICollection<IngredientDto> updatedIngredients)
+        {
+            // Remove ingredients not in the updated list
+            var ingredientsToRemove = existingRecipe.Ingredients
+                .Where(existing => !updatedIngredients.Any(updated => updated.Id == existing.Id))
+                .ToList();
+
+            foreach (var ingredient in ingredientsToRemove)
+            {
+                existingRecipe.Ingredients.Remove(ingredient);
+            }
+
+            // Add or update ingredients
+            foreach (var updatedIngredient in updatedIngredients)
+            {
+                var existingIngredient = existingRecipe.Ingredients
+                    .FirstOrDefault(i => i.Id == updatedIngredient.Id);
+
+                if (existingIngredient == null)
+                {
+                    // Add new ingredient
+                    existingRecipe.Ingredients.Add(new Ingredient
+                    {
+                        Name = updatedIngredient.Name,
+                        Quantity = updatedIngredient.Quantity,
+                        Unit = updatedIngredient.Unit
+                    });
+                }
+                else
+                {
+                    // Update existing ingredient
+                    existingIngredient.Name = updatedIngredient.Name;
+                    existingIngredient.Quantity = updatedIngredient.Quantity;
+                    existingIngredient.Unit = updatedIngredient.Unit;
+                }
+            }
+        }
+
+        private void UpdateInstructions(Recipe existingRecipe, ICollection<InstructionDto> updatedInstructions)
+        {
+            // Remove instructions not in the updated list
+            var instructionsToRemove = existingRecipe.Instructions
+                .Where(existing => !updatedInstructions.Any(updated => updated.Id == existing.Id))
+                .ToList();
+
+            foreach (var instruction in instructionsToRemove)
+            {
+                existingRecipe.Instructions.Remove(instruction);
+            }
+
+            // Add or update instructions
+            foreach (var updatedInstruction in updatedInstructions)
+            {
+                var existingInstruction = existingRecipe.Instructions
+                    .FirstOrDefault(i => i.Id == updatedInstruction.Id);
+
+                if (existingInstruction == null)
+                {
+                    // Add new instruction
+                    existingRecipe.Instructions.Add(new Instruction
+                    {
+                        Text = updatedInstruction.Text,
+                        RecipeId = updatedInstruction.RecipeId
+                    });
+                }
+                else
+                {
+                    // Update existing instruction
+                    existingInstruction.Text = updatedInstruction.Text;
+                    existingInstruction.RecipeId = updatedInstruction.RecipeId;
+                }
+            }
+        }
+        private void UpdateCategories(Recipe existingRecipe, ICollection<CategoryDto> updatedCategories)
+        {
+            // Remove categories not in the updated list
+            var categoriesToRemove = existingRecipe.Categories
+                .Where(existing => !updatedCategories.Any(updated => updated.Id == existing.Id))
+                .ToList();
+
+            foreach (var category in categoriesToRemove)
+            {
+                existingRecipe.Categories.Remove(category);
+            }
+
+            // Add or update categories
+            foreach (var updatedCategory in updatedCategories)
+            {
+                var existingCategory = existingRecipe.Categories
+                    .FirstOrDefault(c => c.Id == updatedCategory.Id);
+
+                if (existingCategory == null)
+                {
+                    // Add new category
+                    existingRecipe.Categories.Add(new Category
+                    {
+                        Name = updatedCategory.Name,
+                        Slug = updatedCategory.Slug
+                    });
+                }
+                else
+                {
+                    // Update existing category
+                    existingCategory.Name = updatedCategory.Name;
+                    existingCategory.Slug = updatedCategory.Slug;
+                }
+            }
         }
     }
 }

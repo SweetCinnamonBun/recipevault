@@ -19,6 +19,9 @@ namespace API.Mappings
             CreateMap<Instruction, InstructionDto>().ReverseMap();
             CreateMap<Ingredient, IngredientDto>().ReverseMap();
             CreateMap<Category, CategoryDto>().ReverseMap();
+
+            CreateMap<UpdateRecipeDto, RecipeDto>().ReverseMap();
+
         }
     }
 }

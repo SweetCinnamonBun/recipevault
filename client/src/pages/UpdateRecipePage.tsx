@@ -56,22 +56,25 @@ const UpdateRecipePage = () => {
       return;
     }
   
-    // Create FormData object
-    const formData = new FormData();
-    formData.append("name", recipe.name);
-    formData.append("description", recipe.description);
-    formData.append("cookingTime", recipe.cookingTime);
-    formData.append("difficulty", recipe.difficulty);
-  
-    // Append image file only if it exists
-    if (recipe.imageFileName) {
-      formData.append("imageFile", recipe.imageFileName);
-    }
+    // Prepare the JSON payload
+    const requestData = {
+      name: recipe.name,
+      description: recipe.description,
+      cookingTime: recipe.cookingTime,
+      difficulty: recipe.difficulty,
+      imageFilename: recipe.imageFileName,
+      categories: recipe.categories || [], // Ensure arrays are included
+      ingredients: recipe.ingredients || [],
+      instructions: recipe.instructions || [],
+    };
   
     try {
       const response = await fetch(`http://localhost:5028/api/recipes/${id}`, {
         method: "PUT",
-        body: formData, // No need to set Content-Type; fetch will handle it
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
       });
   
       if (!response.ok) {
@@ -86,6 +89,7 @@ const UpdateRecipePage = () => {
       console.error("Error updating recipe:", error);
     }
   };
+  
   
   
 
