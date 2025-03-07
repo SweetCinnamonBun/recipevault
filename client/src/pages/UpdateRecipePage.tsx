@@ -8,26 +8,25 @@ import { FaHeart, FaStar } from "react-icons/fa";
 import { Recipe } from "@/types/Recipe";
 
 const UpdateRecipePage = () => {
-
   type AddIngredient = {
     quantity: string;
     unit: string;
     name: string;
   };
-  
+
   type AddInstruction = {
     text: string;
   };
 
   const [recipe, setRecipe] = useState<Recipe | null>(null);
-   const [newIngredient, setNewIngredient] = useState<AddIngredient>({
-      quantity: "",
-      unit: "",
-      name: "",
-    });
-    const [newInstruction, setNewInstruction] = useState<AddInstruction>({
-      text: "",
-    });
+  const [newIngredient, setNewIngredient] = useState<AddIngredient>({
+    quantity: "",
+    unit: "",
+    name: "",
+  });
+  const [newInstruction, setNewInstruction] = useState<AddInstruction>({
+    text: "",
+  });
 
   const navigate = useNavigate();
 
@@ -47,58 +46,48 @@ const UpdateRecipePage = () => {
     fetchRecipe();
   }, [id]);
 
+
   const handleUpdateRecipe = async () => {
+    if (!recipe) return;
+  
+    // Ensure all required fields are present
+    if (!recipe.name || !recipe.difficulty || !recipe.cookingTime || !recipe.description) {
+      console.error("Missing required fields");
+      return;
+    }
+  
+    // Create FormData object
+    const formData = new FormData();
+    formData.append("name", recipe.name);
+    formData.append("description", recipe.description);
+    formData.append("cookingTime", recipe.cookingTime);
+    formData.append("difficulty", recipe.difficulty);
+  
+    // Append image file only if it exists
+    if (recipe.imageFileName) {
+      formData.append("imageFile", recipe.imageFileName);
+    }
+  
     try {
-      // Handle recipe update logic
-      const recipeResponse = await fetch(
-        `http://localhost:5028/api/recipes/${recipeId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(recipe),
-        }
-      );
-
-      if (recipeResponse.ok) {
-        // Update ingredients and instructions as well
-        const [ingredientsResponse, instructionsResponse] = await Promise.all([
-          fetch(
-            `http://localhost:5028/api/ingredients/bulk?recipeId=${recipeId}`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(ingredients),
-            }
-          ),
-          fetch(
-            `http://localhost:5028/api/instructions/bulk?recipeId=${recipeId}`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(instructions),
-            }
-          ),
-        ]);
-
-        if (ingredientsResponse.ok && instructionsResponse.ok) {
-          console.log("Ingredients and instructions updated successfully!");
-          navigate(`/recipe/${recipeId}`);
-        } else {
-          console.error("Failed to update ingredients or instructions.");
-        }
-      } else {
-        console.error("Failed to update the recipe.");
+      const response = await fetch(`http://localhost:5028/api/recipes/${id}`, {
+        method: "PUT",
+        body: formData, // No need to set Content-Type; fetch will handle it
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Failed to update recipe:", errorData);
+        return;
       }
+  
+      console.log("Recipe updated successfully");
+      navigate(`/recipe/${id}`);
     } catch (error) {
-      console.error("An error occurred:", error);
+      console.error("Error updating recipe:", error);
     }
   };
+  
+  
 
   const handleDeleteIngredient = (indexToDelete: number) => {
     if (!recipe) return;
@@ -118,26 +107,37 @@ const UpdateRecipePage = () => {
     setRecipe({ ...recipe, instructions: updatedInstructions });
   };
 
+
   const handleAddIngredient = () => {
-    if (newIngredient.name.trim()) {
-      setIngredients([...ingredients, newIngredient]);
-      setNewIngredient({ quantity: "", unit: "", name: "" });
-    }
-  };
+    if (!recipe || !newIngredient.name.trim()) return;
+
+    setRecipe({
+      ...recipe,
+      ingredients: [...recipe.ingredients, newIngredient]
+    });
+    setNewIngredient({ quantity: "", unit: "", name: "" });
+  }
 
   const handleAddInstruction = () => {
-    if (newInstruction.text.trim()) {
-      setInstructions([...instructions, newInstruction]);
-      setNewInstruction({ text: "" });
-    }
-  };
+    if (!recipe || !newInstruction.text.trim()) return;
 
+    setRecipe({
+      ...recipe,
+      instructions: [...recipe.instructions, newInstruction]
+    })
+    setNewInstruction({ text: "" });
+  }
+
+  
   return (
     <div className="flex flex-col items-center">
       <h1 className="w-full py-2 mt-5 mb-20 text-4xl italic text-center bg-white rounded-lg">
         Update Recipe
       </h1>
-      <h1 className="my-5 text-3xl">{recipe?.name}</h1>
+      <input type="text" value={recipe?.name} className="w-3/4 px-4 py-2 my-5 text-3xl" onChange={(e) => {
+        if (!recipe) return;
+        setRecipe({...recipe, name: e.target.value})
+      }}/>
 
       <div className="flex justify-between px-5 py-5 mt-2 mb-8 w-72">
         <div className="flex flex-col items-center">
@@ -160,67 +160,82 @@ const UpdateRecipePage = () => {
         />
       </figure>
 
-      <section className="w-11/12 my-10">
+      <section className="w-11/12 mb-20 mt-28">
         <textarea
-          className="w-full p-4 text-xl bg-white shadow-lg h-36 rounded-xl"
+          className="w-full p-4 text-xl bg-white shadow-lg rounded-xl h-96"
           value={recipe?.description}
           onChange={(e) => {
             if (!recipe) return;
-            setRecipe({ ...recipe, description: e.target.value })
-          }
-          }
+            setRecipe({ ...recipe, description: e.target.value });
+          }}
           placeholder="Recipe description"
         />
       </section>
-      <section>
-      <div className="flex flex-col mt-4 gap-y-2">
-            <input
-              type="text"
-              placeholder="Quantity"
-              value={newIngredient.quantity}
+      <section className="grid w-11/12 grid-cols-2 p-4 gap-x-8">
+        <div className="flex flex-col mt-4 gap-y-2">
+          <input
+            type="text"
+            placeholder="Quantity"
+            value={newIngredient.quantity}
+            onChange={(e) =>
+              setNewIngredient({ ...newIngredient, quantity: e.target.value })
+            }
+            className="p-2 border border-gray-400 rounded"
+          />
+          <select
+            value={newIngredient.unit}
+            onChange={(e) =>
+              setNewIngredient({ ...newIngredient, unit: e.target.value })
+            }
+            className="h-10 p-2 border rounded-md focus:ring-2 focus:ring-green-400 focus:outline-none"
+          >
+            <option value="" disabled>
+              Select Unit
+            </option>
+            <option value="g">Grams (g)</option>
+            <option value="kg">Kilograms (kg)</option>
+            <option value="ml">Milliliters (ml)</option>
+            <option value="L">Liters (L)</option>
+            <option value="tsp">Teaspoon (tsp)</option>
+            <option value="tbsp">Tablespoon (tbsp)</option>
+            <option value="cup">Cup</option>
+            <option value="oz">Ounces (oz)</option>
+            <option value="lb">Pounds (lb)</option>
+            <option value="pcs">Pieces (pcs)</option>
+          </select>
+          <input
+            type="text"
+            placeholder="Name"
+            value={newIngredient.name}
+            onChange={(e) =>
+              setNewIngredient({ ...newIngredient, name: e.target.value })
+            }
+            className="p-2 border border-gray-400 rounded"
+          />
+          <button
+            onClick={handleAddIngredient}
+            className="px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
+          >
+            Add Ingredient
+          </button>
+        </div>
+        <div className="flex flex-col justify-between mt-4 gap-y-2">
+            <textarea
+              placeholder="Instruction"
+              value={newInstruction.text}
               onChange={(e) =>
-                setNewIngredient({ ...newIngredient, quantity: e.target.value })
+                setNewInstruction({ ...newInstruction, text: e.target.value })
               }
-              className="p-2 border border-gray-400 rounded"
-            />
-            <select
-              value={newIngredient.unit}
-              onChange={(e) =>
-                setNewIngredient({ ...newIngredient, unit: e.target.value })
-              }
-              className="h-10 p-2 border rounded-md focus:ring-2 focus:ring-green-400 focus:outline-none"
-            >
-              <option value="" disabled>
-                Select Unit
-              </option>
-              <option value="g">Grams (g)</option>
-              <option value="kg">Kilograms (kg)</option>
-              <option value="ml">Milliliters (ml)</option>
-              <option value="L">Liters (L)</option>
-              <option value="tsp">Teaspoon (tsp)</option>
-              <option value="tbsp">Tablespoon (tbsp)</option>
-              <option value="cup">Cup</option>
-              <option value="oz">Ounces (oz)</option>
-              <option value="lb">Pounds (lb)</option>
-              <option value="pcs">Pieces (pcs)</option>
-            </select>
-            <input
-              type="text"
-              placeholder="Name"
-              value={newIngredient.name}
-              onChange={(e) =>
-                setNewIngredient({ ...newIngredient, name: e.target.value })
-              }
-              className="p-2 border border-gray-400 rounded"
+              className="w-full h-full p-2 border border-gray-400 rounded"
             />
             <button
-              onClick={handleAddIngredient}
+              onClick={handleAddInstruction}
               className="px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
             >
-              Add Ingredient
+              Add Instruction
             </button>
           </div>
-      </section>    
+      </section>
       <section className="grid w-11/12 grid-cols-2 gap-x-8 p-4 h-[750px]">
         {/* Ingredients Section */}
         <div className="p-6 shadow-lg rounded-lg bg-[#F8FAE5]">
