@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 
 
 namespace API.Services
@@ -20,23 +21,38 @@ namespace API.Services
 
         public async Task<string> UploadFileAsync(Stream fileStream, string fileName)
         {
-            // Create a BlobServiceClient
             var blobServiceClient = new BlobServiceClient(_connectionString);
-
-            // Get a reference to the container
             var containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
-
-            // Create the container if it doesn't exist
             await containerClient.CreateIfNotExistsAsync();
 
-            // Get a reference to the blob
             var blobClient = containerClient.GetBlobClient(fileName);
 
-            // Upload the file
-            await blobClient.UploadAsync(fileStream, overwrite: true);
+            // Set the content type based on the file extension
+            var contentType = GetContentType(fileName);
+            var options = new BlobUploadOptions
+            {
+                HttpHeaders = new BlobHttpHeaders
+                {
+                    ContentType = contentType // Set the Content-Type header
+                }
+            };
 
-            // Return the URL of the uploaded file
+            await blobClient.UploadAsync(fileStream, options);
+
             return blobClient.Uri.ToString();
+        }
+
+        private string GetContentType(string fileName)
+        {
+            var extension = Path.GetExtension(fileName).ToLower();
+            return extension switch
+            {
+                ".jpg" => "image/jpeg",
+                ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                _ => "application/octet-stream" // Default for unknown file types
+            };
         }
     }
 }

@@ -126,7 +126,7 @@ const HomePage = () => {
               >
                 <figure className="w-full h-60 ">
                   <img
-                    src={`http://localhost:5028/images/recipes/${recipe.imageFileName}`}
+                    src={recipe.imageUrl}
                     alt={recipe.name}
                     className="w-full h-full rounded-t-xl"
                   />

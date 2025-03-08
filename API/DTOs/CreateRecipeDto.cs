@@ -13,7 +13,7 @@ namespace API.DTOs
         public required string CookingTime { get; set; }
         public required string Difficulty { get; set; }
         public required string Description { get; set; }
-        public IFormFile? ImageFile { get; set; }
+        public required string ImageUrl { get; set; }
 
         // public ICollection<Category> Categories { get; set; } = [];
         // public List<IngredientDto> Ingredients { get; set; }

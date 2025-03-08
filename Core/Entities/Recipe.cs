@@ -13,7 +13,7 @@ namespace Core.Entities
         public required string CookingTime { get; set; }
         public required string Difficulty { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public required string ImageFileName { get; set; }
+        public required string ImageUrl { get; set; }
 
         // public ICollection<Image> Images { get; set; } = [];
         public ICollection<Category> Categories { get; set; } = [];

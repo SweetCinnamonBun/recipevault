@@ -4,7 +4,7 @@ export type Recipe = {
   description: string;
   cookingTime: string;
   difficulty: string;
-  imageFileName: string;
+  imageUrl: string;
   createdAt: string;
   categories: Category[];
   ingredients: Ingredient[];

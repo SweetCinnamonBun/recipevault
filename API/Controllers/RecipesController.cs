@@ -99,29 +99,29 @@ namespace API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> CreateRecipe([FromForm] CreateRecipeDto recipeDto)
+        public async Task<IActionResult> CreateRecipe([FromBody] CreateRecipeDto recipeDto)
         {
 
-            if (recipeDto.ImageFile == null)
-            {
-                ModelState.AddModelError("ImageFile", "Please select an image");
-                return BadRequest(ModelState);
-            }
+            // if (recipeDto.ImageFile == null)
+            // {
+            //     ModelState.AddModelError("ImageFile", "Please select an image");
+            //     return BadRequest(ModelState);
+            // }
 
             // Save the image file
-            string imageFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + Path.GetExtension(recipeDto.ImageFile.FileName);
-            string imagesFolder = Path.Combine(env.WebRootPath, "images", "recipes");
+            // string imageFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + Path.GetExtension(recipeDto.ImageFile.FileName);
+            // string imagesFolder = Path.Combine(env.WebRootPath, "images", "recipes");
 
-            if (!Directory.Exists(imagesFolder))
-            {
-                Directory.CreateDirectory(imagesFolder);
-            }
+            // if (!Directory.Exists(imagesFolder))
+            // {
+            //     Directory.CreateDirectory(imagesFolder);
+            // }
 
-            string imagePath = Path.Combine(imagesFolder, imageFileName);
-            using (var stream = new FileStream(imagePath, FileMode.Create))
-            {
-                await recipeDto.ImageFile.CopyToAsync(stream);
-            }
+            // string imagePath = Path.Combine(imagesFolder, imageFileName);
+            // using (var stream = new FileStream(imagePath, FileMode.Create))
+            // {
+            //     await recipeDto.ImageFile.CopyToAsync(stream);
+            // }
 
             // Create the Recipe entity
             Recipe recipe = new()
@@ -130,7 +130,7 @@ namespace API.Controllers
                 Description = recipeDto.Description,
                 CookingTime = recipeDto.CookingTime,
                 Difficulty = recipeDto.Difficulty,
-                ImageFileName = imageFileName,
+                ImageUrl = recipeDto.ImageUrl,
                 CreatedAt = DateTime.Now
             };
 
@@ -171,7 +171,7 @@ namespace API.Controllers
             existingRecipe.Description = updatedRecipeDto.Description;
             existingRecipe.CookingTime = updatedRecipeDto.CookingTime;
             existingRecipe.Difficulty = updatedRecipeDto.Difficulty;
-            existingRecipe.ImageFileName = updatedRecipeDto.ImageFileName;
+            existingRecipe.ImageUrl = updatedRecipeDto.ImageUrl;
 
             // Update navigation properties
             UpdateIngredients(existingRecipe, updatedRecipeDto.Ingredients);
@@ -196,8 +196,8 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            string imagesFolder = env.WebRootPath + "/images/recipes/";
-            System.IO.File.Delete(imagesFolder + recipe.ImageFileName);
+            // string imagesFolder = env.WebRootPath + "/images/recipes/";
+            // System.IO.File.Delete(imagesFolder + recipe.ImageFileName);
 
             context.Recipes.Remove(recipe);
             await context.SaveChangesAsync();

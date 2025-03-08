@@ -16,25 +16,53 @@ const CreateRecipePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Create FormData
-    const formData = new FormData();
-    formData.append("Name", name);
-    formData.append("CookingTime", cookingTime);
-    formData.append("Description", description);
-    formData.append("Difficulty", difficulty);
+  
+    let imageUrl = null;
+  
+    // Step 1: Upload the image (if provided)
     if (imageFile) {
-      formData.append("ImageFile", imageFile);
+      const imageFormData = new FormData();
+      imageFormData.append("ImageFile", imageFile);
+  
+      try {
+        const imageResponse = await fetch("http://localhost:5028/api/images/upload", {
+          method: "POST",
+          body: imageFormData,
+        });
+  
+        if (imageResponse.ok) {
+          const imageData = await imageResponse.json();
+          imageUrl = imageData.imageUrl; // Get the image URL
+        } else {
+          console.error("Failed to upload image.");
+          return;
+        }
+      } catch (error) {
+        console.error("An error occurred while uploading the image:", error);
+        return;
+      }
     }
-
+  
+    // Step 2: Create the recipe with the image URL
+    const recipeData = {
+      name:name,
+      cookingTime:cookingTime,
+      description:description,
+      difficulty:difficulty,
+      imageUrl:imageUrl, // Include the image URL in the recipe data
+    };
+  
     try {
-      const response = await fetch("http://localhost:5028/api/recipes", {
+      const recipeResponse = await fetch("http://localhost:5028/api/recipes", {
         method: "POST",
-        body: formData,
+        headers: {
+          "Content-Type": "application/json", // Set the content type to JSON
+        },
+        body: JSON.stringify(recipeData), // Send the recipe data as JSON
       });
-
-      if (response.ok) {
-        const data = await response.json();
+  
+      if (recipeResponse.ok) {
+        const data = await recipeResponse.json();
         dispatch(setRecipe(data));
         console.log("Recipe created successfully!");
         navigate("/add-categories");

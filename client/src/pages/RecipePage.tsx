@@ -48,7 +48,7 @@ const RecipePage = () => {
       </div>
       <figure className="w-3/5">
         <img
-          src={`http://localhost:5028/images/recipes/${recipe?.imageFileName}`}
+          src={recipe?.imageUrl}
           alt={recipe?.name}
           className="w-full h-full rounded-xl"
         />

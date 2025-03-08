@@ -14,7 +14,7 @@ namespace API.DTOs
         public required string Description { get; set; }
         public required string CookingTime { get; set; }
         public required string Difficulty { get; set; }
-        public required string ImageFileName { get; set; }
+        public required string ImageUrl { get; set; }
         public ICollection<CategoryDto> Categories { get; set; } = [];
         public ICollection<InstructionDto> Instructions { get; set; } = [];
         public ICollection<IngredientDto> Ingredients { get; set; } = [];
