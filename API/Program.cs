@@ -1,4 +1,5 @@
 using API.Mappings;
+using API.Services;
 using Core.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,12 @@ builder.Services.AddDbContext<BlogContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddSingleton<AzureBlobStorageService>(provider =>
+{
+    var configuration = provider.GetRequiredService<IConfiguration>();
+    return new AzureBlobStorageService(configuration);
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -27,6 +34,8 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<AppUser>()
     .AddEntityFrameworkStores<BlogContext>();
+
+
 
 
 

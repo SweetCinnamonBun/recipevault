@@ -131,7 +131,7 @@ const UpdateRecipePage = () => {
     })
     setNewInstruction({ text: "" });
   }
-
+  
   
   return (
     <div className="flex flex-col items-center">
@@ -143,15 +143,25 @@ const UpdateRecipePage = () => {
         setRecipe({...recipe, name: e.target.value})
       }}/>
 
-      <div className="flex justify-between px-5 py-5 mt-2 mb-8 w-72">
+      <div className="flex justify-between mt-2 mb-8 w-72">
         <div className="flex flex-col items-center">
           <MdAccessTime className="w-8 h-8" />
-          <span className="text-lg">{recipe?.cookingTime}</span>
+          <input type="text" value={recipe?.cookingTime} className="w-24 text-lg" onChange={(e) => {
+            if (!recipe) return;
+            setRecipe({...recipe, cookingTime: e.target.value})
+          }}/>
           <span className="text-md">Cooking time</span>
         </div>
         <div className="flex flex-col items-center">
           <PiShootingStarLight className="w-8 h-8" />
-          <span className="text-lg">{recipe?.difficulty}</span>
+          <select value={recipe?.difficulty} name="" id="" className="w-28 h-9" onChange={(e) => {
+            if (!recipe) return;
+            setRecipe({...recipe, difficulty: e.target.value})
+          }}>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+          </select>
           <span className="text-md">Difficulty</span>
         </div>
       </div>

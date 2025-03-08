@@ -66,14 +66,9 @@ const RecipePage = () => {
         <FaHeart className="w-7 h-7" />
         <span>Add to your favorites</span>
       </div>
-      <section className="my-10">
-        <div className="w-11/12 p-8 mx-auto text-xl border border-yellow-600 h-96 rounded-xl">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellat sit
-          aperiam ea eligendi quam optio minima, error consectetur odio natus
-          animi mollitia aspernatur ut adipisci excepturi inventore? Voluptas
-          aliquid sunt quibusdam sint aliquam earum ipsam impedit ab amet esse
-          officia porro iste, tempora in velit omnis expedita ducimus voluptate
-          fugit commodi maxime, debitis magnam. Reiciendis!
+      <section className="w-11/12 my-10">
+        <div className="w-full p-8 mx-auto text-xl border border-yellow-600 h-96 rounded-xl">
+          {recipe?.description}
         </div>
       </section>
       <section className="grid w-11/12 grid-cols-2 border border-blue-500 h-[750px] gap-x-8 p-4">
