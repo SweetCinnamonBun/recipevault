@@ -11,6 +11,8 @@ import { Provider } from "react-redux";
 import store from "./store/store";
 import RecipePreviewPage from "./pages/RecipePreviewPage";
 import UpdateRecipePage from "./pages/UpdateRecipePage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import LoginPage from "./pages/LoginPage";
 
 
 const router = createBrowserRouter([
@@ -27,27 +29,38 @@ const router = createBrowserRouter([
         element: <RecipePage />,
       },
       {
-        path: "/create-recipe",
-        element: <CreateRecipePage />
+        path: "/login",
+        element: <LoginPage />
       },
+      // Protected routes
       {
-        path: "/add-categories",
-        element: <SelectCategoriesPage />
+        element: <ProtectedRoute />, // ProtectedRoute acts as a layout route
+        children: [
+          {
+            path: "/create-recipe",
+            element: <CreateRecipePage />,
+          },
+          {
+            path: "/add-categories",
+            element: <SelectCategoriesPage />,
+          },
+          {
+            path: "/ingredients-and-instructions",
+            element: <CreateIngredientsAndInstructionsPage />,
+          },
+          {
+            path: "/recipe-preview",
+            element: <RecipePreviewPage />,
+          },
+          {
+            path: "/update-recipe/:id",
+            element: <UpdateRecipePage />,
+          },
+        ],
       },
-      {
-        path: "/ingredients-and-instructions",
-        element: <CreateIngredientsAndInstructionsPage />
-      },
-      {
-        path: "/recipe-preview",
-        element: <RecipePreviewPage />
-      },
-      {
-        path: "/update-recipe/:id",
-        element: <UpdateRecipePage />
-      }
     ],
   },
+  // Uncomment and add these routes if needed
   // {
   //   path: "/login",
   //   element: <LoginPage />,

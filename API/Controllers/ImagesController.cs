@@ -37,5 +37,18 @@ namespace API.Controllers
                 return Ok(new { ImageUrl = imageUrl });
             }
         }
+
+        [HttpDelete("delete")]
+        public async Task<IActionResult> DeleteImage([FromQuery] string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return BadRequest("File name is required.");
+            }
+
+            // Delete the file from Azure Blob Storage
+            await _blobStorageService.DeleteFileAsync(fileName);
+            return NoContent();
+        }
     }
 }

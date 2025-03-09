@@ -42,6 +42,15 @@ namespace API.Services
             return blobClient.Uri.ToString();
         }
 
+        public async Task DeleteFileAsync(string fileName)
+        {
+            var blobServiceClient = new BlobServiceClient(_connectionString);
+            var containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
+            var blobClient = containerClient.GetBlobClient(fileName);
+
+            await blobClient.DeleteIfExistsAsync();
+        }
+
         private string GetContentType(string fileName)
         {
             var extension = Path.GetExtension(fileName).ToLower();

@@ -28,6 +28,8 @@ const UpdateRecipePage = () => {
     text: "",
   });
 
+  const [newImageFile, setNewImageFile] = useState<File | null>(null);
+
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -46,28 +48,67 @@ const UpdateRecipePage = () => {
     fetchRecipe();
   }, [id]);
 
-
   const handleUpdateRecipe = async () => {
     if (!recipe) return;
   
     // Ensure all required fields are present
-    if (!recipe.name || !recipe.difficulty || !recipe.cookingTime || !recipe.description) {
+    if (
+      !recipe.name ||
+      !recipe.difficulty ||
+      !recipe.cookingTime ||
+      !recipe.description
+    ) {
       console.error("Missing required fields");
       return;
     }
   
-    // Prepare the JSON payload
+    let newImageUrl = recipe.imageUrl; // Default to the existing image URL
+  
+    // Step 1: Upload the new image (if provided)
+    if (newImageFile) {
+      const imageFormData = new FormData();
+      imageFormData.append("ImageFile", newImageFile);
+  
+      try {
+        const imageResponse = await fetch("http://localhost:5028/api/images/upload", {
+          method: "POST",
+          body: imageFormData,
+        });
+  
+        if (imageResponse.ok) {
+          const imageData = await imageResponse.json();
+          newImageUrl = imageData.imageUrl; // Get the new image URL
+  
+          // Step 2: Delete the previous image (if it exists)
+          if (recipe.imageUrl) {
+            const previousImageName = recipe.imageUrl.split("/").pop(); // Extract the file name from the URL
+            await fetch(`http://localhost:5028/api/images/delete?fileName=${previousImageName}`, {
+              method: "DELETE",
+            });
+          }
+        } else {
+          console.error("Failed to upload new image.");
+          return;
+        }
+      } catch (error) {
+        console.error("An error occurred while uploading the new image:", error);
+        return;
+      }
+    }
+  
+    // Step 3: Prepare the JSON payload
     const requestData = {
       name: recipe.name,
       description: recipe.description,
       cookingTime: recipe.cookingTime,
       difficulty: recipe.difficulty,
-      imageFilename: recipe.imageFileName,
-      categories: recipe.categories || [], // Ensure arrays are included
+      imageUrl: newImageUrl, // Use the new image URL
+      categories: recipe.categories || [],
       ingredients: recipe.ingredients || [],
       instructions: recipe.instructions || [],
     };
   
+    // Step 4: Update the recipe
     try {
       const response = await fetch(`http://localhost:5028/api/recipes/${id}`, {
         method: "PUT",
@@ -89,9 +130,6 @@ const UpdateRecipePage = () => {
       console.error("Error updating recipe:", error);
     }
   };
-  
-  
-  
 
   const handleDeleteIngredient = (indexToDelete: number) => {
     if (!recipe) return;
@@ -111,53 +149,67 @@ const UpdateRecipePage = () => {
     setRecipe({ ...recipe, instructions: updatedInstructions });
   };
 
-
   const handleAddIngredient = () => {
     if (!recipe || !newIngredient.name.trim()) return;
 
     setRecipe({
       ...recipe,
-      ingredients: [...recipe.ingredients, newIngredient]
+      ingredients: [...recipe.ingredients, newIngredient],
     });
     setNewIngredient({ quantity: "", unit: "", name: "" });
-  }
+  };
 
   const handleAddInstruction = () => {
     if (!recipe || !newInstruction.text.trim()) return;
 
     setRecipe({
       ...recipe,
-      instructions: [...recipe.instructions, newInstruction]
-    })
+      instructions: [...recipe.instructions, newInstruction],
+    });
     setNewInstruction({ text: "" });
-  }
-  
-  
+  };
+
   return (
     <div className="flex flex-col items-center">
       <h1 className="w-full py-2 mt-5 mb-20 text-4xl italic text-center bg-white rounded-lg">
         Update Recipe
       </h1>
-      <input type="text" value={recipe?.name} className="w-3/4 px-4 py-2 my-5 text-3xl" onChange={(e) => {
-        if (!recipe) return;
-        setRecipe({...recipe, name: e.target.value})
-      }}/>
+      <input
+        type="text"
+        value={recipe?.name}
+        className="w-3/4 px-4 py-2 my-5 text-3xl"
+        onChange={(e) => {
+          if (!recipe) return;
+          setRecipe({ ...recipe, name: e.target.value });
+        }}
+      />
 
       <div className="flex justify-between mt-2 mb-8 w-72">
         <div className="flex flex-col items-center">
           <MdAccessTime className="w-8 h-8" />
-          <input type="text" value={recipe?.cookingTime} className="w-24 text-lg" onChange={(e) => {
-            if (!recipe) return;
-            setRecipe({...recipe, cookingTime: e.target.value})
-          }}/>
+          <input
+            type="text"
+            value={recipe?.cookingTime}
+            className="w-24 text-lg"
+            onChange={(e) => {
+              if (!recipe) return;
+              setRecipe({ ...recipe, cookingTime: e.target.value });
+            }}
+          />
           <span className="text-md">Cooking time</span>
         </div>
         <div className="flex flex-col items-center">
           <PiShootingStarLight className="w-8 h-8" />
-          <select value={recipe?.difficulty} name="" id="" className="w-28 h-9" onChange={(e) => {
-            if (!recipe) return;
-            setRecipe({...recipe, difficulty: e.target.value})
-          }}>
+          <select
+            value={recipe?.difficulty}
+            name=""
+            id=""
+            className="w-28 h-9"
+            onChange={(e) => {
+              if (!recipe) return;
+              setRecipe({ ...recipe, difficulty: e.target.value });
+            }}
+          >
             <option value="Easy">Easy</option>
             <option value="Medium">Medium</option>
             <option value="Hard">Hard</option>
@@ -166,13 +218,41 @@ const UpdateRecipePage = () => {
         </div>
       </div>
 
-      <figure className="w-3/5">
-        <img
-          src={recipe?.imageUrl}
-          alt={recipe?.name}
-          className="w-full h-full rounded-xl"
+      <div className="my-4">
+        <label className="text-lg font-medium">Recipe Image:</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            if (e.target.files && e.target.files[0]) {
+              setNewImageFile(e.target.files[0]); // Store the new image file
+            }
+          }}
+          className="hidden"
+          id="imageUpload"
         />
-      </figure>
+        <label
+          htmlFor="imageUpload"
+          className="cursor-pointer border border-gray-300 rounded-lg p-2 flex items-center justify-center w-full min-h-[300px] max-h-[300px] bg-gray-50 hover:bg-gray-100 transition relative overflow-hidden my-4"
+        >
+          {/* Display the new image if selected, otherwise display the current image */}
+          {newImageFile ? (
+            <img
+              src={URL.createObjectURL(newImageFile)}
+              alt="New Recipe"
+              className="object-cover w-full h-full rounded-lg"
+            />
+          ) : recipe?.imageUrl ? (
+            <img
+              src={recipe.imageUrl}
+              alt="Current Recipe"
+              className="object-cover w-full h-full rounded-lg"
+            />
+          ) : (
+            <span className="text-gray-500">Click to upload an image</span>
+          )}
+        </label>
+      </div>
 
       <section className="w-11/12 mb-20 mt-28">
         <textarea
@@ -234,21 +314,21 @@ const UpdateRecipePage = () => {
           </button>
         </div>
         <div className="flex flex-col justify-between mt-4 gap-y-2">
-            <textarea
-              placeholder="Instruction"
-              value={newInstruction.text}
-              onChange={(e) =>
-                setNewInstruction({ ...newInstruction, text: e.target.value })
-              }
-              className="w-full h-full p-2 border border-gray-400 rounded"
-            />
-            <button
-              onClick={handleAddInstruction}
-              className="px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
-            >
-              Add Instruction
-            </button>
-          </div>
+          <textarea
+            placeholder="Instruction"
+            value={newInstruction.text}
+            onChange={(e) =>
+              setNewInstruction({ ...newInstruction, text: e.target.value })
+            }
+            className="w-full h-full p-2 border border-gray-400 rounded"
+          />
+          <button
+            onClick={handleAddInstruction}
+            className="px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
+          >
+            Add Instruction
+          </button>
+        </div>
       </section>
       <section className="grid w-11/12 grid-cols-2 gap-x-8 p-4 h-[750px]">
         {/* Ingredients Section */}

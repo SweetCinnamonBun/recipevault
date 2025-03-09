@@ -83,8 +83,8 @@ const SelectCategoriesPage = () => {
       <div className="w-2/5 bg-white -mt-44 h-[500px]">
         <h1 className="py-5 text-2xl font-semibold text-center">Select Categories</h1>
         <div className="flex flex-wrap justify-center gap-2 my-5 gap-y-3">
-          {categories?.map((category: Category) => (
-            <span onClick={() => handleCategorySelection(category)} className="px-4 py-2 text-lg bg-yellow-400 rounded-lg">{category.name}</span>
+          {categories?.map((category: Category, index) => (
+            <span key={index} onClick={() => handleCategorySelection(category)} className="px-4 py-2 text-lg bg-yellow-400 rounded-lg">{category.name}</span>
           ))}
         </div>
         <p className="mx-2 mt-5 italic">Selected categories:</p>

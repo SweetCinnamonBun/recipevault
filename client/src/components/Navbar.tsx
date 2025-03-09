@@ -27,9 +27,11 @@ const Navbar = () => {
         <button className='px-4 py-2 border border-blue-600 rounded-full text-md'>
           Sign Up
         </button>
-        <button className='px-4 py-2 text-white bg-blue-600 rounded-full text-md'>
-          Login
-        </button>
+        
+          <Link to="/login" className='px-4 py-2 text-white bg-blue-600 rounded-full text-md'>
+            login
+          </Link>
+     
       </div>
     </div>
   )

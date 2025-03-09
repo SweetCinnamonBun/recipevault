@@ -7,7 +7,7 @@ const initialState: Recipe = {
   description: "",
   cookingTime: "",
   difficulty: "",
-  imageFileName: "",
+  imageUrl: "",
   createdAt: "",
   categories: [],
   ingredients: [],
