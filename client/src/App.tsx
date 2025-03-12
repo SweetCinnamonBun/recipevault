@@ -13,6 +13,9 @@ import RecipePreviewPage from "./pages/RecipePreviewPage";
 import UpdateRecipePage from "./pages/UpdateRecipePage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import path from "path";
+import FavoritesPage from "./pages/FavoritesPage";
 
 
 const router = createBrowserRouter([
@@ -31,6 +34,10 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <LoginPage />
+      },
+      {
+        path: "/register",
+        element: <RegisterPage />
       },
       // Protected routes
       {
@@ -55,6 +62,10 @@ const router = createBrowserRouter([
           {
             path: "/update-recipe/:id",
             element: <UpdateRecipePage />,
+          },
+          {
+            path: "/favorites",
+            element: <FavoritesPage />
           },
         ],
       },

@@ -19,5 +19,9 @@ namespace Core.Entities
         public ICollection<Category> Categories { get; set; } = [];
         public ICollection<Instruction> Instructions { get; set; } = [];
         public ICollection<Ingredient> Ingredients { get; set; } = [];
+        public string? UserId { get; set; } // Foreign key
+        public AppUser? User { get; set; } // Navigation property
+
+        public ICollection<AppUser> FavoritedBy { get; set; } = [];
     }
 }

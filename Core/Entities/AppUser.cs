@@ -11,5 +11,8 @@ namespace Core.Entities
 
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
+        public ICollection<Recipe> Recipes { get; set; } = [];
+
+        public ICollection<Recipe> FavoriteRecipes { get; set; } = [];
     }
 }

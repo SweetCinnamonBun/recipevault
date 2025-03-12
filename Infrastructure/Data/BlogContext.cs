@@ -25,6 +25,25 @@ namespace Infrastructure.Data
 
         // public required DbSet<Image> Images { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder); // Ensure Identity configuration
+
+            // Configure the one-to-many relationship between AppUser and Recipe
+            modelBuilder.Entity<Recipe>()
+                .HasOne<AppUser>(r => r.User)
+                .WithMany(u => u.Recipes)
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.NoAction); // Prevent cascade delete
+
+            // Many-to-Many: Users <-> FavoriteRecipes <-> Recipes
+            modelBuilder.Entity<AppUser>()
+                .HasMany(u => u.FavoriteRecipes)
+                .WithMany(r => r.FavoritedBy)
+                .UsingEntity(j => j.ToTable("UserFavorites"));
+        }
+
+
 
     }
 }

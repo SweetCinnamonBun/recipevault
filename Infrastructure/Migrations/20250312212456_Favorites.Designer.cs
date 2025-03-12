@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(BlogContext))]
-    [Migration("20250118175905_IdentityAdded")]
-    partial class IdentityAdded
+    [Migration("20250312212456_Favorites")]
+    partial class Favorites
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("AppUserRecipe", b =>
+                {
+                    b.Property<int>("FavoriteRecipesId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FavoritedById")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("FavoriteRecipesId", "FavoritedById");
+
+                    b.HasIndex("FavoritedById");
+
+                    b.ToTable("UserFavorites", (string)null);
+                });
 
             modelBuilder.Entity("CategoryRecipe", b =>
                 {
@@ -203,7 +218,11 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageFileName")
+                    b.Property<string>("Difficulty")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -211,7 +230,12 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Recipes");
                 });
@@ -349,6 +373,21 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("AppUserRecipe", b =>
+                {
+                    b.HasOne("Core.Entities.Recipe", null)
+                        .WithMany()
+                        .HasForeignKey("FavoriteRecipesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Core.Entities.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("FavoritedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("CategoryRecipe", b =>
                 {
                     b.HasOne("Core.Entities.Category", null)
@@ -384,6 +423,16 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Recipe");
+                });
+
+            modelBuilder.Entity("Core.Entities.Recipe", b =>
+                {
+                    b.HasOne("Core.Entities.AppUser", "User")
+                        .WithMany("Recipes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -435,6 +484,11 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Core.Entities.AppUser", b =>
+                {
+                    b.Navigation("Recipes");
                 });
 
             modelBuilder.Entity("Core.Entities.Recipe", b =>
