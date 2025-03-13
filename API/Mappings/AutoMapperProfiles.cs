@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.DTOs;
+using API.DTOs.Account;
 using API.DTOs.Category;
 using API.DTOs.Ingredients;
 using API.DTOs.Instructions;
@@ -21,6 +22,9 @@ namespace API.Mappings
             CreateMap<Category, CategoryDto>().ReverseMap();
 
             CreateMap<UpdateRecipeDto, RecipeDto>().ReverseMap();
+            CreateMap<CreateRecipeDto, Recipe>().ReverseMap();
+
+            CreateMap<AppUser, UserDto>().ReverseMap();
 
         }
     }

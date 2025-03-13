@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.DTOs.Category;
@@ -10,6 +11,8 @@ using API.DTOs.Instructions;
 using AutoMapper;
 using Core.Entities;
 using Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -23,12 +26,14 @@ namespace API.Controllers
         private readonly BlogContext context;
         private readonly IWebHostEnvironment env;
         private readonly IMapper mapper;
+        private readonly SignInManager<AppUser> signInManager;
 
-        public RecipesController(BlogContext context, IWebHostEnvironment env, IMapper mapper)
+        public RecipesController(BlogContext context, IWebHostEnvironment env, IMapper mapper, SignInManager<AppUser> signInManager)
         {
             this.context = context;
             this.env = env;
             this.mapper = mapper;
+            this.signInManager = signInManager;
         }
 
 
@@ -97,7 +102,7 @@ namespace API.Controllers
         }
 
 
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateRecipe([FromBody] CreateRecipeDto recipeDto)
         {
@@ -124,6 +129,12 @@ namespace API.Controllers
             // }
 
             // Create the Recipe entity
+
+            var user = await signInManager.UserManager.Users.FirstOrDefaultAsync(x => x.Email == User.FindFirstValue(ClaimTypes.Email));
+
+            if (user == null) return NotFound();
+
+
             Recipe recipe = new()
             {
                 Name = recipeDto.Name,
@@ -131,7 +142,8 @@ namespace API.Controllers
                 CookingTime = recipeDto.CookingTime,
                 Difficulty = recipeDto.Difficulty,
                 ImageUrl = recipeDto.ImageUrl,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
+                UserId = user.Id
             };
 
             Console.WriteLine(recipe);
@@ -141,7 +153,9 @@ namespace API.Controllers
             await context.Recipes.AddAsync(recipe);
             await context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetRecipe), new { id = recipe.Id }, recipe);
+            var resultDto = mapper.Map<RecipeDto>(recipe);
+
+            return CreatedAtAction(nameof(GetRecipe), new { id = recipe.Id }, resultDto);
         }
 
 
@@ -204,6 +218,23 @@ namespace API.Controllers
 
             return Ok();
 
+        }
+
+        [Authorize]
+        [HttpGet("my-recipes")]
+        public async Task<IActionResult> GetUserRecipes()
+        {
+
+            var user = await signInManager.UserManager.Users.FirstOrDefaultAsync(x => x.Email == User.FindFirstValue(ClaimTypes.Email));
+
+            if (user == null) return NotFound();
+
+            var recipes = await context.Recipes
+                .Where(r => r.UserId == user.Id)
+                .ToListAsync();
+
+
+            return Ok(mapper.Map<List<RecipeDto>>(recipes));
         }
 
         private void UpdateIngredients(Recipe existingRecipe, ICollection<IngredientDto> updatedIngredients)

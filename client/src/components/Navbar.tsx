@@ -48,6 +48,7 @@ const Navbar = () => {
         <span>Profile</span>
         <Link to="/create-recipe">Create Recipe</Link>
         <Link to="/add-categories">Category selection</Link>
+        <Link to="/your-recipes">Your Recipes</Link>
         <Link to="/ingredients-and-instructions">
           Instructions and Ingredients
         </Link>

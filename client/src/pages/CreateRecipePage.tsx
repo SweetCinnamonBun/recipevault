@@ -55,6 +55,7 @@ const CreateRecipePage = () => {
     try {
       const recipeResponse = await fetch("http://localhost:5028/api/recipes", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json", // Set the content type to JSON
         },

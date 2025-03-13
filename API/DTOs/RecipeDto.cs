@@ -20,5 +20,6 @@ namespace API.DTOs
         public ICollection<CategoryDto> Categories { get; set; } = [];
         public ICollection<InstructionDto> Instructions { get; set; } = [];
         public ICollection<IngredientDto> Ingredients { get; set; } = [];
+        public string? UserId { get; set; }
     }
 }

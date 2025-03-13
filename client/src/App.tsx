@@ -16,6 +16,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import path from "path";
 import FavoritesPage from "./pages/FavoritesPage";
+import UsersRecipesPage from "./pages/UsersRecipesPage";
 
 
 const router = createBrowserRouter([
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
             path: "/favorites",
             element: <FavoritesPage />
           },
+          {
+            path: "/your-recipes",
+            element: <UsersRecipesPage />
+          }
         ],
       },
     ],
