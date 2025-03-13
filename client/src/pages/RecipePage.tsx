@@ -5,10 +5,14 @@ import { MdAccessTime } from "react-icons/md";
 import { PiShootingStarLight } from "react-icons/pi";
 import { FaStar } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 const RecipePage = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  const user = useSelector((state) => state.auth.user)
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -23,6 +27,56 @@ const RecipePage = () => {
     };
     fetchRecipe();
   }, [id]);
+
+  useEffect(() => {
+    const checkIfFavorite = async () => {
+      if (!user) return; // Exit early if no user
+  
+      try {
+        const response = await fetch("http://localhost:5028/api/favorites/my-favorites", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Include credentials (cookies or session)
+        });
+  
+        if (!response.ok) {
+          console.error("Failed to fetch favorites");
+          return;
+        }
+  
+        const favorites = await response.json();
+        setIsFavorite(favorites.some((fav: Recipe) => fav.id === parseInt(id!)));
+      } catch (error) {
+        console.error("Error fetching favorites:", error);
+      }
+    };
+  
+    checkIfFavorite();
+  }, [id, user]);
+
+  const handleFavoriteToggle = async () => {
+    const url = `http://localhost:5028/api/favorites/${id}`;
+    const method = isFavorite ? "DELETE" : "POST"; // Toggle between POST (add) and DELETE (remove)
+
+    try {
+      const response = await fetch(url, {
+        method: method,
+        credentials: "include", // Include credentials (cookies) for authentication
+      });
+
+      if (response.ok) {
+        setIsFavorite((prev) => !prev); // Toggle the state
+        alert(isFavorite ? "Recipe removed from favorites" : "Recipe added to favorites");
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || "Failed to toggle favorite.");
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center">
@@ -63,8 +117,11 @@ const RecipePage = () => {
         </div>
       </div>
       <div className="flex gap-2 my-8">
-        <FaHeart className="w-7 h-7" />
-        <span>Add to your favorites</span>
+        <FaHeart
+          className={`w-7 h-7 cursor-pointer ${isFavorite ? "text-red-500" : "text-gray-400"}`}
+          onClick={handleFavoriteToggle}
+        />
+        <span>{isFavorite ? "Remove from favorites" : "Add to your favorites"}</span>
       </div>
       <section className="w-11/12 my-10">
         <div className="w-full p-8 mx-auto text-xl border border-yellow-600 h-96 rounded-xl">
