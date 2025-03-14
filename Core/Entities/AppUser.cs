@@ -14,5 +14,7 @@ namespace Core.Entities
         public ICollection<Recipe> Recipes { get; set; } = [];
 
         public ICollection<Recipe> FavoriteRecipes { get; set; } = [];
+
+        public ICollection<Comment> Comments { get; set; } = [];
     }
 }

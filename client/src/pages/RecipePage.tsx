@@ -11,6 +11,8 @@ const RecipePage = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState("");
 
   const user = useSelector((state) => state.auth.user)
 
@@ -75,6 +77,40 @@ const RecipePage = () => {
       }
     } catch (error) {
       console.error("Error toggling favorite:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await fetch(`http://localhost:5028/api/comments/${id}/comments`);
+        const data = await response.json();
+        setComments(data);
+      } catch (err) {
+        console.log("Error fetching comments:", err);
+      }
+    };
+    fetchComments();
+  }, [id]);
+
+  const handleCommentSubmit = async () => {
+    if (!newComment.trim()) return;
+    try {
+      const response = await fetch(`http://localhost:5028/api/comments/${id}/comments`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ content: newComment }),
+      });
+      if (response.ok) {
+        const comment = await response.json();
+        setComments([...comments, comment]);
+        setNewComment("");
+      }
+    } catch (err) {
+      console.log("Error submitting comment:", err);
     }
   };
 
@@ -162,6 +198,32 @@ const RecipePage = () => {
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+      <section className="w-full p-6 my-10 border border-gray-300 rounded-lg">
+        <h2 className="text-2xl font-bold">Comments</h2>
+        <div className="mt-4">
+          {comments.map((comment, index) => (
+            <div key={index} className="pt-2 pb-4 my-2 space-y-2 border-b border-gray-300">
+              <strong>user:</strong>
+              <p>{comment.content}</p>
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-2 mt-4">
+          <input
+            type="text"
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            className="w-full p-2 border rounded-lg"
+            placeholder="Add a comment..."
+          />
+          <button
+            onClick={handleCommentSubmit}
+            className="px-4 py-2 text-white bg-blue-500 rounded-lg"
+          >
+            Submit
+          </button>
         </div>
       </section>
     </div>

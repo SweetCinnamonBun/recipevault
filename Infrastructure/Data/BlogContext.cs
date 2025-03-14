@@ -23,6 +23,8 @@ namespace Infrastructure.Data
 
         public required DbSet<Ingredient> Ingredients { get; set; }
 
+        public required DbSet<Comment> Comments { get; set; }
+
         // public required DbSet<Image> Images { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -41,6 +43,19 @@ namespace Infrastructure.Data
                 .HasMany(u => u.FavoriteRecipes)
                 .WithMany(r => r.FavoritedBy)
                 .UsingEntity(j => j.ToTable("UserFavorites"));
+
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.Comments)
+                .HasForeignKey(c => c.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Recipe)
+                .WithMany(r => r.Comments)
+                .HasForeignKey(c => c.RecipeId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
 
 
