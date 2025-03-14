@@ -14,7 +14,7 @@ const RecipePage = () => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
 
-  const user = useSelector((state) => state.auth.user)
+  const user = useSelector((state) => state.auth.user);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -33,28 +33,33 @@ const RecipePage = () => {
   useEffect(() => {
     const checkIfFavorite = async () => {
       if (!user) return; // Exit early if no user
-  
+
       try {
-        const response = await fetch("http://localhost:5028/api/favorites/my-favorites", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // Include credentials (cookies or session)
-        });
-  
+        const response = await fetch(
+          "http://localhost:5028/api/favorites/my-favorites",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include", // Include credentials (cookies or session)
+          }
+        );
+
         if (!response.ok) {
           console.error("Failed to fetch favorites");
           return;
         }
-  
+
         const favorites = await response.json();
-        setIsFavorite(favorites.some((fav: Recipe) => fav.id === parseInt(id!)));
+        setIsFavorite(
+          favorites.some((fav: Recipe) => fav.id === parseInt(id!))
+        );
       } catch (error) {
         console.error("Error fetching favorites:", error);
       }
     };
-  
+
     checkIfFavorite();
   }, [id, user]);
 
@@ -70,7 +75,11 @@ const RecipePage = () => {
 
       if (response.ok) {
         setIsFavorite((prev) => !prev); // Toggle the state
-        alert(isFavorite ? "Recipe removed from favorites" : "Recipe added to favorites");
+        alert(
+          isFavorite
+            ? "Recipe removed from favorites"
+            : "Recipe added to favorites"
+        );
       } else {
         const errorData = await response.json();
         alert(errorData.message || "Failed to toggle favorite.");
@@ -83,7 +92,9 @@ const RecipePage = () => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await fetch(`http://localhost:5028/api/comments/${id}/comments`);
+        const response = await fetch(
+          `http://localhost:5028/api/comments/${id}/comments`
+        );
         const data = await response.json();
         setComments(data);
       } catch (err) {
@@ -93,8 +104,10 @@ const RecipePage = () => {
     fetchComments();
   }, [id]);
 
-  const handleCommentSubmit = async () => {
-    if (!newComment.trim()) return;
+  const handleSubmitComment = async (e) => {
+    e.preventDefault();
+    if (!newComment.trim()) return; // Prevent empty comments
+  
     try {
       const response = await fetch(`http://localhost:5028/api/comments/${id}/comments`, {
         method: "POST",
@@ -102,24 +115,48 @@ const RecipePage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ content: newComment }),
+        body: JSON.stringify({
+          content: newComment
+        }),
       });
+  
       if (response.ok) {
-        const comment = await response.json();
-        setComments([...comments, comment]);
+        const newCommentData = await response.json();
+        setComments([...comments, newCommentData]);
         setNewComment("");
       }
-    } catch (err) {
-      console.log("Error submitting comment:", err);
+    } catch (error) {
+      console.error("Error submitting comment:", error);
     }
   };
+
+  const handleDeleteComment = async (commentId: number) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5028/api/comments/comments/${commentId}`,
+        {
+          method: "DELETE",
+          credentials: "include",
+        }
+      );
+
+      if (response.ok) {
+        setComments(comments.filter((comment) => comment.id !== commentId));
+      } else {
+        console.error("Failed to delete comment");
+      }
+    } catch (err) {
+      console.error("Error deleting comment:", err);
+    }
+  };
+
+  console.log("Current User:", user);
+  console.log("Current User:", user?.userName);
 
   return (
     <div className="flex flex-col items-center">
       <h1 className="my-5 text-3xl">{recipe?.name}</h1>
-      <Link to={`/update-recipe/${recipe?.id}`}>
-      Update Recipe
-      </Link>
+      <Link to={`/update-recipe/${recipe?.id}`}>Update Recipe</Link>
       <div className="flex justify-between px-5 py-5 mt-2 mb-8 w-72">
         <div className="">
           <div className="flex flex-col items-center">
@@ -154,10 +191,14 @@ const RecipePage = () => {
       </div>
       <div className="flex gap-2 my-8">
         <FaHeart
-          className={`w-7 h-7 cursor-pointer ${isFavorite ? "text-red-500" : "text-gray-400"}`}
+          className={`w-7 h-7 cursor-pointer ${
+            isFavorite ? "text-red-500" : "text-gray-400"
+          }`}
           onClick={handleFavoriteToggle}
         />
-        <span>{isFavorite ? "Remove from favorites" : "Add to your favorites"}</span>
+        <span>
+          {isFavorite ? "Remove from favorites" : "Add to your favorites"}
+        </span>
       </div>
       <section className="w-11/12 my-10">
         <div className="w-full p-8 mx-auto text-xl border border-yellow-600 h-96 rounded-xl">
@@ -192,9 +233,10 @@ const RecipePage = () => {
           <ul className="mt-6 space-y-3">
             {recipe?.ingredients.map((ingredient) => (
               <li className="text-xl list-square">
-
                 <span>{ingredient.name}</span>
-                <span className="ml-2 mr-1">({ingredient.quantity} {ingredient.unit})</span>
+                <span className="ml-2 mr-1">
+                  ({ingredient.quantity} {ingredient.unit})
+                </span>
               </li>
             ))}
           </ul>
@@ -202,28 +244,44 @@ const RecipePage = () => {
       </section>
       <section className="w-full p-6 my-10 border border-gray-300 rounded-lg">
         <h2 className="text-2xl font-bold">Comments</h2>
+
+        {/* Comment Submission Form */}
+        {user && (
+          <form onSubmit={handleSubmitComment} className="mt-4">
+            <textarea
+              className="w-full p-2 border border-gray-300 rounded-lg"
+              placeholder="Write a comment..."
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+            />
+            <button
+              type="submit"
+              className="px-4 py-2 mt-2 text-white bg-blue-500 rounded-lg"
+            >
+              Submit
+            </button>
+          </form>
+        )}
+
+        {/* Comments List */}
         <div className="mt-4">
-          {comments.map((comment, index) => (
-            <div key={index} className="pt-2 pb-4 my-2 space-y-2 border-b border-gray-300">
-              <strong>user:</strong>
+          {comments.map((comment) => (
+            <div
+              key={comment.id}
+              className="pt-2 pb-4 my-2 space-y-2 border-b border-gray-300"
+            >
+              <strong>{comment.user?.userName || "Anonymous"}:</strong>
               <p>{comment.content}</p>
+              {user && user.email === comment.user?.userName && (
+                <button
+                  onClick={() => handleDeleteComment(comment.id)}
+                  className="px-2 py-1 text-white bg-red-500 rounded-lg"
+                >
+                  Delete
+                </button>
+              )}
             </div>
           ))}
-        </div>
-        <div className="flex gap-2 mt-4">
-          <input
-            type="text"
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            className="w-full p-2 border rounded-lg"
-            placeholder="Add a comment..."
-          />
-          <button
-            onClick={handleCommentSubmit}
-            className="px-4 py-2 text-white bg-blue-500 rounded-lg"
-          >
-            Submit
-          </button>
         </div>
       </section>
     </div>

@@ -27,6 +27,7 @@ namespace API.Controllers
         {
             var comments = await context.Comments
                 .Where(c => c.RecipeId == recipeId)
+                .Include(c => c.User) // Ensure user details are included
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
 
@@ -34,7 +35,9 @@ namespace API.Controllers
             {
                 c.Id,
                 c.Content,
-                c.CreatedAt
+                c.CreatedAt,
+                UserId = c.User.Id,  // Include UserId
+                User = new { c.User.Id, c.User.UserName }  // Return user details
             }));
         }
 
@@ -58,6 +61,23 @@ namespace API.Controllers
             await context.SaveChangesAsync();
 
             return Ok(new { message = "Comment added successfully" });
+        }
+
+        [HttpDelete("comments/{commentId}")]
+        public async Task<IActionResult> DeleteComment(int commentId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized();
+
+            var comment = await context.Comments.FindAsync(commentId);
+            if (comment == null) return NotFound();
+
+            if (comment.UserId != userId) return Forbid(); // Prevent deletion by other users
+
+            context.Comments.Remove(comment);
+            await context.SaveChangesAsync();
+
+            return Ok(new { message = "Comment deleted successfully" });
         }
     }
 }

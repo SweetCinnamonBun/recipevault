@@ -5,6 +5,7 @@ type User = {
   firstName: string;
   lastName: string;
   email: string;
+  userName: string;
 };
 
 // Define the initial state
