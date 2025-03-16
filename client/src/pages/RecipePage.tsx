@@ -160,9 +160,36 @@ const RecipePage = () => {
     }
   };
 
-  const handleRatingSubmit = (newRating: number) => {
-    setCurrentRating(newRating);
-};
+  const handleRatingSubmit = async (newRating: number) => {
+    if (!user) {
+      alert("You must be logged in to rate this recipe.");
+      return;
+    }
+  
+    try {
+      const response = await fetch(`http://localhost:5028/api/ratings`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          value: newRating,
+          recipeId: id
+        }),
+      });
+  
+      if (response.ok) {
+        setCurrentRating(newRating); // Update UI with new rating
+        alert("Rating submitted successfully!");
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || "Failed to submit rating.");
+      }
+    } catch (error) {
+      console.error("Error submitting rating:", error);
+    }
+  };
 
   console.log("Current User:", user);
   console.log("Current User:", user?.userName);

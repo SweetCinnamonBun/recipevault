@@ -39,7 +39,7 @@ namespace API.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetRecipes([FromQuery] string? search, [FromQuery] List<string>? categories,
-        [FromQuery] int? page, [FromQuery] int pageSize = 5, [FromQuery] bool isAscending = true, [FromQuery] string? sortBy = null)
+        [FromQuery] int? page, [FromQuery] int pageSize = 50, [FromQuery] bool isAscending = true, [FromQuery] string? sortBy = null)
         {
             var query = context.Recipes.AsQueryable();
 
@@ -77,7 +77,19 @@ namespace API.Controllers
             query = query.Skip((int)(page - 1) * pageSize).Take(pageSize);
 
 
-            var recipes = await query.ToListAsync();
+            var recipes = await query.Select(recipe => new
+            {
+                recipe.Id,
+                recipe.Name,
+                recipe.Description,
+                recipe.CookingTime,
+                recipe.Difficulty,
+                recipe.ServingSize,
+                recipe.CreatedAt,
+                recipe.ImageUrl,
+                AverageRating = recipe.Ratings.Any() ? recipe.Ratings.Average(r => r.Value) : 0 // Calculate the average rating
+            })
+        .ToListAsync();
 
             var response = new
             {
@@ -141,6 +153,7 @@ namespace API.Controllers
                 Description = recipeDto.Description,
                 CookingTime = recipeDto.CookingTime,
                 Difficulty = recipeDto.Difficulty,
+                ServingSize = recipeDto.ServingSize,
                 ImageUrl = recipeDto.ImageUrl,
                 CreatedAt = DateTime.Now,
                 UserId = user.Id

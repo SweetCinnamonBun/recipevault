@@ -9,6 +9,7 @@ import SearchBox from "@/components/SearchBox";
 import { CiFilter } from "react-icons/ci";
 import { FaSort } from "react-icons/fa";
 import Modal from "@/components/Modal";
+import RecipeStars from "@/components/RecipeStars";
 
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
@@ -17,7 +18,7 @@ const HomePage = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [appliedCategories, setAppliedCategories] = useState<string[]>([]);
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -32,6 +33,7 @@ const HomePage = () => {
           throw new Error("Failed to fetch recipes");
         }
         const data = await response.json();
+        console.log(data.recipes);
         setRecipes(data.recipes);
       } catch (error) {
         if (error instanceof Error) {
@@ -85,7 +87,7 @@ const HomePage = () => {
 
   return (
     <div>
-      <section className="flex items-center justify-between mt-10 mb-16">
+      <section className="flex items-center justify-between px-5 mt-10 mb-16">
         <div className="space-x-2">
           <label htmlFor="itemsPerPage">Items per page: </label>
           <select
@@ -95,34 +97,34 @@ const HomePage = () => {
             onChange={handlePageSize}
             value={itemsPerPage}
           >
-            <option value="5">5</option>
             <option value="10">10</option>
             <option value="15">15</option>
             <option value="20">20</option>
+            <option value="50">50</option>
           </select>
         </div>
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-4">
           <SearchBox />
           <button
-            className="flex items-center px-4 py-2 space-x-1 bg-blue-400 rounded-lg"
+            className="flex items-center px-5 py-2 space-x-1 bg-[#B4EBE6] rounded-lg"
             onClick={() => setIsFiltersModalOpen(true)}
           >
             <CiFilter className="w-5 h-5" />
             <span>Filters</span>
           </button>
-          <button className="flex items-center px-4 py-2 space-x-1 bg-blue-400 rounded-lg">
+          <button className="flex items-center px-5 py-2 space-x-1 bg-[#B4EBE6] rounded-lg">
             <FaSort className="w-5 h-5" />
             <span>Sort</span>
           </button>
         </div>
       </section>
-      <div className="2xl:px-20">
+      <div className="px-5 2xl:px-20">
         <div className="grid grid-cols-3 border border-blue-700 gap-y-10 justify-items-center">
           {recipes.map((recipe: Recipe) => (
             <Link to={`/recipe/${recipe.id}`} key={recipe.name}>
               <div
                 key={recipe.id}
-                className=" w-96 h-[382px] bg-white rounded-xl cursor-pointer"
+                className=" w-[356px] h-[382px] bg-white rounded-xl cursor-pointer hover:border hover:border-orange-300 hover:shadow-lg"
               >
                 <figure className="w-full h-60 ">
                   <img
@@ -140,15 +142,16 @@ const HomePage = () => {
                     </div>
                     <div className="flex gap-1">
                       <PiForkKnifeFill className="w-7 h-7" />
-                      <p>{recipe.cookingTime}</p>
+                      <p>{recipe.servingSize || 5}</p>
                     </div>
                   </div>
                   <div className="flex pt-2 ">
-                    <FaStar className="w-6 h-6" fill="#FFF100" />
+                    <RecipeStars averageRating={recipe.averageRating || 4} />
+                    {/* <FaStar className="w-6 h-6" fill="#FFF100" />
                     <FaStar className="w-6 h-6" />
                     <FaStar className="w-6 h-6" />
                     <FaStar className="w-6 h-6" />
-                    <FaStar className="w-6 h-6" />
+                    <FaStar className="w-6 h-6" /> */}
                   </div>
                 </div>
               </div>
