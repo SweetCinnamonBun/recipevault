@@ -94,9 +94,12 @@ const CreateIngredientsAndInstructionsPage = () => {
 
   return (
     <div className="flex flex-col items-center justify-center w-full min-h-screen p-4">
-      <section className="grid w-11/12 grid-cols-2 p-4 border border-blue-500 gap-x-8 min-h-[700px]">
+      <h1 className="w-full py-2 mt-5 text-4xl italic text-center bg-white rounded-lg mb-14">
+        Create Ingredients and Instructions
+      </h1>
+      <section className="grid w-11/12 grid-cols-2 p-4  gap-x-8 min-h-[700px]">
         {/* Ingredients Section */}
-        <div className="p-6 bg-white border border-red-600 rounded-lg">
+        <div className="p-6 bg-white rounded-lg shadow-lg">
           <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
           {/* Preview Section */}
           <ul className="p-2 space-y-4 list-disc">
@@ -124,7 +127,7 @@ const CreateIngredientsAndInstructionsPage = () => {
               onChange={(e) =>
                 setNewIngredient({ ...newIngredient, unit: e.target.value })
               }
-              className="h-10 p-2 border rounded-md focus:ring-2 focus:ring-green-400 focus:outline-none"
+              className="h-10 p-2 bg-white border border-gray-400 rounded-md focus:ring-2 focus:ring-green-400 focus:outline-none"
             >
               <option value="" disabled>
                 Select Unit
@@ -151,7 +154,7 @@ const CreateIngredientsAndInstructionsPage = () => {
             />
             <button
               onClick={handleAddIngredient}
-              className="px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
+              className="px-4 py-2 mt-4 text-white bg-green-500 rounded hover:bg-green-600"
             >
               Add Ingredient
             </button>
@@ -159,7 +162,7 @@ const CreateIngredientsAndInstructionsPage = () => {
         </div>
 
         {/* Instructions Section */}
-        <div className="p-6 bg-white border border-green-700 rounded-lg">
+        <div className="p-6 bg-white rounded-lg shadow-lg">
           <h2 className="my-2 text-2xl font-bold">Instructions</h2>
           {/* Preview Section */}
           <ul className="p-2 space-y-4 list-disc">
@@ -181,7 +184,7 @@ const CreateIngredientsAndInstructionsPage = () => {
             />
             <button
               onClick={handleAddInstruction}
-              className="px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
+              className="px-4 py-2 mt-4 text-white bg-green-500 rounded hover:bg-green-600"
             >
               Add Instruction
             </button>

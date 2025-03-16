@@ -2,8 +2,8 @@ import { Recipe } from "@/types/Recipe";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import { MdAccessTime } from "react-icons/md";
-import { PiShootingStarLight } from "react-icons/pi";
-import { FaStar } from "react-icons/fa";
+import { PiForkKnifeFill, PiShootingStarLight } from "react-icons/pi";
+import { FaStar, FaUtensils } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import RatingComponent from "@/components/RatingComponent";
@@ -28,7 +28,9 @@ const RecipePage = () => {
         console.log(data);
         setRecipe(data);
 
-        const ratingResponse = await fetch(`http://localhost:5028/api/ratings/recipe/${id}/average`);
+        const ratingResponse = await fetch(
+          `http://localhost:5028/api/ratings/recipe/${id}/average`
+        );
         const ratingData = await ratingResponse.json();
         setInitialRating(ratingData.rating); // Set the initial rating
       } catch (err) {
@@ -37,8 +39,6 @@ const RecipePage = () => {
     };
     fetchRecipe();
   }, [id]);
-
-  
 
   useEffect(() => {
     const checkIfFavorite = async () => {
@@ -117,19 +117,22 @@ const RecipePage = () => {
   const handleSubmitComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim()) return; // Prevent empty comments
-  
+
     try {
-      const response = await fetch(`http://localhost:5028/api/comments/${id}/comments`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          content: newComment
-        }),
-      });
-  
+      const response = await fetch(
+        `http://localhost:5028/api/comments/${id}/comments`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            content: newComment,
+          }),
+        }
+      );
+
       if (response.ok) {
         const newCommentData = await response.json();
         setComments([...comments, newCommentData]);
@@ -165,7 +168,7 @@ const RecipePage = () => {
       alert("You must be logged in to rate this recipe.");
       return;
     }
-  
+
     try {
       const response = await fetch(`http://localhost:5028/api/ratings`, {
         method: "POST",
@@ -175,10 +178,10 @@ const RecipePage = () => {
         },
         body: JSON.stringify({
           value: newRating,
-          recipeId: id
+          recipeId: id,
         }),
       });
-  
+
       if (response.ok) {
         setCurrentRating(newRating); // Update UI with new rating
         alert("Rating submitted successfully!");
@@ -196,9 +199,12 @@ const RecipePage = () => {
 
   return (
     <div className="flex flex-col items-center">
+      <div className="flex justify-end w-full">
+        <Link to={`/update-recipe/${recipe?.id}`}>Update Recipe</Link>
+      </div>
       <h1 className="my-5 text-3xl">{recipe?.name}</h1>
-      <Link to={`/update-recipe/${recipe?.id}`}>Update Recipe</Link>
-      <div className="flex justify-between px-5 py-5 mt-2 mb-8 w-72">
+      
+      <div className="flex justify-between px-5 py-5 mt-2 mb-8 w-96 gap-x-5">
         <div className="">
           <div className="flex flex-col items-center">
             <MdAccessTime className="w-8 h-8" />
@@ -213,30 +219,41 @@ const RecipePage = () => {
             <span className="text-md">Difficulty</span>
           </div>
         </div>
+        <div className="">
+          <div className="flex flex-col items-center">
+            <PiForkKnifeFill className="w-8 h-8" />
+            <span className="text-lg">{recipe?.servingSize}</span>
+            <span className="text-md">Serving Size</span>
+          </div>
+        </div>
       </div>
+      
       <figure className="w-3/5">
         <img
           src={recipe?.imageUrl}
           alt={recipe?.name}
-          className="w-full h-full rounded-xl"
+          className="w-full h-[520px] rounded-xl"
         />
       </figure>
-      <div>
-        <StarRating initialRating={initialRating} onRatingChange={handleRatingSubmit} />
+      <div className="mt-12">
+        {recipe?.categories.map((category, index) => (
+          <span key={index} className="px-4 py-2 ml-4 bg-[#00FF9C] rounded-lg">{category.name}</span>
+        ))}
       </div>
-      <div>
-        <div className="flex mt-5">
-          <FaStar className="w-8 h-8" fill="#FFF100" />
-          <FaStar className="w-8 h-8" />
-          <FaStar className="w-8 h-8" />
-          <FaStar className="w-8 h-8" />
-          <FaStar className="w-8 h-8" />
+      <div className="flex flex-col items-center mt-10">
+        <StarRating
+          initialRating={initialRating}
+          onRatingChange={handleRatingSubmit}
+        />
+        <div className="mt-3"> 
+          <span>13 ratings. Average: 3.2</span>
         </div>
       </div>
-      <div className="flex gap-2 my-8">
+      
+      <div className="flex flex-col items-center gap-2 mt-14">
         <FaHeart
           className={`w-7 h-7 cursor-pointer ${
-            isFavorite ? "text-red-500" : "text-gray-400"
+            isFavorite ? "text-red-500" : "text-black"
           }`}
           onClick={handleFavoriteToggle}
         />
@@ -245,12 +262,12 @@ const RecipePage = () => {
         </span>
       </div>
       <section className="w-11/12 my-10">
-        <div className="w-full p-8 mx-auto text-xl border border-yellow-600 h-96 rounded-xl">
+        <div className="w-full p-4 text-xl bg-white shadow-lg rounded-xl h-96">
           {recipe?.description}
         </div>
       </section>
-      <section className="grid w-11/12 grid-cols-2 border border-blue-500 h-[750px] gap-x-8 p-4">
-        <div className="p-6 border border-red-600 rounded-lg">
+      <section className="grid w-11/12 grid-cols-2  h-[750px] gap-x-8">
+        <div className="p-6  rounded-lg bg-[#F8FAE5] shadow-lg">
           <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
           <ul className="p-2 space-y-4 list-disc">
             {recipe?.ingredients.map((ingredient) => (
@@ -262,7 +279,7 @@ const RecipePage = () => {
             ))}
           </ul>
         </div>
-        <div className="p-6 border border-green-700 rounded-lg ">
+        <div className="p-6 rounded-lg bg-[#F8FAE5] shadow-lg">
           <h2 className="my-2 text-2xl font-bold">Instructions</h2>
           <ul className="p-2 space-y-4 list-disc">
             {recipe?.instructions.map((instruction) => (
@@ -271,8 +288,8 @@ const RecipePage = () => {
           </ul>
         </div>
       </section>
-      <section className="w-full my-10 border border-blue-600">
-        <div className="w-11/12 p-8 mx-auto border border-red-700 rounded-lg">
+      {/* <section className="w-full my-10">
+        <div className="w-11/12 p-8 mx-auto rounded-lg">
           <h2 className="text-2xl font-bold">Shopping List</h2>
           <ul className="mt-6 space-y-3">
             {recipe?.ingredients.map((ingredient) => (
@@ -285,8 +302,8 @@ const RecipePage = () => {
             ))}
           </ul>
         </div>
-      </section>
-      <section className="w-full p-6 my-10 border border-gray-300 rounded-lg">
+      </section> */}
+      <section className="w-11/12 p-6 my-10 bg-white rounded-lg">
         <h2 className="text-2xl font-bold">Comments</h2>
 
         {/* Comment Submission Form */}
@@ -312,18 +329,20 @@ const RecipePage = () => {
           {comments.map((comment) => (
             <div
               key={comment.id}
-              className="pt-2 pb-4 my-2 space-y-2 border-b border-gray-300"
+              className="pt-4 my-2 space-y-2 border-b border-gray-300 pb-7"
             >
-              <strong>{comment.user?.userName || "Anonymous"}:</strong>
-              <p>{comment.content}</p>
-              {user && user.email === comment.user?.userName && (
+              <div className="flex justify-between">
+                <strong>{comment.user?.userName || "Anonymous"}:</strong>
+                {user && user.email === comment.user?.userName && (
                 <button
                   onClick={() => handleDeleteComment(comment.id)}
-                  className="px-2 py-1 text-white bg-red-500 rounded-lg"
+                  className="px-2 text-sm text-red-500 "
                 >
                   Delete
                 </button>
               )}
+              </div>
+              <p>{comment.content}</p>
             </div>
           ))}
         </div>

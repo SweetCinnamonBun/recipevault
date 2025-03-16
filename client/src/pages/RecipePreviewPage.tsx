@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { MdAccessTime } from "react-icons/md";
-import { PiShootingStarLight } from "react-icons/pi";
+import { PiForkKnifeFill, PiShootingStarLight } from "react-icons/pi";
 import { FaHeart, FaStar } from "react-icons/fa";
 import { Recipe } from "@/types/Recipe";
 import { useEffect, useState } from "react";
@@ -67,35 +67,42 @@ const RecipePreviewPage = () => {
     <div className="flex flex-col items-center">
       <h1 className="w-full py-2 mt-5 mb-20 text-4xl italic text-center bg-white rounded-lg">Recipe Preview</h1>
       <h1 className="my-5 text-3xl">{recipe?.name}</h1>
-      <div className="flex justify-between px-5 py-5 mt-2 mb-8 w-72">
-        <div className="">
-          <div className="flex flex-col items-center">
-            <MdAccessTime className="w-8 h-8" />
-            <span className="text-lg">{recipe?.cookingTime}</span>
-            <span className="text-md">Cooking time</span>
-          </div>
-        </div>
-        <div className="">
-          <div className="flex flex-col items-center">
-            <PiShootingStarLight className="w-8 h-8" />
-            <span className="text-lg">{recipe?.difficulty}</span>
-            <span className="text-md">Difficulty</span>
-          </div>
-        </div>
-      </div>
+      <div className="flex justify-between px-5 py-5 mt-2 mb-8 w-96 gap-x-5">
+              <div className="">
+                <div className="flex flex-col items-center">
+                  <MdAccessTime className="w-8 h-8" />
+                  <span className="text-lg">{recipe?.cookingTime}</span>
+                  <span className="text-md">Cooking time</span>
+                </div>
+              </div>
+              <div className="">
+                <div className="flex flex-col items-center">
+                  <PiShootingStarLight className="w-8 h-8" />
+                  <span className="text-lg">{recipe?.difficulty}</span>
+                  <span className="text-md">Difficulty</span>
+                </div>
+              </div>
+              <div className="">
+                <div className="flex flex-col items-center">
+                  <PiForkKnifeFill className="w-8 h-8" />
+                  <span className="text-lg">{recipe?.servingSize}</span>
+                  <span className="text-md">Serving Size</span>
+                </div>
+              </div>
+            </div>
       <figure className="w-3/5">
         <img
           src={recipe?.imageUrl}
           alt={recipe?.name}
-          className="w-full h-full rounded-xl"
+          className="w-full h-[520px] rounded-xl"
         />
       </figure>
-      <section className="w-11/12 my-10">
+      <section className="w-11/12 mb-20 mt-14">
         <div className="w-full p-8 mx-auto text-xl bg-white shadow-lg h-96 rounded-xl">
           {recipe?.description}
         </div>
       </section>
-      <section className="grid w-11/12 grid-cols-2  h-[750px] gap-x-8 p-4 ">
+      <section className="grid w-11/12 grid-cols-2  h-[750px] gap-x-8">
         <div className="p-6 shadow-lg rounded-lg bg-[#F8FAE5]">
           <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
           <ul className="p-2 space-y-4 list-disc">
@@ -113,21 +120,6 @@ const RecipePreviewPage = () => {
           <ul className="p-2 space-y-4 list-disc">
             {recipe?.instructions.map((instruction) => (
               <li className="text-xl">{instruction.text}</li>
-            ))}
-          </ul>
-        </div>
-      </section>
-      <section className="w-full my-10">
-        <div className="w-11/12 p-8 mx-auto rounded-lg bg-[#FFF7F3] shadow-lg">
-          <h2 className="text-2xl font-bold">Shopping List</h2>
-          <ul className="mt-6 space-y-3">
-            {recipe?.ingredients.map((ingredient) => (
-              <li className="text-xl list-square">
-                <span>{ingredient.name}</span>
-                <span className="ml-2 mr-1">
-                  ({ingredient.quantity} {ingredient.unit})
-                </span>
-              </li>
             ))}
           </ul>
         </div>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setRecipe } from "@/store/recipeSlice";
 import { useNavigate } from "react-router";
+import { FaRegClock } from "react-icons/fa";
 
 const CreateRecipePage = () => {
   const [name, setName] = useState("");
@@ -9,6 +10,8 @@ const CreateRecipePage = () => {
   const [description, setDescription] = useState("");
   const [difficulty, setDifficulty] = useState("Easy");
   const [imageFile, setImageFile] = useState(null);
+  const [timeUnit, setTimeUnit] = useState("min");
+  const [servingSize, setServingSize] = useState("");
 
   const navigate = useNavigate();
 
@@ -16,20 +19,23 @@ const CreateRecipePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     let imageUrl = null;
-  
+
     // Step 1: Upload the image (if provided)
     if (imageFile) {
       const imageFormData = new FormData();
       imageFormData.append("ImageFile", imageFile);
-  
+
       try {
-        const imageResponse = await fetch("http://localhost:5028/api/images/upload", {
-          method: "POST",
-          body: imageFormData,
-        });
-  
+        const imageResponse = await fetch(
+          "http://localhost:5028/api/images/upload",
+          {
+            method: "POST",
+            body: imageFormData,
+          }
+        );
+
         if (imageResponse.ok) {
           const imageData = await imageResponse.json();
           imageUrl = imageData.imageUrl; // Get the image URL
@@ -42,16 +48,18 @@ const CreateRecipePage = () => {
         return;
       }
     }
-  
+
+    const fullCookingTime = `${cookingTime} ${timeUnit}`;
     // Step 2: Create the recipe with the image URL
     const recipeData = {
-      name:name,
-      cookingTime:cookingTime,
-      description:description,
-      difficulty:difficulty,
-      imageUrl:imageUrl, // Include the image URL in the recipe data
+      name: name,
+      cookingTime: fullCookingTime,
+      description: description,
+      difficulty: difficulty,
+      imageUrl: imageUrl,
+      servingSize: servingSize, // Include the image URL in the recipe data
     };
-  
+
     try {
       const recipeResponse = await fetch("http://localhost:5028/api/recipes", {
         method: "POST",
@@ -61,7 +69,7 @@ const CreateRecipePage = () => {
         },
         body: JSON.stringify(recipeData), // Send the recipe data as JSON
       });
-  
+
       if (recipeResponse.ok) {
         const data = await recipeResponse.json();
         dispatch(setRecipe(data));
@@ -75,19 +83,28 @@ const CreateRecipePage = () => {
     }
   };
 
+  const handleTimeChange = (e) => {
+    setCookingTime(e.target.value);
+  };
+
+  const handleUnitChange = (e) => {
+    setTimeUnit(e.target.value);
+    setCookingTime(""); // Clear previous value when switching units
+  };
+
   return (
     <>
       <div className="flex items-center justify-center  mb-[100px]">
         <form
           onSubmit={handleSubmit}
           encType="multipart/form-data"
-          className="w-3/5 px-6 py-4 mt-20 border border-blue-200 rounded-lg"
+          className="w-3/5 px-10 py-4 mt-20 bg-white rounded-lg"
         >
           <h1 className="text-2xl text-center">Create Recipe</h1>
           <div className="flex flex-col">
             <label className="mb-2 text-lg font-medium">Recipe Name:</label>
             <input
-              className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-orange-300"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
@@ -106,7 +123,7 @@ const CreateRecipePage = () => {
             />
             <label
               htmlFor="imageUpload"
-              className="cursor-pointer border border-gray-300 rounded-lg p-2 flex items-center justify-center w-full min-h-[300px] max-h-[300px] bg-gray-50 hover:bg-gray-100 transition relative overflow-hidden my-4"
+              className="cursor-pointer border border-gray-300 rounded-lg p-2 flex items-center justify-center w-full min-h-[300px] max-h-[300px] bg-orange-50 hover:bg-green-50 transition relative overflow-hidden my-4"
             >
               {imageFile ? (
                 <img
@@ -121,14 +138,30 @@ const CreateRecipePage = () => {
           </div>
 
           <div className="my-4">
-            <label className="text-lg font-medium">Cooking Time:</label>
-            <input
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              type="text"
-              value={cookingTime}
-              onChange={(e) => setCookingTime(e.target.value)}
-              required
-            />
+            <label className="flex items-center gap-2 mb-2 text-lg font-medium">
+              Cooking Time:
+            </label>
+            <div className="flex items-center space-x-3">
+              <div className="relative w-24">
+                <input
+                  type="number"
+                  className="w-full px-4 py-3 transition-shadow border border-gray-300 rounded-lg"
+                  value={cookingTime}
+                  onChange={handleTimeChange}
+                  required
+                />
+                <span className="absolute inset-y-0 flex items-center text-gray-400 left-3"></span>
+              </div>
+
+              <select
+                value={timeUnit}
+                onChange={handleUnitChange}
+                className="px-4 py-3 bg-white border border-gray-300 rounded-lg"
+              >
+                <option value="min">Minutes</option>
+                <option value="h">Hours</option>
+              </select>
+            </div>
           </div>
 
           <div className="my-4">
@@ -136,12 +169,22 @@ const CreateRecipePage = () => {
             <select
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 bg-white border border-gray-300 rounded-lg"
             >
               <option value="Easy">Easy</option>
               <option value="Medium">Medium</option>
               <option value="Hard">Hard</option>
             </select>
+          </div>
+          <div className="flex flex-col my-4">
+            <label className="text-lg font-medium">Serving Size:</label>
+            <input
+              type="number"
+              className="w-24 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              value={servingSize}
+              onChange={(e) => setServingSize(e.target.value)} // Update the state when serving size changes
+              required
+            />
           </div>
 
           <div className="my-4">
@@ -167,4 +210,3 @@ const CreateRecipePage = () => {
 };
 
 export default CreateRecipePage;
-

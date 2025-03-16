@@ -80,11 +80,11 @@ const SelectCategoriesPage = () => {
   return (
     <>
     <div className="flex items-center justify-center h-screen">
-      <div className="w-2/5 bg-white -mt-44 h-[500px]">
+      <div className="w-[550px] bg-white  h-full py-5 px-10">
         <h1 className="py-5 text-2xl font-semibold text-center">Select Categories</h1>
         <div className="flex flex-wrap justify-center gap-2 my-5 gap-y-3">
           {categories?.map((category: Category, index) => (
-            <span key={index} onClick={() => handleCategorySelection(category)} className="px-4 py-2 text-lg bg-yellow-400 rounded-lg">{category.name}</span>
+            <span key={index} onClick={() => handleCategorySelection(category)} className="px-4 py-2 text-lg bg-orange-200 rounded-lg cursor-pointer hover:bg-yellow-200">{category.name}</span>
           ))}
         </div>
         <p className="mx-2 mt-5 italic">Selected categories:</p>
@@ -92,7 +92,7 @@ const SelectCategoriesPage = () => {
             {selectedCategories.map((category) => (
               <span
                 key={category.id}
-                className="px-4 py-2 text-lg bg-green-500 rounded cursor-pointer hover:bg-red-500"
+                className="px-4 py-2 text-lg bg-green-200 rounded cursor-pointer hover:bg-red-400"
                 onClick={() => handleCategoryRemoval(category.id)}
               >
                 {category.name} ✕
@@ -100,7 +100,7 @@ const SelectCategoriesPage = () => {
             ))}
           </div>
           <div className="flex justify-end">
-            <button onClick={handleSubmit} className="px-4 py-2 mr-5 text-lg bg-green-200 rounded-lg">Confirm</button>
+            <button onClick={handleSubmit} className="px-4 py-2 mr-5 text-lg bg-green-500 rounded-lg">Confirm</button>
           </div>
       </div>
     </div>
