@@ -6,6 +6,8 @@ import { PiShootingStarLight } from "react-icons/pi";
 import { FaStar } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { useSelector } from "react-redux";
+import RatingComponent from "@/components/RatingComponent";
+import StarRating from "@/components/StarRating";
 
 const RecipePage = () => {
   const { id } = useParams();
@@ -13,6 +15,8 @@ const RecipePage = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
+  const [currentRating, setCurrentRating] = useState<number | null>(null);
+  const [initialRating, setInitialRating] = useState<number | null>(null);
 
   const user = useSelector((state) => state.auth.user);
 
@@ -23,12 +27,18 @@ const RecipePage = () => {
         const data = await response.json();
         console.log(data);
         setRecipe(data);
+
+        const ratingResponse = await fetch(`http://localhost:5028/api/ratings/recipe/${id}/average`);
+        const ratingData = await ratingResponse.json();
+        setInitialRating(ratingData.rating); // Set the initial rating
       } catch (err) {
         console.log(err);
       }
     };
     fetchRecipe();
   }, [id]);
+
+  
 
   useEffect(() => {
     const checkIfFavorite = async () => {
@@ -150,6 +160,10 @@ const RecipePage = () => {
     }
   };
 
+  const handleRatingSubmit = (newRating: number) => {
+    setCurrentRating(newRating);
+};
+
   console.log("Current User:", user);
   console.log("Current User:", user?.userName);
 
@@ -180,6 +194,9 @@ const RecipePage = () => {
           className="w-full h-full rounded-xl"
         />
       </figure>
+      <div>
+        <StarRating initialRating={initialRating} onRatingChange={handleRatingSubmit} />
+      </div>
       <div>
         <div className="flex mt-5">
           <FaStar className="w-8 h-8" fill="#FFF100" />

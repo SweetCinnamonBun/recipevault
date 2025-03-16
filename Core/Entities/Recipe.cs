@@ -20,6 +20,7 @@ namespace Core.Entities
         public ICollection<Instruction> Instructions { get; set; } = [];
         public ICollection<Ingredient> Ingredients { get; set; } = [];
         public ICollection<Comment> Comments { get; set; } = [];
+        public ICollection<Rating> Ratings { get; set; } = [];
         public string? UserId { get; set; } // Foreign key
         public AppUser? User { get; set; } // Navigation property
 
