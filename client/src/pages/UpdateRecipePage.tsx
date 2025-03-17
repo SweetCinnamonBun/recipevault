@@ -20,6 +20,7 @@ const UpdateRecipePage = () => {
   };
 
   const [categories, setCategories] = useState<Category[]>([]);
+  const [timeUnit, setTimeUnit] = useState("min");
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | null>(null);
@@ -138,12 +139,14 @@ const UpdateRecipePage = () => {
       }
     }
 
+
     // Step 3: Prepare the JSON payload
     const requestData = {
       name: recipe.name,
       description: recipe.description,
       cookingTime: recipe.cookingTime,
       difficulty: recipe.difficulty,
+      servingSize: recipe.servingSize,
       imageUrl: newImageUrl, // Use the new image URL
       categories: recipe.categories || [],
       ingredients: recipe.ingredients || [],
@@ -244,38 +247,55 @@ const UpdateRecipePage = () => {
         }}
       />
 
-      <div className="flex justify-between mt-2 mb-8 w-72">
-        <div className="flex flex-col items-center">
-          <MdAccessTime className="w-8 h-8" />
-          <input
-            type="text"
-            value={recipe?.cookingTime}
-            className="w-24 text-lg"
-            onChange={(e) => {
-              if (!recipe) return;
-              setRecipe({ ...recipe, cookingTime: e.target.value });
-            }}
-          />
-          <span className="text-md">Cooking time</span>
+      <div className="flex items-center justify-between my-4 gap-x-10">
+        <div className="">
+          <p className="my-2 text-lg font-medium">Cooking Time:</p>
+          <div className="flex gap-x-2">
+            <input
+              type="number"
+              className="w-32 px-4 py-3 text-black transition-shadow border border-gray-300 rounded-lg"
+              value={recipe?.cookingTime}
+              onChange={(e) => {
+                if (!recipe) return;
+                setRecipe({ ...recipe, cookingTime: e.target.value });
+              }}
+              required
+            />
+            <select value={timeUnit}
+                onChange={(e) => setTimeUnit(e.target.value)} className="px-4 py-3 bg-white border border-gray-300 rounded-lg">
+              <option value="min">Minutes</option>
+              <option value="h">Hours</option>
+            </select>
+          </div>
         </div>
-        <div className="flex flex-col items-center">
-          <PiShootingStarLight className="w-8 h-8" />
+        <div className="">
+          <p className="my-2 text-lg font-medium">Difficulty:</p>
           <select
             value={recipe?.difficulty}
-            name=""
-            id=""
-            className="w-28 h-9"
             onChange={(e) => {
               if (!recipe) return;
               setRecipe({ ...recipe, difficulty: e.target.value });
             }}
+            className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg"
           >
             <option value="Easy">Easy</option>
             <option value="Medium">Medium</option>
             <option value="Hard">Hard</option>
           </select>
-          <span className="text-md">Difficulty</span>
         </div>
+        <div className="flex flex-col my-4">
+            <p className="my-2 text-lg font-medium ">Serving Size:</p>
+            <input
+              type="number"
+              className="w-24 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              value={recipe?.servingSize}
+              onChange={(e) => {
+                if (!recipe) return;
+                setRecipe({...recipe, servingSize: e.target.value})
+              }} 
+            
+            />
+          </div>
       </div>
 
       <div className="w-3/5 my-4">
@@ -353,7 +373,7 @@ const UpdateRecipePage = () => {
             onChange={(e) =>
               setNewIngredient({ ...newIngredient, unit: e.target.value })
             }
-            className="h-10 p-2 border rounded-md focus:ring-2 focus:ring-green-400 focus:outline-none"
+            className="h-10 p-2 bg-white border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
           >
             <option value="" disabled>
               Select Unit
@@ -380,7 +400,7 @@ const UpdateRecipePage = () => {
           />
           <button
             onClick={handleAddIngredient}
-            className="px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
+            className="px-4 py-2 mt-4 text-white bg-green-500 rounded hover:bg-green-600"
           >
             Add Ingredient
           </button>
@@ -396,7 +416,7 @@ const UpdateRecipePage = () => {
           />
           <button
             onClick={handleAddInstruction}
-            className="px-4 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-600"
+            className="px-4 py-2 mt-4 text-white bg-green-500 rounded hover:bg-green-600"
           >
             Add Instruction
           </button>
@@ -447,7 +467,7 @@ const UpdateRecipePage = () => {
       </section>
 
       <button
-        className="px-6 py-3 my-5 text-xl bg-blue-500 rounded-lg"
+        className="px-6 py-3 my-20 text-xl text-white bg-green-500 rounded-lg"
         onClick={handleUpdateRecipe}
       >
         Update Recipe
@@ -466,7 +486,9 @@ const UpdateRecipePage = () => {
                 {category.name}
                 <button
                   className="ml-2 font-bold text-red-500"
-                  onClick={() => category.id && handleRemoveCategory(category.id)}
+                  onClick={() =>
+                    category.id && handleRemoveCategory(category.id)
+                  }
                 >
                   ❌
                 </button>
@@ -488,7 +510,10 @@ const UpdateRecipePage = () => {
           </div>
 
           <div className="flex justify-end mt-4">
-            <button className="px-4 py-2 text-white bg-black rounded-lg" onClick={handleCategoryModalClose}>
+            <button
+              className="px-4 py-2 text-white bg-black rounded-lg"
+              onClick={handleCategoryModalClose}
+            >
               Confirm
             </button>
           </div>

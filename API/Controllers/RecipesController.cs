@@ -198,6 +198,7 @@ namespace API.Controllers
             existingRecipe.Description = updatedRecipeDto.Description;
             existingRecipe.CookingTime = updatedRecipeDto.CookingTime;
             existingRecipe.Difficulty = updatedRecipeDto.Difficulty;
+            existingRecipe.ServingSize = updatedRecipeDto.ServingSize;
             existingRecipe.ImageUrl = updatedRecipeDto.ImageUrl;
 
             // Update navigation properties

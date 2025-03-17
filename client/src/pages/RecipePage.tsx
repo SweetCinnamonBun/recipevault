@@ -317,7 +317,7 @@ const RecipePage = () => {
             />
             <button
               type="submit"
-              className="px-4 py-2 mt-2 text-white bg-blue-500 rounded-lg"
+              className="px-4 py-2 mt-2 text-white bg-black rounded-lg"
             >
               Submit
             </button>
