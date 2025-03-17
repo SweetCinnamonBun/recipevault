@@ -10,15 +10,21 @@ import { CiFilter } from "react-icons/ci";
 import { FaSort } from "react-icons/fa";
 import Modal from "@/components/Modal";
 import RecipeStars from "@/components/RecipeStars";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInView } from "react-intersection-observer";
+import { CgSpinner } from "react-icons/cg";
+
 
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
-  const [error, setError] = useState<string>();
+  // const [error, setError] = useState<string>();
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [appliedCategories, setAppliedCategories] = useState<string[]>([]);
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const { ref, inView } = useInView();
+  const [showSpinner, setShowSpinner] = useState(false);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -46,6 +52,21 @@ const HomePage = () => {
 
     fetchRecipes();
   }, [appliedCategories, itemsPerPage]); // Trigger only when appliedCategories changes
+
+  const fetchRecipes2 = async (page: number, pageSize: number, categories: string[]) => {
+    const categoryQuery = categories.map((category) => `categories=${encodeURIComponent(category)}`).join("&");
+  
+    const response = await fetch(
+      `http://localhost:5028/api/recipes?page=${page}&pageSize=${pageSize}&${categoryQuery}`
+    );
+  
+    if (!response.ok) {
+      throw new Error("Failed to fetch recipes");
+    }
+  
+    const data = await response.json();
+    return data;
+  };
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -85,6 +106,43 @@ const HomePage = () => {
     setItemsPerPage(Number(event.target.value))
   }
 
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+    error,
+  } = useInfiniteQuery({
+    queryKey: ["recipes", appliedCategories],
+    queryFn: ({ pageParam = 1 }) => fetchRecipes2(pageParam, 5, appliedCategories),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const currentPage = allPages.length; 
+      const totalPages = lastPage?.totalPages; 
+    
+      console.log("Current Page:", currentPage, "Total Pages:", totalPages);
+    
+      return currentPage < totalPages ? currentPage + 1 : undefined;
+    },
+    refetchOnWindowFocus: false,
+    staleTime: 20_000,
+  });
+
+  useEffect(() => {
+    if (inView && hasNextPage && !isFetchingNextPage) {
+      setShowSpinner(true);
+      setTimeout(() => {
+        fetchNextPage();
+        setShowSpinner(false);
+      }, 3000); // Adjust delay time as needed
+    }
+  }, [inView, fetchNextPage, hasNextPage, isFetchingNextPage]);
+
+  console.log(data);
+  const recipes2 = data?.pages.flatMap((page) => page.recipes) || [];
+  console.log(recipes2);
+
   return (
     <div>
       <section className="flex items-center justify-between px-5 mt-10 mb-16">
@@ -120,7 +178,7 @@ const HomePage = () => {
       </section>
       <div className="px-5 2xl:px-20">
         <div className="grid grid-cols-3 border border-blue-700 gap-y-10 justify-items-center">
-          {recipes.map((recipe: Recipe) => (
+          {recipes2?.map((recipe: Recipe) => (
             <Link to={`/recipe/${recipe.id}`} key={recipe.name}>
               <div
                 key={recipe.id}
@@ -158,6 +216,11 @@ const HomePage = () => {
             </Link>
           ))}
         </div>
+        <div ref={ref} className="flex justify-center my-4">
+    {showSpinner || isFetchingNextPage ? (
+      <CgSpinner className="w-10 h-10 mr-3 animate-spin" fill="orange"/>
+    ) : null}
+  </div>
       </div>
       {/* MODALS */}
       {isFiltersModalOpen && (

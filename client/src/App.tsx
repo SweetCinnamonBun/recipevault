@@ -14,7 +14,6 @@ import UpdateRecipePage from "./pages/UpdateRecipePage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import path from "path";
 import FavoritesPage from "./pages/FavoritesPage";
 import UsersRecipesPage from "./pages/UsersRecipesPage";
 
