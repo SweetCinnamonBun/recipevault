@@ -325,37 +325,35 @@ namespace API.Controllers
         }
         private void UpdateCategories(Recipe existingRecipe, ICollection<CategoryDto> updatedCategories)
         {
-            // Remove categories not in the updated list
-            var categoriesToRemove = existingRecipe.Categories
-                .Where(existing => !updatedCategories.Any(updated => updated.Id == existing.Id))
+            // Get category IDs from the request
+            var updatedCategoryIds = updatedCategories.Select(c => c.Id).ToList();
+
+            // Fetch categories from the database that match the provided IDs
+            var existingCategories = context.Categories
+                .Where(c => updatedCategoryIds.Contains(c.Id))
                 .ToList();
 
-            foreach (var category in categoriesToRemove)
-            {
-                existingRecipe.Categories.Remove(category);
-            }
+            // Remove all current categories and replace them with the updated ones
+            existingRecipe.Categories.Clear();
 
-            // Add or update categories
             foreach (var updatedCategory in updatedCategories)
             {
-                var existingCategory = existingRecipe.Categories
-                    .FirstOrDefault(c => c.Id == updatedCategory.Id);
+                var category = existingCategories.FirstOrDefault(c => c.Id == updatedCategory.Id);
 
-                if (existingCategory == null)
+                if (category == null)
                 {
-                    // Add new category
-                    existingRecipe.Categories.Add(new Category
+                    // Create a new category if it doesn’t exist
+                    category = new Category
                     {
                         Name = updatedCategory.Name,
                         Slug = updatedCategory.Slug
-                    });
+                    };
+
+                    context.Categories.Add(category); // Ensure EF tracks the new category
                 }
-                else
-                {
-                    // Update existing category
-                    existingCategory.Name = updatedCategory.Name;
-                    existingCategory.Slug = updatedCategory.Slug;
-                }
+
+                // Add category to the recipe
+                existingRecipe.Categories.Add(category);
             }
         }
     }

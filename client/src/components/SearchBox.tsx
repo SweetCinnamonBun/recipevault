@@ -49,7 +49,7 @@ export default function SearchBox() {
             placeholder="Search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="w-[486px] px-12 text-lg leading-8 tracking-tight text-black bg-white  rounded-full h-12 placeholder:text-black max-sm:pr-4"
+            className="w-full h-12 px-12 text-lg leading-8 tracking-tight text-black bg-white rounded-full placeholder:text-black max-sm:pr-4"
           />
         </div>
         <ComboboxOptions className="absolute w-full py-2 mt-3 overflow-y-scroll text-lg bg-white border border-gray-400 max-h-80 rounded-xl">

@@ -4,8 +4,9 @@ import { MdAccessTime } from "react-icons/md";
 import { PiShootingStarLight } from "react-icons/pi";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { FaHeart, FaStar } from "react-icons/fa";
-import { Recipe } from "@/types/Recipe";
+import { FaHeart, FaPlus, FaStar } from "react-icons/fa";
+import { Category, Recipe } from "@/types/Recipe";
+import Modal from "@/components/Modal";
 
 const UpdateRecipePage = () => {
   type AddIngredient = {
@@ -18,6 +19,9 @@ const UpdateRecipePage = () => {
     text: string;
   };
 
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [newIngredient, setNewIngredient] = useState<AddIngredient>({
     quantity: "",
@@ -34,6 +38,14 @@ const UpdateRecipePage = () => {
 
   const { id } = useParams();
 
+  const handleCategoryModalOpen = () => {
+    setIsCategoryModalOpen(true);
+  };
+
+  const handleCategoryModalClose = () => {
+    setIsCategoryModalOpen(false);
+  };
+
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
@@ -48,9 +60,30 @@ const UpdateRecipePage = () => {
     fetchRecipe();
   }, [id]);
 
+  useEffect(() => {
+    // Fetch available categories
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("http://localhost:5028/api/categories");
+        const data = await response.json();
+        setCategories(data);
+      } catch (err) {
+        console.error("Error fetching categories", err);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    if (recipe) {
+      setSelectedCategories(recipe.categories || []);
+    }
+  }, [recipe]);
+
   const handleUpdateRecipe = async () => {
     if (!recipe) return;
-  
+
     // Ensure all required fields are present
     if (
       !recipe.name ||
@@ -61,41 +94,50 @@ const UpdateRecipePage = () => {
       console.error("Missing required fields");
       return;
     }
-  
+
     let newImageUrl = recipe.imageUrl; // Default to the existing image URL
-  
+
     // Step 1: Upload the new image (if provided)
     if (newImageFile) {
       const imageFormData = new FormData();
       imageFormData.append("ImageFile", newImageFile);
-  
+
       try {
-        const imageResponse = await fetch("http://localhost:5028/api/images/upload", {
-          method: "POST",
-          body: imageFormData,
-        });
-  
+        const imageResponse = await fetch(
+          "http://localhost:5028/api/images/upload",
+          {
+            method: "POST",
+            body: imageFormData,
+          }
+        );
+
         if (imageResponse.ok) {
           const imageData = await imageResponse.json();
           newImageUrl = imageData.imageUrl; // Get the new image URL
-  
+
           // Step 2: Delete the previous image (if it exists)
           if (recipe.imageUrl) {
             const previousImageName = recipe.imageUrl.split("/").pop(); // Extract the file name from the URL
-            await fetch(`http://localhost:5028/api/images/delete?fileName=${previousImageName}`, {
-              method: "DELETE",
-            });
+            await fetch(
+              `http://localhost:5028/api/images/delete?fileName=${previousImageName}`,
+              {
+                method: "DELETE",
+              }
+            );
           }
         } else {
           console.error("Failed to upload new image.");
           return;
         }
       } catch (error) {
-        console.error("An error occurred while uploading the new image:", error);
+        console.error(
+          "An error occurred while uploading the new image:",
+          error
+        );
         return;
       }
     }
-  
+
     // Step 3: Prepare the JSON payload
     const requestData = {
       name: recipe.name,
@@ -107,7 +149,7 @@ const UpdateRecipePage = () => {
       ingredients: recipe.ingredients || [],
       instructions: recipe.instructions || [],
     };
-  
+
     // Step 4: Update the recipe
     try {
       const response = await fetch(`http://localhost:5028/api/recipes/${id}`, {
@@ -117,13 +159,13 @@ const UpdateRecipePage = () => {
         },
         body: JSON.stringify(requestData),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         console.error("Failed to update recipe:", errorData);
         return;
       }
-  
+
       console.log("Recipe updated successfully");
       navigate(`/recipe/${id}`);
     } catch (error) {
@@ -167,6 +209,24 @@ const UpdateRecipePage = () => {
       instructions: [...recipe.instructions, newInstruction],
     });
     setNewInstruction({ text: "" });
+  };
+
+  const handleAddCategory = (category: Category) => {
+    if (!recipe) return;
+
+    setRecipe({
+      ...recipe,
+      categories: [...recipe.categories, category],
+    });
+  };
+
+  const handleRemoveCategory = (categoryId: number) => {
+    if (!recipe) return;
+
+    setRecipe({
+      ...recipe,
+      categories: recipe.categories.filter((c) => c.id !== categoryId),
+    });
   };
 
   return (
@@ -218,7 +278,7 @@ const UpdateRecipePage = () => {
         </div>
       </div>
 
-      <div className="my-4">
+      <div className="w-3/5 my-4">
         <label className="text-lg font-medium">Recipe Image:</label>
         <input
           type="file"
@@ -233,7 +293,7 @@ const UpdateRecipePage = () => {
         />
         <label
           htmlFor="imageUpload"
-          className="cursor-pointer border border-gray-300 rounded-lg p-2 flex items-center justify-center w-full min-h-[300px] max-h-[300px] bg-gray-50 hover:bg-gray-100 transition relative overflow-hidden my-4"
+          className="cursor-pointer border border-gray-300 rounded-lg p-2 flex items-center justify-center w-full h-[520px]  bg-gray-50 hover:bg-gray-100 transition relative overflow-hidden my-4"
         >
           {/* Display the new image if selected, otherwise display the current image */}
           {newImageFile ? (
@@ -252,6 +312,18 @@ const UpdateRecipePage = () => {
             <span className="text-gray-500">Click to upload an image</span>
           )}
         </label>
+      </div>
+
+      <div className="flex mt-12 ">
+        {recipe?.categories.map((category, index) => (
+          <span key={index} className="px-4 py-2 ml-4 bg-[#00FF9C] rounded-lg">
+            {category.name}
+          </span>
+        ))}
+        <FaPlus
+          className="ml-5 w-9 h-9"
+          onClick={() => setIsCategoryModalOpen(true)}
+        />
       </div>
 
       <section className="w-11/12 mb-20 mt-28">
@@ -380,6 +452,48 @@ const UpdateRecipePage = () => {
       >
         Update Recipe
       </button>
+      {/* MODAL */}
+      {isCategoryModalOpen && (
+        <Modal onClose={handleCategoryModalClose}>
+          <h1 className="mb-4 text-2xl font-bold">Update Categories</h1>
+          <p className="my-5">Current Categories:</p>
+          <div className="flex flex-wrap gap-y-4">
+            {recipe?.categories.map((category, index) => (
+              <span
+                key={index}
+                className="px-4 py-2 ml-4 bg-[#00FF9C] rounded-lg  gap-2"
+              >
+                {category.name}
+                <button
+                  className="ml-2 font-bold text-red-500"
+                  onClick={() => category.id && handleRemoveCategory(category.id)}
+                >
+                  ❌
+                </button>
+              </span>
+            ))}
+          </div>
+
+          <p className="my-5">Add categories:</p>
+          <div className="flex flex-wrap w-full gap-3">
+            {categories.map((c, i) => (
+              <span
+                key={i}
+                className="px-4 py-2 ml-4 bg-[#00FF9C] rounded-lg"
+                onClick={() => handleAddCategory(c)}
+              >
+                {c.name}
+              </span>
+            ))}
+          </div>
+
+          <div className="flex justify-end mt-4">
+            <button className="px-4 py-2 text-white bg-black rounded-lg" onClick={handleCategoryModalClose}>
+              Confirm
+            </button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

@@ -145,8 +145,8 @@ const HomePage = () => {
 
   return (
     <div>
-      <section className="flex items-center justify-between px-5 mt-10 mb-16">
-        <div className="space-x-2">
+      <section className="flex items-center justify-between px-10 mt-10 mb-16">
+        {/* <div className="space-x-2">
           <label htmlFor="itemsPerPage">Items per page: </label>
           <select
             name="itemsPerPage"
@@ -160,9 +160,12 @@ const HomePage = () => {
             <option value="20">20</option>
             <option value="50">50</option>
           </select>
+        </div> */}
+        <div className="w-3/4">
+
+        <SearchBox />
         </div>
         <div className="flex items-center space-x-4">
-          <SearchBox />
           <button
             className="flex items-center px-5 py-2 space-x-1 bg-[#B4EBE6] rounded-lg"
             onClick={() => setIsFiltersModalOpen(true)}
@@ -178,8 +181,8 @@ const HomePage = () => {
       </section>
       <div className="px-5 2xl:px-20">
         <div className="grid grid-cols-3 border border-blue-700 gap-y-10 justify-items-center">
-          {recipes2?.map((recipe: Recipe) => (
-            <Link to={`/recipe/${recipe.id}`} key={recipe.name}>
+          {recipes2?.map((recipe: Recipe, index: number) => (
+            <Link to={`/recipe/${recipe.id}`} key={index}>
               <div
                 key={recipe.id}
                 className=" w-[356px] h-[382px] bg-white rounded-xl cursor-pointer hover:border hover:border-orange-300 hover:shadow-lg"
@@ -225,8 +228,8 @@ const HomePage = () => {
       {/* MODALS */}
       {isFiltersModalOpen && (
         <Modal onClose={handleFiltersModalClose}>
-          <h1 className="mb-4 text-2xl font-bold">Filter by Categories</h1>
-          <div className="grid grid-cols-4 my-16 gap-y-4">
+          <h1 className="mb-4 ml-5 text-2xl font-bold">Filter by Categories</h1>
+          <div className="grid grid-cols-4 px-6 my-16 gap-y-4">
             {categories.map((category: Category) => (
               <div key={category.id} className="flex items-center text-lg">
                 <input
@@ -243,7 +246,7 @@ const HomePage = () => {
           </div>
           <div className="flex justify-end mt-4">
             <button
-              className="px-4 py-2 text-white bg-blue-500 rounded-lg"
+              className="px-4 py-2 text-white bg-green-500 rounded-lg"
               onClick={applyFilters}
             >
               Apply Filters
