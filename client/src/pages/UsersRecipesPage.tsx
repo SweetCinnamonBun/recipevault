@@ -82,7 +82,7 @@ const UsersRecipesPage = () => {
             key={recipe.id}
             className=" w-96 h-[382px] bg-white rounded-xl cursor-pointer"
           >
-            <Link to={`/recipe/${recipe.id}`}>
+            <Link to={`/recipe/${recipe.id}`} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
               <figure className="w-full h-60 ">
                 <img
                   src={recipe.imageUrl}

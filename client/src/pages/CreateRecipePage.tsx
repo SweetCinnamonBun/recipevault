@@ -74,6 +74,9 @@ const CreateRecipePage = () => {
         const data = await recipeResponse.json();
         dispatch(setRecipe(data));
         console.log("Recipe created successfully!");
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
         navigate("/add-categories");
       } else {
         console.error("Failed to create recipe.");

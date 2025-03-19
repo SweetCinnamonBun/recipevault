@@ -124,7 +124,7 @@ const RecipePreviewPage = () => {
           </ul>
         </div>
       </section>
-      <button className="px-6 py-3 my-5 text-xl bg-green-400 rounded-lg" onClick={handleSubmit}>Create Recipe</button>
+      <button className="px-6 py-3 text-xl bg-green-400 rounded-lg my-14" onClick={handleSubmit}>Create Recipe</button>
     </div>
   );
 };

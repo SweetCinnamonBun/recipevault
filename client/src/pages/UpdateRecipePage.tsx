@@ -170,7 +170,8 @@ const UpdateRecipePage = () => {
       }
 
       console.log("Recipe updated successfully");
-      navigate(`/recipe/${id}`);
+      
+      navigate(`/recipe/${id}`,  { replace: true });
     } catch (error) {
       console.error("Error updating recipe:", error);
     }
@@ -467,11 +468,17 @@ const UpdateRecipePage = () => {
       </section>
 
       <button
-        className="px-6 py-3 my-20 text-xl text-white bg-green-500 rounded-lg"
-        onClick={handleUpdateRecipe}
-      >
-        Update Recipe
-      </button>
+  className="px-6 py-3 my-20 text-xl text-white bg-green-500 rounded-lg"
+  onClick={() => {
+    // Scroll to the top smoothly before updating the recipe
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    
+    // Call the handleUpdateRecipe function after scrolling
+    handleUpdateRecipe();
+  }}
+>
+  Update Recipe
+</button>
       {/* MODAL */}
       {isCategoryModalOpen && (
         <Modal onClose={handleCategoryModalClose}>

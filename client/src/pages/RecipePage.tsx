@@ -8,6 +8,7 @@ import { FaHeart } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import RatingComponent from "@/components/RatingComponent";
 import StarRating from "@/components/StarRating";
+import RatingModal from "@/components/RatingModal";
 
 const RecipePage = () => {
   const { id } = useParams();
@@ -17,6 +18,7 @@ const RecipePage = () => {
   const [newComment, setNewComment] = useState("");
   const [currentRating, setCurrentRating] = useState<number | null>(null);
   const [initialRating, setInitialRating] = useState<number | null>(null);
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState<boolean>(false);
 
   const user = useSelector((state) => state.auth.user);
 
@@ -163,6 +165,37 @@ const RecipePage = () => {
     }
   };
 
+  // const handleRatingSubmit = async (newRating: number) => {
+  //   if (!user) {
+  //     alert("You must be logged in to rate this recipe.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await fetch(`http://localhost:5028/api/ratings`, {
+  //       method: "POST",
+  //       credentials: "include",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         value: newRating,
+  //         recipeId: id,
+  //       }),
+  //     });
+
+  //     if (response.ok) {
+  //       setCurrentRating(newRating); // Update UI with new rating
+  //       alert("Rating submitted successfully!");
+  //     } else {
+  //       const errorData = await response.json();
+  //       alert(errorData.message || "Failed to submit rating.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error submitting rating:", error);
+  //   }
+  // };
+
   const handleRatingSubmit = async (newRating: number) => {
     if (!user) {
       alert("You must be logged in to rate this recipe.");
@@ -183,8 +216,9 @@ const RecipePage = () => {
       });
 
       if (response.ok) {
-        setCurrentRating(newRating); // Update UI with new rating
+        // setCurrentRating(newRating);
         alert("Rating submitted successfully!");
+        setIsRatingModalOpen(false); // Close the modal after submitting the rating
       } else {
         const errorData = await response.json();
         alert(errorData.message || "Failed to submit rating.");
@@ -247,6 +281,12 @@ const RecipePage = () => {
         />
         <div className="mt-3"> 
           <span>13 ratings. Average: 3.2</span>
+        </div>
+        <div>
+          <button className="" onClick={() => setIsRatingModalOpen(true)}>Open ratings</button>
+          {isRatingModalOpen && (
+            <RatingModal onSubmit={handleRatingSubmit}  onClose={() => setIsRatingModalOpen(false)} />
+          )}
         </div>
       </div>
       

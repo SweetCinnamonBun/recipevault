@@ -33,6 +33,7 @@ const CreateIngredientsAndInstructionsPage = () => {
     dispatch(addIngredients(ingredients));
     dispatch(addInstructions(instructions));
     console.log("Ingredients and instructions added to Redux store!");
+    window.scrollTo({ top: 0, behavior: "smooth" });
     navigate("/recipe-preview");
   };
 
@@ -82,6 +83,7 @@ const CreateIngredientsAndInstructionsPage = () => {
       if (ingredientsResponse.ok && instructionsResponse.ok) {
         console.log("Ingredients and instructions added successfully!");
         // Navigate or update state as needed
+        window.scrollTo({ top: 0, behavior: "smooth" });
         navigate("/recipe-preview");
         
       } else {

@@ -44,7 +44,7 @@ const FavoritesPage = () => {
       </h1>
       <div className="grid grid-cols-3 mt-14 gap-y-10 justify-items-center">
         {recipes.map((recipe: Recipe) => (
-          <Link to={`/recipe/${recipe.id}`} key={recipe.name}>
+          <Link to={`/recipe/${recipe.id}`} key={recipe.name}  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} >
             <div
               key={recipe.id}
               className=" w-96 h-[382px] bg-white rounded-xl cursor-pointer"

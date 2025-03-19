@@ -182,7 +182,7 @@ const HomePage = () => {
       <div className="px-5 2xl:px-20">
         <div className="grid grid-cols-3 border border-blue-700 gap-y-10 justify-items-center">
           {recipes2?.map((recipe: Recipe, index: number) => (
-            <Link to={`/recipe/${recipe.id}`} key={index}>
+            <Link to={`/recipe/${recipe.id}`} key={index}  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
               <div
                 key={recipe.id}
                 className=" w-[356px] h-[382px] bg-white rounded-xl cursor-pointer hover:border hover:border-orange-300 hover:shadow-lg"

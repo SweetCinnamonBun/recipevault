@@ -69,6 +69,7 @@ const SelectCategoriesPage = () => {
       }
       const updatedCategories = await categoriesResponse.json();
       dispatch(addCategories(updatedCategories));
+      window.scrollTo({ top: 0, behavior: "smooth" });
       navigate("/ingredients-and-instructions");
   
     } catch (error) {
