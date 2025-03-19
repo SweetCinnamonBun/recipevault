@@ -1,45 +1,48 @@
-import { Recipe } from '@/types/Recipe';
-import React, { useEffect, useState } from 'react'
-import { FaStar } from 'react-icons/fa';
-import { MdAccessTime } from 'react-icons/md';
-import { PiForkKnifeFill } from 'react-icons/pi';
-import { Link } from 'react-router-dom';
+import RecipeStars from "@/components/RecipeStars";
+import { Recipe } from "@/types/Recipe";
+import React, { useEffect, useState } from "react";
+import { FaHeart, FaStar, FaTrash } from "react-icons/fa";
+import { MdAccessTime } from "react-icons/md";
+import { PiForkKnifeFill } from "react-icons/pi";
+import { Link } from "react-router-dom";
 
 const FavoritesPage = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
-  
-    useEffect(() => {
-      const fetchRecipes = async () => {
-        try {
-          const response = await fetch(
-            "http://localhost:5028/api/favorites/my-favorites",
-            {
-              method: "GET",
-              credentials: "include", // Ensures cookies are sent
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-  
-          if (!response.ok) {
-            throw new Error("Failed to fetch recipes");
+
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5028/api/favorites/my-favorites",
+          {
+            method: "GET",
+            credentials: "include", // Ensures cookies are sent
+            headers: {
+              "Content-Type": "application/json",
+            },
           }
-  
-          const data = await response.json();
-          setRecipes(data);
-        } catch (error) {
-          console.error("Error fetching recipes:", error);
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch recipes");
         }
-      };
-  
-      fetchRecipes();
-    }, []);
-    
+
+        const data = await response.json();
+        setRecipes(data);
+      } catch (error) {
+        console.error("Error fetching recipes:", error);
+      }
+    };
+
+    fetchRecipes();
+  }, []);
 
   return (
     <div className="2xl:px-20">
-      <div className="grid grid-cols-3 border border-blue-700 gap-y-10 justify-items-center">
+      <h1 className="flex items-center py-2 mt-10 ml-8 text-2xl text-center bg-white rounded-lg w-52">
+        <FaHeart className="w-6 h-6 mx-3 text-red-500" /> Your Favorites
+      </h1>
+      <div className="grid grid-cols-3 mt-14 gap-y-10 justify-items-center">
         {recipes.map((recipe: Recipe) => (
           <Link to={`/recipe/${recipe.id}`} key={recipe.name}>
             <div
@@ -66,11 +69,13 @@ const FavoritesPage = () => {
                   </div>
                 </div>
                 <div className="flex pt-2 ">
-                  <FaStar className="w-6 h-6" fill="#FFF100" />
-                  <FaStar className="w-6 h-6" />
-                  <FaStar className="w-6 h-6" />
-                  <FaStar className="w-6 h-6" />
-                  <FaStar className="w-6 h-6" />
+                  <RecipeStars averageRating={recipe.averageRating || 4} />
+                  {/* <FaStar className="w-6 h-6" fill="#FFF100" />
+                    <FaStar className="w-6 h-6" />
+                    <FaStar className="w-6 h-6" />
+                    <FaStar className="w-6 h-6" />
+                    <FaStar className="w-6 h-6" /> */}
+                   
                 </div>
               </div>
             </div>
@@ -78,7 +83,7 @@ const FavoritesPage = () => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FavoritesPage
+export default FavoritesPage;
