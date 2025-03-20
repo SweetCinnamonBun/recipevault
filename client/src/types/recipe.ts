@@ -6,6 +6,7 @@ export type Recipe = {
   difficulty: string;
   servingSize: number;
   averageRating: number;
+  ratingCount: number;
   imageUrl: string;
   createdAt: string;
   categories: Category[];
@@ -43,3 +44,17 @@ export type AddIngredient = {
 export type AddInstruction = {
   text: string;
 }
+
+export type User = {
+  id?: string;
+  userName: string;
+}
+
+export type Comment = {
+  id?: number;
+  content: string;
+  createdAt: string;
+  userId: string;
+  user: User;
+}
+

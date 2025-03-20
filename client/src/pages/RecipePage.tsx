@@ -9,12 +9,13 @@ import { useSelector } from "react-redux";
 import RatingComponent from "@/components/RatingComponent";
 import StarRating from "@/components/StarRating";
 import RatingModal from "@/components/RatingModal";
+import { toast } from "react-toastify";
 
 const RecipePage = () => {
   const { id } = useParams();
   const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [currentRating, setCurrentRating] = useState<number | null>(null);
   const [initialRating, setInitialRating] = useState<number | null>(null);
@@ -137,8 +138,9 @@ const RecipePage = () => {
 
       if (response.ok) {
         const newCommentData = await response.json();
-        setComments([...comments, newCommentData]);
+        setComments((prevComments) => [newCommentData, ...prevComments]); // Use functional update
         setNewComment("");
+        toast("Comment submitted!");
       }
     } catch (error) {
       console.error("Error submitting comment:", error);
@@ -157,6 +159,7 @@ const RecipePage = () => {
 
       if (response.ok) {
         setComments(comments.filter((comment) => comment.id !== commentId));
+        toast("Comment deleted!");
       } else {
         console.error("Failed to delete comment");
       }
@@ -237,7 +240,7 @@ const RecipePage = () => {
         <Link to={`/update-recipe/${recipe?.id}`}>Update Recipe</Link>
       </div>
       <h1 className="my-5 text-3xl">{recipe?.name}</h1>
-      
+
       <div className="flex justify-between px-5 py-5 mt-2 mb-8 w-96 gap-x-5">
         <div className="">
           <div className="flex flex-col items-center">
@@ -261,7 +264,7 @@ const RecipePage = () => {
           </div>
         </div>
       </div>
-      
+
       <figure className="w-3/5">
         <img
           src={recipe?.imageUrl}
@@ -271,25 +274,41 @@ const RecipePage = () => {
       </figure>
       <div className="mt-12">
         {recipe?.categories.map((category, index) => (
-          <span key={index} className="px-4 py-2 ml-4 bg-[#00FF9C] rounded-lg">{category.name}</span>
+          <span key={index} className="px-4 py-2 ml-4 bg-[#00FF9C] rounded-lg">
+            {category.name}
+          </span>
         ))}
       </div>
-      <div className="flex flex-col items-center mt-10">
+      <div className="flex flex-col items-center mt-20">
         <StarRating
           initialRating={initialRating}
           onRatingChange={handleRatingSubmit}
         />
-        <div className="mt-3"> 
-          <span>13 ratings. Average: 3.2</span>
+        <div className="mt-3">
+          {recipe?.ratingCount === 0 ? (
+            <span>No ratings for this recipe</span>
+          ) : (
+            <span className="">
+              {recipe?.ratingCount} ratings. Average: {recipe?.averageRating}
+            </span>
+          )}
         </div>
-        <div>
-          <button className="" onClick={() => setIsRatingModalOpen(true)}>Open ratings</button>
+        <div className="mt-8">
+          <button
+            className="px-4 py-2 font-bold bg-yellow-300 rounded-lg"
+            onClick={() => setIsRatingModalOpen(true)}
+          >
+            Rate this recipe
+          </button>
           {isRatingModalOpen && (
-            <RatingModal onSubmit={handleRatingSubmit}  onClose={() => setIsRatingModalOpen(false)} />
+            <RatingModal
+              onSubmit={handleRatingSubmit}
+              onClose={() => setIsRatingModalOpen(false)}
+            />
           )}
         </div>
       </div>
-      
+
       <div className="flex flex-col items-center gap-2 mt-14">
         <FaHeart
           className={`w-7 h-7 cursor-pointer ${
@@ -366,25 +385,31 @@ const RecipePage = () => {
 
         {/* Comments List */}
         <div className="mt-4">
-          {comments.map((comment) => (
-            <div
-              key={comment.id}
-              className="pt-4 my-2 space-y-2 border-b border-gray-300 pb-7"
-            >
-              <div className="flex justify-between">
-                <strong>{comment.user?.userName || "Anonymous"}:</strong>
-                {user && user.email === comment.user?.userName && (
-                <button
-                  onClick={() => handleDeleteComment(comment.id)}
-                  className="px-2 text-sm text-red-500 "
-                >
-                  Delete
-                </button>
-              )}
+          {comments.length === 0 ? (
+            <p className="pt-5 my-4 text-lg font-bold">
+              There are no comments for this recipe.
+            </p>
+          ) : (
+            comments.map((comment) => (
+              <div
+                key={comment.id}
+                className="pt-4 my-2 space-y-2 border-b border-gray-300 pb-7"
+              >
+                <div className="flex justify-between">
+                  <strong>{comment.user?.userName || "Anonymous"}:</strong>
+                  {user && user.email === comment.user?.userName && (
+                    <button
+                      onClick={() => handleDeleteComment(comment.id)}
+                      className="px-2 text-sm text-red-500 "
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
+                <p>{comment.content}</p>
               </div>
-              <p>{comment.content}</p>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </section>
     </div>

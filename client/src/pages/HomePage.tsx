@@ -14,7 +14,6 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { CgSpinner } from "react-icons/cg";
 
-
 const HomePage = () => {
   const [recipes, setRecipes] = useState([]);
   // const [error, setError] = useState<string>();
@@ -25,6 +24,9 @@ const HomePage = () => {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const { ref, inView } = useInView();
   const [showSpinner, setShowSpinner] = useState(false);
+  const [sortBy, setSortBy] = useState("id");
+  const [isAscending, setIsAscending] = useState(false); 
+  const [isSortingOpen, setIsSortingOpen] = useState(false);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -53,17 +55,25 @@ const HomePage = () => {
     fetchRecipes();
   }, [appliedCategories, itemsPerPage]); // Trigger only when appliedCategories changes
 
-  const fetchRecipes2 = async (page: number, pageSize: number, categories: string[]) => {
-    const categoryQuery = categories.map((category) => `categories=${encodeURIComponent(category)}`).join("&");
-  
+  const fetchRecipes2 = async (
+    page: number,
+    pageSize: number,
+    categories: string[],
+    sortBy: string,
+    isAscending: boolean,
+  ) => {
+    const categoryQuery = categories
+      .map((category) => `categories=${encodeURIComponent(category)}`)
+      .join("&");
+
     const response = await fetch(
-      `http://localhost:5028/api/recipes?page=${page}&pageSize=${pageSize}&${categoryQuery}`
+      `http://localhost:5028/api/recipes?page=${page}&pageSize=${pageSize}&${categoryQuery}&sortBy=${sortBy}&isAscending=${isAscending}`
     );
-  
+
     if (!response.ok) {
       throw new Error("Failed to fetch recipes");
     }
-  
+
     const data = await response.json();
     return data;
   };
@@ -102,10 +112,6 @@ const HomePage = () => {
     setIsFiltersModalOpen(false);
   };
 
-  const handlePageSize = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setItemsPerPage(Number(event.target.value))
-  }
-
   const {
     data,
     fetchNextPage,
@@ -114,15 +120,16 @@ const HomePage = () => {
     status,
     error,
   } = useInfiniteQuery({
-    queryKey: ["recipes", appliedCategories],
-    queryFn: ({ pageParam = 1 }) => fetchRecipes2(pageParam, 5, appliedCategories),
+    queryKey: ["recipes", appliedCategories,sortBy, isAscending],
+    queryFn: ({ pageParam = 1 }) =>
+      fetchRecipes2(pageParam, 5, appliedCategories, sortBy, isAscending),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      const currentPage = allPages.length; 
-      const totalPages = lastPage?.totalPages; 
-    
+      const currentPage = allPages.length;
+      const totalPages = lastPage?.totalPages;
+
       console.log("Current Page:", currentPage, "Total Pages:", totalPages);
-    
+
       return currentPage < totalPages ? currentPage + 1 : undefined;
     },
     refetchOnWindowFocus: false,
@@ -143,9 +150,23 @@ const HomePage = () => {
   const recipes2 = data?.pages.flatMap((page) => page.recipes) || [];
   console.log(recipes2);
 
+  const handleSortChange = (criteria: string) => {
+    setSortBy(criteria);
+    setIsSortingOpen(false);
+  };
+  
+  const handleSortOrderChange = () => {
+    setIsAscending((prev) => !prev);
+    setIsSortingOpen(false);
+  };
+
+  const handleSortByName = () => {
+    setIsAscending()
+  }
+
   return (
     <div>
-      <section className="flex items-center justify-between px-10 mt-10 mb-16">
+      <section className="flex items-center justify-between px-10 mt-10 mb-16 2xl:px-36 [@media(min-width:1750px)]:px-48 [@media(min-width:1900px)]:px-56">
         {/* <div className="space-x-2">
           <label htmlFor="itemsPerPage">Items per page: </label>
           <select
@@ -161,9 +182,8 @@ const HomePage = () => {
             <option value="50">50</option>
           </select>
         </div> */}
-        <div className="w-3/4">
-
-        <SearchBox />
+        <div className="w-3/4 px-5">
+          <SearchBox />
         </div>
         <div className="flex items-center space-x-4">
           <button
@@ -173,19 +193,55 @@ const HomePage = () => {
             <CiFilter className="w-5 h-5" />
             <span>Filters</span>
           </button>
+          <div className="relative">
+      <button
+        className="flex items-center px-5 py-2 space-x-1 bg-[#B4EBE6] rounded-lg"
+        onClick={() => setIsSortingOpen((prev) => !prev)}
+      >
+        <FaSort className="w-5 h-5" />
+        <span>Sort</span>
+      </button>
+
+      {isSortingOpen && (
+        <div className="absolute right-0 w-48 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg">
+          <button
+            className="block w-full px-4 py-2 text-left hover:bg-gray-200"
+            onClick={() => handleSortChange("name")}
+          >
+            Sort by Name
+          </button>
+          <button
+            className="block w-full px-4 py-2 text-left hover:bg-gray-200"
+            onClick={() => handleSortChange("date")}
+          >
+            Sort by Date
+          </button>
+          <button
+            className="block w-full px-4 py-2 text-left hover:bg-gray-200"
+            onClick={() => handleSortOrderChange()}
+          >
+            {isAscending ? "Descending" : "Ascending"}
+          </button>
+        </div>
+      )}
+    </div>
           <button className="flex items-center px-5 py-2 space-x-1 bg-[#B4EBE6] rounded-lg">
             <FaSort className="w-5 h-5" />
             <span>Sort</span>
           </button>
         </div>
       </section>
-      <div className="px-5 2xl:px-20">
+      <div className="px-10  2xl:px-36 [@media(min-width:1750px)]:px-48 [@media(min-width:1900px)]:px-56">
         <div className="grid grid-cols-3 border border-blue-700 gap-y-10 justify-items-center">
           {recipes2?.map((recipe: Recipe, index: number) => (
-            <Link to={`/recipe/${recipe.id}`} key={index}  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
+            <Link
+              to={`/recipe/${recipe.id}`}
+              key={index}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            >
               <div
                 key={recipe.id}
-                className=" w-[356px] h-[382px] bg-white rounded-xl cursor-pointer hover:border hover:border-orange-300 hover:shadow-lg"
+                className=" w-[356px] h-[382px] bg-white rounded-xl cursor-pointer hover:border hover:border-orange-300 hover:shadow-lg [@media(min-width:1450px)]:w-[380px]"
               >
                 <figure className="w-full h-60 ">
                   <img
@@ -207,12 +263,7 @@ const HomePage = () => {
                     </div>
                   </div>
                   <div className="flex pt-2 ">
-                    <RecipeStars averageRating={recipe.averageRating || 4} />
-                    {/* <FaStar className="w-6 h-6" fill="#FFF100" />
-                    <FaStar className="w-6 h-6" />
-                    <FaStar className="w-6 h-6" />
-                    <FaStar className="w-6 h-6" />
-                    <FaStar className="w-6 h-6" /> */}
+                    <RecipeStars averageRating={recipe.averageRating || 0} />
                   </div>
                 </div>
               </div>
@@ -220,10 +271,10 @@ const HomePage = () => {
           ))}
         </div>
         <div ref={ref} className="flex justify-center my-4">
-    {showSpinner || isFetchingNextPage ? (
-      <CgSpinner className="w-10 h-10 mr-3 animate-spin" fill="orange"/>
-    ) : null}
-  </div>
+          {showSpinner || isFetchingNextPage ? (
+            <CgSpinner className="w-10 h-10 mr-3 animate-spin" fill="orange" />
+          ) : null}
+        </div>
       </div>
       {/* MODALS */}
       {isFiltersModalOpen && (

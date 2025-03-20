@@ -5,6 +5,7 @@ import { FaBook, FaHeart, FaStar, FaTrash } from "react-icons/fa";
 import { MdAccessTime } from "react-icons/md";
 import { PiForkKnifeFill } from "react-icons/pi";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const UsersRecipesPage = () => {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -63,7 +64,7 @@ const UsersRecipesPage = () => {
 
         if (recipeDeletion.ok) {
           setRecipes((prev) => prev.filter((r) => r.id !== recipeId));
-          alert("Recipe deleted successfully");
+          toast("Recipe deleted successfully!");
         }
       }
     } catch (error) {
@@ -104,7 +105,7 @@ const UsersRecipesPage = () => {
                 </div>
               </div>
               <div className="flex justify-between pt-2">
-                <RecipeStars averageRating={recipe.averageRating || 4} />
+                <RecipeStars averageRating={recipe.averageRating || 0} />
 
                 <div className="flex justify-center py-2 mr-5 bg-red-100 rounded-lg w-11 hover:bg-red-500">
                   <FaTrash

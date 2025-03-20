@@ -6,6 +6,7 @@ import { FaHeart, FaStar } from "react-icons/fa";
 import { Recipe } from "@/types/Recipe";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 const RecipePreviewPage = () => {
   const recipe = useSelector((state: RootState) => state.recipe);
@@ -54,6 +55,7 @@ const RecipePreviewPage = () => {
   
       if (ingredientsResponse.ok && instructionsResponse.ok) {
         console.log("Ingredients and instructions added successfully!");
+        toast("Recipe created successfully!");
         navigate("/");
       } else {
         console.error("Failed to add ingredients or instructions.");

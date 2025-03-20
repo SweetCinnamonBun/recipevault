@@ -64,6 +64,10 @@ namespace API.Controllers
                 {
                     query = isAscending ? query.OrderBy(x => x.Id) : query.OrderByDescending(x => x.Id);
                 }
+                else if (sortBy.Equals("createdAt", StringComparison.OrdinalIgnoreCase))
+                {
+                    query = isAscending ? query.OrderBy(x => x.CreatedAt) : query.OrderByDescending(x => x.CreatedAt);
+                }
             }
 
 
@@ -104,11 +108,18 @@ namespace API.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetRecipe([FromRoute] int id)
         {
-            var recipe = await context.Recipes.Include(x => x.Categories).Include(x => x.Ingredients).Include(x => x.Instructions).FirstOrDefaultAsync((x) => x.Id == id);
+            var recipe = await context.Recipes.Include(x => x.Categories)
+            .Include(x => x.Ingredients)
+            .Include(x => x.Instructions)
+            .Include(x => x.Ratings)
+            .FirstOrDefaultAsync((x) => x.Id == id);
 
             if (recipe == null) return NotFound();
 
             var dto = mapper.Map<RecipeDto>(recipe);
+
+            dto.AverageRating = recipe.Ratings.Count != 0 ? Math.Round(recipe.Ratings.Average(r => r.Value), 2) : 0;
+            dto.RatingCount = recipe.Ratings.Count;
 
             return Ok(dto);
         }

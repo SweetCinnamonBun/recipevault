@@ -54,13 +54,32 @@ namespace API.Controllers
             {
                 UserId = userId,
                 RecipeId = recipeId,
-                Content = commentDto.Content
+                Content = commentDto.Content,
+                CreatedAt = DateTime.UtcNow // Assuming you track timestamps
             };
 
             context.Comments.Add(comment);
             await context.SaveChangesAsync();
 
-            return Ok(new { message = "Comment added successfully" });
+            // Fetch the comment with related data (e.g., user details)
+            var savedComment = await context.Comments
+                .Where(c => c.Id == comment.Id)
+                .Select(c => new
+                {
+                    c.Id,
+                    c.Content,
+                    c.RecipeId,
+                    c.UserId,
+                    c.CreatedAt,
+                    User = new
+                    {
+                        c.User.Id,
+                        c.User.UserName // Assuming you have a User navigation property
+                    }
+                })
+                .FirstOrDefaultAsync();
+
+            return Ok(savedComment);
         }
 
         [HttpDelete("comments/{commentId}")]
