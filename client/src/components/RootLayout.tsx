@@ -12,7 +12,7 @@ const RootLayout = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("http://localhost:5028/api/accounts/user-info", {
+        const response = await fetch("/api/accounts/user-info", {
           credentials: "include", // Include cookies in the request
         });
 

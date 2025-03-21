@@ -14,7 +14,7 @@ const Navbar = () => {
   const logout = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5028/api/accounts/logout",
+        "/api/accounts/logout",
         {
           method: "POST", // Assuming logout requires a POST request
           credentials: "include", // Include cookies if needed for authentication

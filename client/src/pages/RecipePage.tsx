@@ -26,13 +26,13 @@ const RecipePage = () => {
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const response = await fetch(`http://localhost:5028/api/recipes/${id}`);
+        const response = await fetch(`/api/recipes/${id}`);
         const data = await response.json();
         console.log(data);
         setRecipe(data);
 
         const ratingResponse = await fetch(
-          `http://localhost:5028/api/ratings/recipe/${id}/average`
+          `/api/ratings/recipe/${id}/average`
         );
         const ratingData = await ratingResponse.json();
         setInitialRating(ratingData.rating); // Set the initial rating
@@ -49,7 +49,7 @@ const RecipePage = () => {
 
       try {
         const response = await fetch(
-          "http://localhost:5028/api/favorites/my-favorites",
+          "/api/favorites/my-favorites",
           {
             method: "GET",
             headers: {
@@ -77,7 +77,7 @@ const RecipePage = () => {
   }, [id, user]);
 
   const handleFavoriteToggle = async () => {
-    const url = `http://localhost:5028/api/favorites/${id}`;
+    const url = `/api/favorites/${id}`;
     const method = isFavorite ? "DELETE" : "POST"; // Toggle between POST (add) and DELETE (remove)
 
     try {
@@ -88,11 +88,7 @@ const RecipePage = () => {
 
       if (response.ok) {
         setIsFavorite((prev) => !prev); // Toggle the state
-        alert(
-          isFavorite
-            ? "Recipe removed from favorites"
-            : "Recipe added to favorites"
-        );
+        toast(isFavorite ? "Recipe removed from favorites" : "Recipe added to favorites");
       } else {
         const errorData = await response.json();
         alert(errorData.message || "Failed to toggle favorite.");
@@ -106,7 +102,7 @@ const RecipePage = () => {
     const fetchComments = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5028/api/comments/${id}/comments`
+          `/api/comments/${id}/comments`
         );
         const data = await response.json();
         setComments(data);
@@ -123,7 +119,7 @@ const RecipePage = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:5028/api/comments/${id}/comments`,
+        `/api/comments/${id}/comments`,
         {
           method: "POST",
           credentials: "include",
@@ -150,7 +146,7 @@ const RecipePage = () => {
   const handleDeleteComment = async (commentId: number) => {
     try {
       const response = await fetch(
-        `http://localhost:5028/api/comments/comments/${commentId}`,
+        `/api/comments/comments/${commentId}`,
         {
           method: "DELETE",
           credentials: "include",
@@ -206,7 +202,7 @@ const RecipePage = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5028/api/ratings`, {
+      const response = await fetch(`/api/ratings`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -220,7 +216,7 @@ const RecipePage = () => {
 
       if (response.ok) {
         // setCurrentRating(newRating);
-        alert("Rating submitted successfully!");
+        toast("Rating submitted successfully!");
         setIsRatingModalOpen(false); // Close the modal after submitting the rating
       } else {
         const errorData = await response.json();

@@ -35,7 +35,7 @@ const HomePage = () => {
         .join("&");
       try {
         const response = await fetch(
-          `http://localhost:5028/api/recipes?${categoryQuery}&pageSize=${itemsPerPage}`
+          `/api/recipes?${categoryQuery}&pageSize=${itemsPerPage}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch recipes");
@@ -67,7 +67,7 @@ const HomePage = () => {
       .join("&");
 
     const response = await fetch(
-      `http://localhost:5028/api/recipes?page=${page}&pageSize=${pageSize}&${categoryQuery}&sortBy=${sortBy}&isAscending=${isAscending}`
+      `/api/recipes?page=${page}&pageSize=${pageSize}&${categoryQuery}&sortBy=${sortBy}&isAscending=${isAscending}`
     );
 
     if (!response.ok) {
@@ -81,7 +81,7 @@ const HomePage = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:5028/api/categories");
+        const response = await fetch("/api/categories");
         if (!response.ok) {
           throw new Error("Failed to fetch categories");
         }

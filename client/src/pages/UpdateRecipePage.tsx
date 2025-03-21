@@ -50,7 +50,7 @@ const UpdateRecipePage = () => {
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const response = await fetch(`http://localhost:5028/api/recipes/${id}`);
+        const response = await fetch(`/api/recipes/${id}`);
         const data = await response.json();
         console.log(data);
         setRecipe(data);
@@ -65,7 +65,7 @@ const UpdateRecipePage = () => {
     // Fetch available categories
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:5028/api/categories");
+        const response = await fetch("/api/categories");
         const data = await response.json();
         setCategories(data);
       } catch (err) {
@@ -105,7 +105,7 @@ const UpdateRecipePage = () => {
 
       try {
         const imageResponse = await fetch(
-          "http://localhost:5028/api/images/upload",
+          "/api/images/upload",
           {
             method: "POST",
             body: imageFormData,
@@ -120,7 +120,7 @@ const UpdateRecipePage = () => {
           if (recipe.imageUrl) {
             const previousImageName = recipe.imageUrl.split("/").pop(); // Extract the file name from the URL
             await fetch(
-              `http://localhost:5028/api/images/delete?fileName=${previousImageName}`,
+              `/api/images/delete?fileName=${previousImageName}`,
               {
                 method: "DELETE",
               }
@@ -155,7 +155,7 @@ const UpdateRecipePage = () => {
 
     // Step 4: Update the recipe
     try {
-      const response = await fetch(`http://localhost:5028/api/recipes/${id}`, {
+      const response = await fetch(`/api/recipes/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

@@ -17,7 +17,7 @@ const RegisterPage = () => {
 
     try {
       const registerResponse = await fetch(
-        "http://localhost:5028/api/accounts/register",
+        "/api/accounts/register",
         {
           method: "POST",
           credentials: "include",

@@ -37,14 +37,14 @@ const RecipePreviewPage = () => {
     try {
       // Make POST requests for ingredients and instructions
       const [ingredientsResponse, instructionsResponse] = await Promise.all([
-        fetch(`http://localhost:5028/api/ingredients/bulk?recipeId=${recipeId}`, {
+        fetch(`/api/ingredients/bulk?recipeId=${recipeId}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(ingredients),
         }),
-        fetch(`http://localhost:5028/api/instructions/bulk?recipeId=${recipeId}`, {
+        fetch(`/api/instructions/bulk?recipeId=${recipeId}`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

@@ -21,7 +21,7 @@ export default function SearchBox() {
       const controller = new AbortController();
       (async () => {
         const url =
-          "http://localhost:5028/api/recipes?search=" +
+          "/api/recipes?search=" +
           encodeURIComponent(debouncedQuery);
         const response = await fetch(url, { signal: controller.signal });
         const data = await response.json();

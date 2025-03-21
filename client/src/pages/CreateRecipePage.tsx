@@ -29,7 +29,7 @@ const CreateRecipePage = () => {
 
       try {
         const imageResponse = await fetch(
-          "http://localhost:5028/api/images/upload",
+          "/api/images/upload",
           {
             method: "POST",
             body: imageFormData,
@@ -61,7 +61,7 @@ const CreateRecipePage = () => {
     };
 
     try {
-      const recipeResponse = await fetch("http://localhost:5028/api/recipes", {
+      const recipeResponse = await fetch("/api/recipes", {
         method: "POST",
         credentials: "include",
         headers: {

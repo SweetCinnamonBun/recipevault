@@ -16,7 +16,7 @@ const LoginPage = () => {
     try {
     
       const loginResponse = await fetch(
-        "http://localhost:5028/api/login?useCookies=true",
+        "/api/login?useCookies=true",
         {
           method: "POST",
           credentials: "include", 
@@ -30,7 +30,7 @@ const LoginPage = () => {
       if (loginResponse.ok) {
         // Step 2: Fetch user info after successful login
         const userInfoResponse = await fetch(
-          "http://localhost:5028/api/accounts/user-info",
+          "/api/accounts/user-info",
           {
             credentials: "include", // Include cookies in the request
           }

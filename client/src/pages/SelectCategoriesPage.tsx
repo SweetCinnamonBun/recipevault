@@ -16,7 +16,7 @@ const SelectCategoriesPage = () => {
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const response = await fetch("http://localhost:5028/api/categories");
+      const response = await fetch("/api/categories");
       const data = await response.json();
       setCategories(data);
     };
@@ -46,7 +46,7 @@ const SelectCategoriesPage = () => {
   
     try {
       // Step 1: POST request to add categories
-      const response = await fetch("http://localhost:5028/api/categories/add-to-recipe", {
+      const response = await fetch("/api/categories/add-to-recipe", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,7 +61,7 @@ const SelectCategoriesPage = () => {
   
       console.log("Categories added successfully!");
   
-      const categoriesResponse = await fetch(`http://localhost:5028/api/categories/recipes-categories/${recipeId}`);
+      const categoriesResponse = await fetch(`/api/categories/recipes-categories/${recipeId}`);
       
       if (!categoriesResponse.ok) {
         console.error("Failed to fetch updated categories.");

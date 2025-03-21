@@ -13,7 +13,7 @@ const FavoritesPage = () => {
     const fetchRecipes = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5028/api/favorites/my-favorites",
+          "/api/favorites/my-favorites",
           {
             method: "GET",
             credentials: "include", // Ensures cookies are sent

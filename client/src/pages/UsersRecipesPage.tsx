@@ -14,7 +14,7 @@ const UsersRecipesPage = () => {
     const fetchRecipes = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5028/api/recipes/my-recipes",
+          "/api/recipes/my-recipes",
           {
             method: "GET",
             credentials: "include", // Ensures cookies are sent
@@ -42,7 +42,7 @@ const UsersRecipesPage = () => {
     try {
       const fileName = imageUrl.split("/").pop();
       const response = await fetch(
-        `http://localhost:5028/api/images/delete?fileName=${fileName}`,
+        `/api/images/delete?fileName=${fileName}`,
         {
           method: "DELETE",
           headers: {
@@ -52,7 +52,7 @@ const UsersRecipesPage = () => {
       );
       if (response.ok) {
         const recipeDeletion = await fetch(
-          `http://localhost:5028/api/recipes/${recipeId}`,
+          `/api/recipes/${recipeId}`,
           {
             method: "DELETE",
             credentials: "include",

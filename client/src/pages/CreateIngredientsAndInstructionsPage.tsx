@@ -59,7 +59,7 @@ const CreateIngredientsAndInstructionsPage = () => {
       // Make POST requests for ingredients and instructions
       const [ingredientsResponse, instructionsResponse] = await Promise.all([
         fetch(
-          `http://localhost:5028/api/ingredients/bulk?recipeId=${recipeId}`,
+          `/api/ingredients/bulk?recipeId=${recipeId}`,
           {
             method: "POST",
             headers: {
@@ -69,7 +69,7 @@ const CreateIngredientsAndInstructionsPage = () => {
           }
         ),
         fetch(
-          `http://localhost:5028/api/instructions/bulk?recipeId=${recipeId}`,
+          `/api/instructions/bulk?recipeId=${recipeId}`,
           {
             method: "POST",
             headers: {

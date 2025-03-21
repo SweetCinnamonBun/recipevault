@@ -19,6 +19,7 @@ builder.Services.AddDbContext<BlogContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddCors();
 
 builder.Services.AddSingleton<AzureBlobStorageService>(provider =>
 {
@@ -43,6 +44,10 @@ var app = builder.Build();
 
 app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
     .WithOrigins("http://localhost:5173", "https://localhost:5173"));
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.MapFallbackToController("Index", "Fallback");
 
 app.MapControllers();
 app.MapGroup("api").MapIdentityApi<AppUser>();
