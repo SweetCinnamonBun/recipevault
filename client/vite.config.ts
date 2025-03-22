@@ -12,5 +12,14 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, "../API/wwwroot"), 
     emptyOutDir: true, 
-  }
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5028/api',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
 });

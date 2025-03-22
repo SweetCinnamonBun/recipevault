@@ -34,7 +34,7 @@ const RootLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
     <Navbar />    
-    <main className="flex-grow p-4">
+    <main className="flex-grow md:p-4">
       <Outlet /> 
     </main>
   </div>

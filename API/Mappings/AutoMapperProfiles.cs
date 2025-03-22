@@ -7,6 +7,7 @@ using API.DTOs.Account;
 using API.DTOs.Category;
 using API.DTOs.Ingredients;
 using API.DTOs.Instructions;
+using API.DTOs.Ratings;
 using AutoMapper;
 using Core.Entities;
 
@@ -25,6 +26,8 @@ namespace API.Mappings
             CreateMap<CreateRecipeDto, Recipe>().ReverseMap();
 
             CreateMap<AppUser, UserDto>().ReverseMap();
+
+            CreateMap<Rating, RatingDto>().ReverseMap();
 
         }
     }

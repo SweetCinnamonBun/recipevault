@@ -256,117 +256,115 @@ namespace API.Controllers
 
             var recipes = await context.Recipes
                 .Where(r => r.UserId == user.Id)
+                .Include(x => x.Ratings)
                 .ToListAsync();
 
+            var result = recipes.Select(recipe => new RecipeDto
+            {
+                Id = recipe.Id,
+                Name = recipe.Name,
+                Description = recipe.Description,
+                CookingTime = recipe.CookingTime,
+                Difficulty = recipe.Difficulty,
+                ServingSize = recipe.ServingSize,
+                CreatedAt = recipe.CreatedAt,
+                ImageUrl = recipe.ImageUrl,
 
-            return Ok(mapper.Map<List<RecipeDto>>(recipes));
+                AverageRating = recipe.Ratings.Any() ? recipe.Ratings.Average(r => r.Value) : 0,
+                RatingCount = recipe.Ratings.Count(),
+
+            });
+
+            return Ok(result);
         }
 
         private void UpdateIngredients(Recipe existingRecipe, ICollection<IngredientDto> updatedIngredients)
         {
-            // Remove ingredients not in the updated list
+            // Find existing ingredient IDs
+            var existingIngredientIds = existingRecipe.Ingredients.Select(i => i.Id).ToList();
+
+            // Find ingredients to remove
             var ingredientsToRemove = existingRecipe.Ingredients
-                .Where(existing => !updatedIngredients.Any(updated => updated.Id == existing.Id))
+                .Where(i => !updatedIngredients.Any(ui => ui.Id == i.Id))
                 .ToList();
 
-            foreach (var ingredient in ingredientsToRemove)
-            {
-                existingRecipe.Ingredients.Remove(ingredient);
-            }
+            // Remove ingredients that are not in the updated list
+            context.Ingredients.RemoveRange(ingredientsToRemove);
 
-            // Add or update ingredients
-            foreach (var updatedIngredient in updatedIngredients)
-            {
-                var existingIngredient = existingRecipe.Ingredients
-                    .FirstOrDefault(i => i.Id == updatedIngredient.Id);
+            // Find new ingredients to add
+            var newIngredients = updatedIngredients
+                .Where(ui => !existingIngredientIds.Contains(ui.Id))
+                .Select(ui => new Ingredient
+                {
+                    Name = ui.Name,
+                    Quantity = ui.Quantity,
+                    Unit = ui.Unit,
+                    RecipeId = existingRecipe.Id
+                })
+                .ToList();
 
-                if (existingIngredient == null)
-                {
-                    // Add new ingredient
-                    existingRecipe.Ingredients.Add(new Ingredient
-                    {
-                        Name = updatedIngredient.Name,
-                        Quantity = updatedIngredient.Quantity,
-                        Unit = updatedIngredient.Unit
-                    });
-                }
-                else
-                {
-                    // Update existing ingredient
-                    existingIngredient.Name = updatedIngredient.Name;
-                    existingIngredient.Quantity = updatedIngredient.Quantity;
-                    existingIngredient.Unit = updatedIngredient.Unit;
-                }
+            // Add all new ingredients in bulk
+            if (newIngredients.Any())
+            {
+                context.Ingredients.AddRange(newIngredients);
             }
         }
 
+
         private void UpdateInstructions(Recipe existingRecipe, ICollection<InstructionDto> updatedInstructions)
         {
-            // Remove instructions not in the updated list
+            var existingInstructionIds = existingRecipe.Instructions.Select(i => i.Id).ToList();
+
             var instructionsToRemove = existingRecipe.Instructions
-                .Where(existing => !updatedInstructions.Any(updated => updated.Id == existing.Id))
+                .Where(i => !updatedInstructions.Any(ui => ui.Id == i.Id))
                 .ToList();
 
-            foreach (var instruction in instructionsToRemove)
-            {
-                existingRecipe.Instructions.Remove(instruction);
-            }
+            context.Instructions.RemoveRange(instructionsToRemove);
 
-            // Add or update instructions
-            foreach (var updatedInstruction in updatedInstructions)
-            {
-                var existingInstruction = existingRecipe.Instructions
-                    .FirstOrDefault(i => i.Id == updatedInstruction.Id);
+            var newInstructions = updatedInstructions
+                .Where(ui => !existingInstructionIds.Contains(ui.Id))
+                .Select(ui => new Instruction
+                {
+                    Text = ui.Text,
+                    RecipeId = existingRecipe.Id
+                })
+                .ToList();
 
-                if (existingInstruction == null)
-                {
-                    // Add new instruction
-                    existingRecipe.Instructions.Add(new Instruction
-                    {
-                        Text = updatedInstruction.Text,
-                        RecipeId = updatedInstruction.RecipeId
-                    });
-                }
-                else
-                {
-                    // Update existing instruction
-                    existingInstruction.Text = updatedInstruction.Text;
-                    existingInstruction.RecipeId = updatedInstruction.RecipeId;
-                }
+            if (newInstructions.Any())
+            {
+                context.Instructions.AddRange(newInstructions);
             }
         }
         private void UpdateCategories(Recipe existingRecipe, ICollection<CategoryDto> updatedCategories)
         {
-            // Get category IDs from the request
             var updatedCategoryIds = updatedCategories.Select(c => c.Id).ToList();
 
-            // Fetch categories from the database that match the provided IDs
-            var existingCategories = context.Categories
+            // Remove categories that are not in the updated list
+            existingRecipe.Categories = existingRecipe.Categories
                 .Where(c => updatedCategoryIds.Contains(c.Id))
                 .ToList();
 
-            // Remove all current categories and replace them with the updated ones
-            existingRecipe.Categories.Clear();
-
             foreach (var updatedCategory in updatedCategories)
             {
-                var category = existingCategories.FirstOrDefault(c => c.Id == updatedCategory.Id);
+                var existingCategory = context.Categories
+                    .FirstOrDefault(c => c.Id == updatedCategory.Id);
 
-                if (category == null)
+                if (existingCategory == null)
                 {
-                    // Create a new category if it doesn’t exist
-                    category = new Category
+                    existingCategory = new Category
                     {
                         Name = updatedCategory.Name,
                         Slug = updatedCategory.Slug
                     };
-
-                    context.Categories.Add(category); // Ensure EF tracks the new category
+                    context.Categories.Add(existingCategory);
                 }
 
-                // Add category to the recipe
-                existingRecipe.Categories.Add(category);
+                if (!existingRecipe.Categories.Any(c => c.Id == existingCategory.Id))
+                {
+                    existingRecipe.Categories.Add(existingCategory);
+                }
             }
         }
+
     }
 }

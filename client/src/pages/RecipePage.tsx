@@ -10,6 +10,7 @@ import RatingComponent from "@/components/RatingComponent";
 import StarRating from "@/components/StarRating";
 import RatingModal from "@/components/RatingModal";
 import { toast } from "react-toastify";
+import { RiAccountCircleLine } from "react-icons/ri";
 
 const RecipePage = () => {
   const { id } = useParams();
@@ -31,9 +32,7 @@ const RecipePage = () => {
         console.log(data);
         setRecipe(data);
 
-        const ratingResponse = await fetch(
-          `/api/ratings/recipe/${id}/average`
-        );
+        const ratingResponse = await fetch(`/api/ratings/recipe/${id}/average`);
         const ratingData = await ratingResponse.json();
         setInitialRating(ratingData.rating); // Set the initial rating
       } catch (err) {
@@ -48,16 +47,13 @@ const RecipePage = () => {
       if (!user) return; // Exit early if no user
 
       try {
-        const response = await fetch(
-          "/api/favorites/my-favorites",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            credentials: "include", // Include credentials (cookies or session)
-          }
-        );
+        const response = await fetch("/api/favorites/my-favorites", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // Include credentials (cookies or session)
+        });
 
         if (!response.ok) {
           console.error("Failed to fetch favorites");
@@ -88,7 +84,11 @@ const RecipePage = () => {
 
       if (response.ok) {
         setIsFavorite((prev) => !prev); // Toggle the state
-        toast(isFavorite ? "Recipe removed from favorites" : "Recipe added to favorites");
+        toast(
+          isFavorite
+            ? "Recipe removed from favorites"
+            : "Recipe added to favorites"
+        );
       } else {
         const errorData = await response.json();
         alert(errorData.message || "Failed to toggle favorite.");
@@ -101,9 +101,7 @@ const RecipePage = () => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await fetch(
-          `/api/comments/${id}/comments`
-        );
+        const response = await fetch(`/api/comments/${id}/comments`);
         const data = await response.json();
         setComments(data);
       } catch (err) {
@@ -118,19 +116,16 @@ const RecipePage = () => {
     if (!newComment.trim()) return; // Prevent empty comments
 
     try {
-      const response = await fetch(
-        `/api/comments/${id}/comments`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            content: newComment,
-          }),
-        }
-      );
+      const response = await fetch(`/api/comments/${id}/comments`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: newComment,
+        }),
+      });
 
       if (response.ok) {
         const newCommentData = await response.json();
@@ -145,13 +140,10 @@ const RecipePage = () => {
 
   const handleDeleteComment = async (commentId: number) => {
     try {
-      const response = await fetch(
-        `/api/comments/comments/${commentId}`,
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`/api/comments/comments/${commentId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
 
       if (response.ok) {
         setComments(comments.filter((comment) => comment.id !== commentId));
@@ -232,43 +224,43 @@ const RecipePage = () => {
 
   return (
     <div className="flex flex-col items-center">
-      <div className="flex justify-end w-full">
-        <Link to={`/update-recipe/${recipe?.id}`}>Update Recipe</Link>
-      </div>
-      <h1 className="my-5 text-3xl">{recipe?.name}</h1>
+    
+      <h1 className="p-10 my-5 text-2xl text-center md:text-3xl">
+        {recipe?.name}
+      </h1>
 
       <div className="flex justify-between px-5 py-5 mt-2 mb-8 w-96 gap-x-5">
         <div className="">
           <div className="flex flex-col items-center">
             <MdAccessTime className="w-8 h-8" />
-            <span className="text-lg">{recipe?.cookingTime}</span>
-            <span className="text-md">Cooking time</span>
+            <span className="text-md md:text-lg">{recipe?.cookingTime}</span>
+            <span className="text-sm md:text-md">Cooking time</span>
           </div>
         </div>
         <div className="">
           <div className="flex flex-col items-center">
             <PiShootingStarLight className="w-8 h-8" />
-            <span className="text-lg">{recipe?.difficulty}</span>
-            <span className="text-md">Difficulty</span>
+            <span className="text-md md:text-lg">{recipe?.difficulty}</span>
+            <span className="text-sm md:text-md">Difficulty</span>
           </div>
         </div>
         <div className="">
           <div className="flex flex-col items-center">
             <PiForkKnifeFill className="w-8 h-8" />
-            <span className="text-lg">{recipe?.servingSize}</span>
-            <span className="text-md">Serving Size</span>
+            <span className="text-md md:text-lg">{recipe?.servingSize}</span>
+            <span className="text-sm md:text-md">Serving Size</span>
           </div>
         </div>
       </div>
 
-      <figure className="w-3/5">
+      <figure className="w-full sm:w-3/4 px-1 lg:w-[70%] [@media(min-width:1100px)]:w-[60%] [@media(min-width:1300px)]:w-[50%] 2xl:w-[50%] [@media(min-width:1750px)]:w-[40%]">
         <img
           src={recipe?.imageUrl}
           alt={recipe?.name}
-          className="w-full h-[520px] rounded-xl"
+          className="w-full h-[380px] md:h-[520px] rounded-xl"
         />
       </figure>
-      <div className="mt-12">
+      <div className="flex flex-wrap justify-center mt-12 gap-y-5">
         {recipe?.categories.map((category, index) => (
           <span key={index} className="px-4 py-2 ml-4 bg-[#00FF9C] rounded-lg">
             {category.name}
@@ -316,12 +308,12 @@ const RecipePage = () => {
           {isFavorite ? "Remove from favorites" : "Add to your favorites"}
         </span>
       </div>
-      <section className="w-11/12 my-10">
+      <section className="w-11/12 my-10 2xl:px-52">
         <div className="w-full p-4 text-xl bg-white shadow-lg rounded-xl h-96">
           {recipe?.description}
         </div>
       </section>
-      <section className="grid w-11/12 grid-cols-2  h-[750px] gap-x-8">
+      <section className="grid w-11/12 gap-y-4 grid-cols-1 md:grid-cols-2  md:h-[750px] gap-x-8 2xl:px-52">
         <div className="p-6  rounded-lg bg-[#F8FAE5] shadow-lg">
           <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
           <ul className="p-2 space-y-4 list-disc">
@@ -334,80 +326,68 @@ const RecipePage = () => {
             ))}
           </ul>
         </div>
-        <div className="p-6 rounded-lg bg-[#F8FAE5] shadow-lg">
-          <h2 className="my-2 text-2xl font-bold">Instructions</h2>
-          <ul className="p-2 space-y-4 list-disc">
-            {recipe?.instructions.map((instruction) => (
-              <li className="text-xl">{instruction.text}</li>
-            ))}
-          </ul>
-        </div>
+        <div className="p-6 rounded-lg bg-[#F8FAE5] shadow-lg min-w-0">
+    <h2 className="my-2 text-2xl font-bold">Instructions</h2>
+    <ul className="p-2 space-y-4 list-disc">
+      {recipe?.instructions.map((instruction) => (
+        <li className="text-xl break-words">{instruction.text}</li>
+      ))}
+    </ul>
+  </div>
       </section>
-      {/* <section className="w-full my-10">
-        <div className="w-11/12 p-8 mx-auto rounded-lg">
-          <h2 className="text-2xl font-bold">Shopping List</h2>
-          <ul className="mt-6 space-y-3">
-            {recipe?.ingredients.map((ingredient) => (
-              <li className="text-xl list-square">
-                <span>{ingredient.name}</span>
-                <span className="ml-2 mr-1">
-                  ({ingredient.quantity} {ingredient.unit})
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section> */}
-      <section className="w-11/12 p-6 my-10 bg-white rounded-lg">
-        <h2 className="text-2xl font-bold">Comments</h2>
 
-        {/* Comment Submission Form */}
-        {user && (
-          <form onSubmit={handleSubmitComment} className="mt-4">
-            <textarea
-              className="w-full p-2 border border-gray-300 rounded-lg"
-              placeholder="Write a comment..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-            />
-            <button
-              type="submit"
-              className="px-4 py-2 mt-2 text-white bg-black rounded-lg"
-            >
-              Submit
-            </button>
-          </form>
-        )}
+      <div className="w-full 2xl:px-56">
+        <section className="w-11/12 p-6 mx-auto my-10 bg-white rounded-lg">
+          <h2 className="text-2xl font-bold">Comments</h2>
 
-        {/* Comments List */}
-        <div className="mt-4">
-          {comments.length === 0 ? (
-            <p className="pt-5 my-4 text-lg font-bold">
-              There are no comments for this recipe.
-            </p>
-          ) : (
-            comments.map((comment) => (
-              <div
-                key={comment.id}
-                className="pt-4 my-2 space-y-2 border-b border-gray-300 pb-7"
+          {/* Comment Submission Form */}
+          {user && (
+            <form onSubmit={handleSubmitComment} className="mt-4">
+              <textarea
+                className="w-full p-2 border border-gray-300 rounded-lg"
+                placeholder="Write a comment..."
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="px-4 py-2 mt-2 text-white bg-black rounded-lg"
               >
-                <div className="flex justify-between">
-                  <strong>{comment.user?.userName || "Anonymous"}:</strong>
-                  {user && user.email === comment.user?.userName && (
-                    <button
-                      onClick={() => handleDeleteComment(comment.id)}
-                      className="px-2 text-sm text-red-500 "
-                    >
-                      Delete
-                    </button>
-                  )}
-                </div>
-                <p>{comment.content}</p>
-              </div>
-            ))
+                Submit
+              </button>
+            </form>
           )}
-        </div>
-      </section>
+
+          {/* Comments List */}
+          <div className="mt-4 ">
+            {comments.length === 0 ? (
+              <p className="pt-5 my-4 text-lg font-bold">
+                There are no comments for this recipe.
+              </p>
+            ) : (
+              comments.map((comment) => (
+                <div
+                  key={comment.id}
+                  className="pt-4 my-2 space-y-2 border-b border-gray-300 pb-7"
+                >
+                  <div className="flex justify-between">
+                    <strong>{comment.user?.userName || "Anonymous"}:</strong>
+                    {user && user.email === comment.user?.userName && (
+                      <button
+                        onClick={() => handleDeleteComment(comment.id)}
+                        className="px-2 text-sm text-red-500 "
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                  <p>{comment.content}</p>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+      </div>
     </div>
   );
 };

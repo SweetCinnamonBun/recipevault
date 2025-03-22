@@ -299,7 +299,7 @@ const UpdateRecipePage = () => {
           </div>
       </div>
 
-      <div className="w-3/5 my-4">
+      <div className="w-full  my-4   sm:w-3/4 px-1 lg:w-[70%] [@media(min-width:1100px)]:w-[60%] [@media(min-width:1300px)]:w-[50%] 2xl:w-[50%] [@media(min-width:1750px)]:w-[40%]">
         <label className="text-lg font-medium">Recipe Image:</label>
         <input
           type="file"
@@ -314,7 +314,7 @@ const UpdateRecipePage = () => {
         />
         <label
           htmlFor="imageUpload"
-          className="cursor-pointer border border-gray-300 rounded-lg p-2 flex items-center justify-center w-full h-[520px]  bg-gray-50 hover:bg-gray-100 transition relative overflow-hidden my-4"
+          className="cursor-pointer border border-gray-300 rounded-lg p-2 flex items-center justify-center w-full h-[380px] md:h-[520px]  bg-gray-50 hover:bg-gray-100 transition relative overflow-hidden my-4"
         >
           {/* Display the new image if selected, otherwise display the current image */}
           {newImageFile ? (
@@ -347,7 +347,7 @@ const UpdateRecipePage = () => {
         />
       </div>
 
-      <section className="w-11/12 mb-20 mt-28">
+      <section className="w-11/12 px-3 mb-20 mt-28 2xl:px-52">
         <textarea
           className="w-full p-4 text-xl bg-white shadow-lg rounded-xl h-96"
           value={recipe?.description}
@@ -358,7 +358,7 @@ const UpdateRecipePage = () => {
           placeholder="Recipe description"
         />
       </section>
-      <section className="grid w-11/12 grid-cols-2 p-4 gap-x-8">
+      <section className="grid w-11/12 grid-cols-2 py-4 gap-x-8 2xl:px-52">
         <div className="flex flex-col mt-4 gap-y-2">
           <input
             type="text"
@@ -423,7 +423,7 @@ const UpdateRecipePage = () => {
           </button>
         </div>
       </section>
-      <section className="grid w-11/12 grid-cols-2 gap-x-8 p-4 h-[750px]">
+      <section className="grid w-11/12 gap-y-4 grid-cols-1 md:grid-cols-2  md:h-[750px] gap-x-8 2xl:px-52">
         {/* Ingredients Section */}
         <div className="p-6 shadow-lg rounded-lg bg-[#F8FAE5]">
           <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
@@ -437,7 +437,7 @@ const UpdateRecipePage = () => {
                 </div>
                 <button
                   onClick={() => handleDeleteIngredient(index)}
-                  className="px-2 py-1 ml-4 text-white bg-red-500 rounded"
+                  className="px-2 py-1 ml-4 text-white bg-red-600 rounded"
                 >
                   Delete
                 </button>
@@ -451,12 +451,12 @@ const UpdateRecipePage = () => {
           <h2 className="my-2 text-2xl font-bold">Instructions</h2>
           <ul className="p-2 space-y-4 list-disc">
             {recipe?.instructions.map((instruction, index) => (
-              <li key={index} className="text-xl">
+              <li key={index} className="text-xl ">
                 <div className="flex justify-between">
-                  <span>{instruction.text}</span>
+                  <span className="min-w-0 break-words">{instruction.text}</span>
                   <button
                     onClick={() => handleDeleteInstruction(index)}
-                    className="px-2 py-1 ml-4 text-white bg-red-500 rounded"
+                    className="self-center px-2 py-1 ml-4 text-white bg-red-600 rounded"
                   >
                     Delete
                   </button>

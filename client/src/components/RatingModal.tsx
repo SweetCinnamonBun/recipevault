@@ -27,7 +27,7 @@ const RatingModal: React.FC<RatingModalProps> = ({ onClose, onSubmit }) => {
     >
       <div
         ref={wrapper}
-        className="relative px-4 pt-2 pb-10 bg-white rounded-lg lg:w-1/2 xl:w-1/2"
+        className="relative px-4 pt-2 pb-10 bg-white rounded-lg h-[350px] lg:w-1/2 xl:w-1/2"
       >
         <div className="flex justify-end">
           <button

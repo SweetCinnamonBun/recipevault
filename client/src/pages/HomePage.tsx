@@ -25,7 +25,7 @@ const HomePage = () => {
   const { ref, inView } = useInView();
   const [showSpinner, setShowSpinner] = useState(false);
   const [sortBy, setSortBy] = useState("id");
-  const [isAscending, setIsAscending] = useState(false); 
+  const [isAscending, setIsAscending] = useState(false);
   const [isSortingOpen, setIsSortingOpen] = useState(false);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ const HomePage = () => {
     pageSize: number,
     categories: string[],
     sortBy: string,
-    isAscending: boolean,
+    isAscending: boolean
   ) => {
     const categoryQuery = categories
       .map((category) => `categories=${encodeURIComponent(category)}`)
@@ -120,7 +120,7 @@ const HomePage = () => {
     status,
     error,
   } = useInfiniteQuery({
-    queryKey: ["recipes", appliedCategories,sortBy, isAscending],
+    queryKey: ["recipes", appliedCategories, sortBy, isAscending],
     queryFn: ({ pageParam = 1 }) =>
       fetchRecipes2(pageParam, 5, appliedCategories, sortBy, isAscending),
     initialPageParam: 1,
@@ -154,35 +154,20 @@ const HomePage = () => {
     setSortBy(criteria);
     setIsSortingOpen(false);
   };
-  
+
   const handleSortOrderChange = () => {
     setIsAscending((prev) => !prev);
     setIsSortingOpen(false);
   };
 
   const handleSortByName = () => {
-    setIsAscending()
-  }
+    setIsAscending();
+  };
 
   return (
     <div>
       <section className="flex items-center justify-between px-10 mt-10 mb-16 2xl:px-36 [@media(min-width:1750px)]:px-48 [@media(min-width:1900px)]:px-56">
-        {/* <div className="space-x-2">
-          <label htmlFor="itemsPerPage">Items per page: </label>
-          <select
-            name="itemsPerPage"
-            id="itemsPerPage"
-            className="px-2 py-3 bg-white border border-gray-600 rounded-lg"
-            onChange={handlePageSize}
-            value={itemsPerPage}
-          >
-            <option value="10">10</option>
-            <option value="15">15</option>
-            <option value="20">20</option>
-            <option value="50">50</option>
-          </select>
-        </div> */}
-        <div className="w-3/4 px-5">
+        <div className="w-full">
           <SearchBox />
         </div>
         <div className="flex items-center space-x-4">
@@ -194,45 +179,41 @@ const HomePage = () => {
             <span>Filters</span>
           </button>
           <div className="relative">
-      <button
-        className="flex items-center px-5 py-2 space-x-1 bg-[#B4EBE6] rounded-lg"
-        onClick={() => setIsSortingOpen((prev) => !prev)}
-      >
-        <FaSort className="w-5 h-5" />
-        <span>Sort</span>
-      </button>
+            <button
+              className="flex items-center px-5 py-2 space-x-1 bg-[#B4EBE6] rounded-lg"
+              onClick={() => setIsSortingOpen((prev) => !prev)}
+            >
+              <FaSort className="w-5 h-5" />
+              <span>Sort</span>
+            </button>
 
-      {isSortingOpen && (
-        <div className="absolute right-0 w-48 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg">
-          <button
-            className="block w-full px-4 py-2 text-left hover:bg-gray-200"
-            onClick={() => handleSortChange("name")}
-          >
-            Sort by Name
-          </button>
-          <button
-            className="block w-full px-4 py-2 text-left hover:bg-gray-200"
-            onClick={() => handleSortChange("date")}
-          >
-            Sort by Date
-          </button>
-          <button
-            className="block w-full px-4 py-2 text-left hover:bg-gray-200"
-            onClick={() => handleSortOrderChange()}
-          >
-            {isAscending ? "Descending" : "Ascending"}
-          </button>
-        </div>
-      )}
-    </div>
-          <button className="flex items-center px-5 py-2 space-x-1 bg-[#B4EBE6] rounded-lg">
-            <FaSort className="w-5 h-5" />
-            <span>Sort</span>
-          </button>
+            {isSortingOpen && (
+              <div className="absolute right-0 w-48 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg">
+                <button
+                  className="block w-full px-4 py-2 text-left hover:bg-gray-200"
+                  onClick={() => handleSortChange("name")}
+                >
+                  Sort by Name
+                </button>
+                <button
+                  className="block w-full px-4 py-2 text-left hover:bg-gray-200"
+                  onClick={() => handleSortChange("date")}
+                >
+                  Sort by Date
+                </button>
+                <button
+                  className="block w-full px-4 py-2 text-left hover:bg-gray-200"
+                  onClick={() => handleSortOrderChange()}
+                >
+                  {isAscending ? "Descending" : "Ascending"}
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </section>
-      <div className="px-10  2xl:px-36 [@media(min-width:1750px)]:px-48 [@media(min-width:1900px)]:px-56">
-        <div className="grid grid-cols-3 border border-blue-700 gap-y-10 justify-items-center">
+      <div className=" xl:px-10  2xl:px-36 [@media(min-width:1000px)]: [@media(min-width:1750px)]:px-48 [@media(min-width:1900px)]:px-56">
+        <div className="grid border border-blue-700 md:grid-cols-2 xl:grid-cols-3 gap-y-10 justify-items-center">
           {recipes2?.map((recipe: Recipe, index: number) => (
             <Link
               to={`/recipe/${recipe.id}`}
