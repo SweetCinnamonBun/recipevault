@@ -213,7 +213,7 @@ const HomePage = () => {
         </div>
       </section>
       <div className=" xl:px-10  2xl:px-36 [@media(min-width:1000px)]: [@media(min-width:1750px)]:px-48 [@media(min-width:1900px)]:px-56">
-        <div className="grid border border-blue-700 md:grid-cols-2 xl:grid-cols-3 gap-y-10 justify-items-center">
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-y-10 justify-items-center">
           {recipes2?.map((recipe: Recipe, index: number) => (
             <Link
               to={`/recipe/${recipe.id}`}
