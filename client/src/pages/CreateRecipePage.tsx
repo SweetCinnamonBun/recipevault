@@ -3,6 +3,8 @@ import { useDispatch } from "react-redux";
 import { setRecipe } from "@/store/recipeSlice";
 import { useNavigate } from "react-router";
 import { FaRegClock } from "react-icons/fa";
+import { useImages } from "@/lib/hooks/useImages";
+import { useRecipes } from "@/lib/hooks/useRecipes";
 
 const CreateRecipePage = () => {
   const [name, setName] = useState("");
@@ -12,6 +14,9 @@ const CreateRecipePage = () => {
   const [imageFile, setImageFile] = useState(null);
   const [timeUnit, setTimeUnit] = useState("min");
   const [servingSize, setServingSize] = useState("");
+
+  const { postImage } = useImages();
+  const { createRecipe } = useRecipes();
 
   const navigate = useNavigate();
 
@@ -28,21 +33,9 @@ const CreateRecipePage = () => {
       imageFormData.append("ImageFile", imageFile);
 
       try {
-        const imageResponse = await fetch(
-          "/api/images/upload",
-          {
-            method: "POST",
-            body: imageFormData,
-          }
-        );
+       const data = await postImage.mutateAsync(imageFormData);
+       imageUrl = data;
 
-        if (imageResponse.ok) {
-          const imageData = await imageResponse.json();
-          imageUrl = imageData.imageUrl; // Get the image URL
-        } else {
-          console.error("Failed to upload image.");
-          return;
-        }
       } catch (error) {
         console.error("An error occurred while uploading the image:", error);
         return;
@@ -50,37 +43,23 @@ const CreateRecipePage = () => {
     }
 
     const fullCookingTime = `${cookingTime} ${timeUnit}`;
-    // Step 2: Create the recipe with the image URL
     const recipeData = {
       name: name,
       cookingTime: fullCookingTime,
       description: description,
       difficulty: difficulty,
       imageUrl: imageUrl,
-      servingSize: servingSize, // Include the image URL in the recipe data
+      servingSize: servingSize, 
     };
 
     try {
-      const recipeResponse = await fetch("/api/recipes", {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json", // Set the content type to JSON
-        },
-        body: JSON.stringify(recipeData), // Send the recipe data as JSON
-      });
 
-      if (recipeResponse.ok) {
-        const data = await recipeResponse.json();
-        dispatch(setRecipe(data));
+        const response = await createRecipe.mutateAsync(recipeData)
+        dispatch(setRecipe(response));
         console.log("Recipe created successfully!");
-
         window.scrollTo({ top: 0, behavior: "smooth" });
-
         navigate("/add-categories");
-      } else {
-        console.error("Failed to create recipe.");
-      }
+      
     } catch (error) {
       console.error("An error occurred:", error);
     }

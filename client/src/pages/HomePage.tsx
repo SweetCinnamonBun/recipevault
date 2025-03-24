@@ -13,49 +13,22 @@ import RecipeStars from "@/components/RecipeStars";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { CgSpinner } from "react-icons/cg";
+import { useCategories } from "@/lib/hooks/useCategories";
 
 const HomePage = () => {
-  const [recipes, setRecipes] = useState([]);
   // const [error, setError] = useState<string>();
-  const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [appliedCategories, setAppliedCategories] = useState<string[]>([]);
   const [isFiltersModalOpen, setIsFiltersModalOpen] = useState(false);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
   const { ref, inView } = useInView();
   const [showSpinner, setShowSpinner] = useState(false);
   const [sortBy, setSortBy] = useState("id");
   const [isAscending, setIsAscending] = useState(false);
   const [isSortingOpen, setIsSortingOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchRecipes = async () => {
-      const categoryQuery = appliedCategories
-        .map((category: string) => `categories=${category}`)
-        .join("&");
-      try {
-        const response = await fetch(
-          `/api/recipes?${categoryQuery}&pageSize=${itemsPerPage}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch recipes");
-        }
-        const data = await response.json();
-        console.log(data.recipes);
-        setRecipes(data.recipes);
-      } catch (error) {
-        if (error instanceof Error) {
-          setError(error.message);
-        } else {
-          setError("An unknown error occurred");
-        }
-      }
-    };
+  const { categories, isPending } = useCategories();
 
-    fetchRecipes();
-  }, [appliedCategories, itemsPerPage]); // Trigger only when appliedCategories changes
-
-  const fetchRecipes2 = async (
+  const fetchRecipes = async (
     page: number,
     pageSize: number,
     categories: string[],
@@ -78,23 +51,6 @@ const HomePage = () => {
     return data;
   };
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("/api/categories");
-        if (!response.ok) {
-          throw new Error("Failed to fetch categories");
-        }
-        const categories = await response.json();
-        setCategories(categories);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
   const handleFiltersModalClose = () => {
     setIsFiltersModalOpen(false);
   };
@@ -108,7 +64,7 @@ const HomePage = () => {
   };
 
   const applyFilters = () => {
-    setAppliedCategories(selectedCategories); // Apply filters to trigger API call
+    setAppliedCategories(selectedCategories);
     setIsFiltersModalOpen(false);
   };
 
@@ -117,12 +73,13 @@ const HomePage = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    isLoading,
     status,
     error,
   } = useInfiniteQuery({
     queryKey: ["recipes", appliedCategories, sortBy, isAscending],
     queryFn: ({ pageParam = 1 }) =>
-      fetchRecipes2(pageParam, 5, appliedCategories, sortBy, isAscending),
+      fetchRecipes(pageParam, 5, appliedCategories, sortBy, isAscending),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
       const currentPage = allPages.length;
@@ -146,9 +103,7 @@ const HomePage = () => {
     }
   }, [inView, fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  console.log(data);
-  const recipes2 = data?.pages.flatMap((page) => page.recipes) || [];
-  console.log(recipes2);
+  const recipes = data?.pages.flatMap((page) => page.recipes) || [];
 
   const handleSortChange = (criteria: string) => {
     setSortBy(criteria);
@@ -158,10 +113,6 @@ const HomePage = () => {
   const handleSortOrderChange = () => {
     setIsAscending((prev) => !prev);
     setIsSortingOpen(false);
-  };
-
-  const handleSortByName = () => {
-    setIsAscending();
   };
 
   return (
@@ -214,42 +165,54 @@ const HomePage = () => {
       </section>
       <div className=" xl:px-10  2xl:px-36 [@media(min-width:1000px)]: [@media(min-width:1750px)]:px-48 [@media(min-width:1900px)]:px-56">
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-y-10 justify-items-center">
-          {recipes2?.map((recipe: Recipe, index: number) => (
-            <Link
-              to={`/recipe/${recipe.id}`}
-              key={index}
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            >
-              <div
-                key={recipe.id}
-                className=" w-[356px] h-[382px] bg-white rounded-xl cursor-pointer hover:border hover:border-orange-300 hover:shadow-lg [@media(min-width:1450px)]:w-[380px]"
-              >
-                <figure className="w-full h-60 ">
-                  <img
-                    src={recipe.imageUrl}
-                    alt={recipe.name}
-                    className="w-full h-full rounded-t-xl"
-                  />
-                </figure>
-                <div className="px-3">
-                  <h2 className="py-2 text-xl text-red-700">{recipe.name}</h2>
-                  <div className="flex gap-5">
-                    <div className="flex gap-1">
-                      <MdAccessTime className="w-7 h-7" />
-                      <p>{recipe.cookingTime}</p>
-                    </div>
-                    <div className="flex gap-1">
-                      <PiForkKnifeFill className="w-7 h-7" />
-                      <p>{recipe.servingSize || 5}</p>
+          {isLoading ? (
+            <p>Loading Recipes...</p>
+          ) : (
+            <>
+              {recipes?.map((recipe: Recipe, index: number) => (
+                <Link
+                  to={`/recipe/${recipe.id}`}
+                  key={index}
+                  onClick={() =>
+                    window.scrollTo({ top: 0, behavior: "smooth" })
+                  }
+                >
+                  <div
+                    key={recipe.id}
+                    className=" w-[356px] h-[382px] bg-white rounded-xl cursor-pointer hover:border hover:border-orange-300 hover:shadow-lg [@media(min-width:1450px)]:w-[380px]"
+                  >
+                    <figure className="w-full h-60 ">
+                      <img
+                        src={recipe.imageUrl}
+                        alt={recipe.name}
+                        className="w-full h-full rounded-t-xl"
+                      />
+                    </figure>
+                    <div className="px-3">
+                      <h2 className="py-2 text-xl text-red-700">
+                        {recipe.name}
+                      </h2>
+                      <div className="flex gap-5">
+                        <div className="flex gap-1">
+                          <MdAccessTime className="w-7 h-7" />
+                          <p>{recipe.cookingTime}</p>
+                        </div>
+                        <div className="flex gap-1">
+                          <PiForkKnifeFill className="w-7 h-7" />
+                          <p>{recipe.servingSize || 5}</p>
+                        </div>
+                      </div>
+                      <div className="flex pt-2 ">
+                        <RecipeStars
+                          averageRating={recipe.averageRating || 0}
+                        />
+                      </div>
                     </div>
                   </div>
-                  <div className="flex pt-2 ">
-                    <RecipeStars averageRating={recipe.averageRating || 0} />
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
+                </Link>
+              ))}
+            </>
+          )}
         </div>
         <div ref={ref} className="flex justify-center my-4">
           {showSpinner || isFetchingNextPage ? (
@@ -262,19 +225,25 @@ const HomePage = () => {
         <Modal onClose={handleFiltersModalClose}>
           <h1 className="mb-4 ml-5 text-2xl font-bold">Filter by Categories</h1>
           <div className="grid grid-cols-4 px-6 my-16 gap-y-4">
-            {categories.map((category: Category) => (
-              <div key={category.id} className="flex items-center text-lg">
-                <input
-                  type="checkbox"
-                  id={category.name}
-                  value={category.name}
-                  checked={selectedCategories.includes(category.name)}
-                  onChange={() => handleCategoryChange(category.name)}
-                  className="w-5 h-5 mr-2"
-                />
-                <label htmlFor={category.name}>{category.name}</label>
-              </div>
-            ))}
+            {!categories || isPending ? (
+              <p>Loading...</p>
+            ) : (
+              <>
+                {categories.map((category: Category) => (
+                  <div key={category.id} className="flex items-center text-lg">
+                    <input
+                      type="checkbox"
+                      id={category.name}
+                      value={category.name}
+                      checked={selectedCategories.includes(category.name)}
+                      onChange={() => handleCategoryChange(category.name)}
+                      className="w-5 h-5 mr-2"
+                    />
+                    <label htmlFor={category.name}>{category.name}</label>
+                  </div>
+                ))}
+              </>
+            )}
           </div>
           <div className="flex justify-end mt-4">
             <button

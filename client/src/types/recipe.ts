@@ -14,6 +14,16 @@ export type Recipe = {
   instructions: Instruction[];
 };
 
+export type RecipeCreate = {
+  name: string;
+  description: string;
+  cookingTime: string;
+  difficulty: string;
+  servingSize: string;
+  imageUrl: string;
+};
+
+
 export type Ingredient = {
   id?: number;
   name: string;
