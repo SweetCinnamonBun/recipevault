@@ -93,7 +93,7 @@ const Navbar = () => {
       <div className="space-x-4">
         {user ? (
           <Link
-            className="px-4 py-2 border border-blue-600 rounded-full text-md"
+            className="px-4 py-2 border border-black rounded-full text-md"
             to="/register"
             onClick={logout}
           >
@@ -102,14 +102,14 @@ const Navbar = () => {
         ) : (
           <div className="space-x-4">
             <Link
-              className="px-4 py-2 border border-blue-600 rounded-full text-md"
+              className="px-4 py-2 border border-black rounded-full text-md"
               to="/register"
             >
               Sign Up
             </Link>
             <Link
               to="/login"
-              className="px-4 py-2 text-white bg-blue-600 rounded-full text-md"
+              className="px-4 py-2 text-white bg-black rounded-full text-md"
             >
               login
             </Link>

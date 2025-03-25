@@ -123,7 +123,7 @@ const HomePage = () => {
         </div>
         <div className="flex items-center space-x-4">
           <button
-            className="flex items-center px-5 py-2 space-x-1 bg-[#B4EBE6] rounded-lg"
+            className="flex items-center px-5 py-2 space-x-1 bg-[#DE3163] rounded-lg text-white"
             onClick={() => setIsFiltersModalOpen(true)}
           >
             <CiFilter className="w-5 h-5" />
@@ -131,7 +131,7 @@ const HomePage = () => {
           </button>
           <div className="relative">
             <button
-              className="flex items-center px-5 py-2 space-x-1 bg-[#B4EBE6] rounded-lg"
+              className="flex items-center px-5 py-2 space-x-1 bg-[#DE3163] rounded-lg text-white"
               onClick={() => setIsSortingOpen((prev) => !prev)}
             >
               <FaSort className="w-5 h-5" />
