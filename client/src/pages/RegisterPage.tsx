@@ -131,7 +131,7 @@ const RegisterPage = () => {
                 Don’t have an account?
               </p>
               <NavLink
-                to="/register"
+                to="/login"
                 className="text-sm font-normal text-blue-600 underline"
               >
                 Login

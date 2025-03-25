@@ -15,26 +15,27 @@ import { useRecipes } from "@/lib/hooks/useRecipes";
 import { useRatings } from "@/lib/hooks/useRatings";
 import { ClipLoader } from "react-spinners";
 import { useComments } from "@/lib/hooks/useComments";
+import RecipePageStars from "@/components/RecipePageStars";
 
 const RecipePage = () => {
   const { id } = useParams();
   const [isFavorite, setIsFavorite] = useState(false);
   const [newComment, setNewComment] = useState({
-    content: ""
+    content: "",
   });
   const [isRatingModalOpen, setIsRatingModalOpen] = useState<boolean>(false);
 
-  const user = useSelector((state) => state.auth.user); 
+  const user = useSelector((state) => state.auth.user);
 
   const { recipe, isLoadingRecipe } = useRecipes(id);
-  const { recipeRatings, isLoadingRatings } = useRatings(id);
+  const { recipeRatings, isLoadingRatings, addRating } = useRatings(id);
+  
 
-  const { comments, addComment } = useComments(id);
-
+  const { comments, addComment, deleteComment } = useComments(id);
 
   useEffect(() => {
     const checkIfFavorite = async () => {
-      if (!user) return; 
+      if (!user) return;
 
       try {
         const response = await fetch("/api/favorites/my-favorites", {
@@ -42,7 +43,7 @@ const RecipePage = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: "include", 
+          credentials: "include",
         });
 
         if (!response.ok) {
@@ -64,16 +65,16 @@ const RecipePage = () => {
 
   const handleFavoriteToggle = async () => {
     const url = `/api/favorites/${id}`;
-    const method = isFavorite ? "DELETE" : "POST"; 
+    const method = isFavorite ? "DELETE" : "POST";
 
     try {
       const response = await fetch(url, {
         method: method,
-        credentials: "include", 
+        credentials: "include",
       });
 
       if (response.ok) {
-        setIsFavorite((prev) => !prev); 
+        setIsFavorite((prev) => !prev);
         toast(
           isFavorite
             ? "Recipe removed from favorites"
@@ -88,17 +89,13 @@ const RecipePage = () => {
     }
   };
 
-
-  const handleSubmitComment = async (e: { preventDefault: () => void; }) => {
+  const handleSubmitComment = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    if (!newComment.content.trim()) return; 
+    if (!newComment.content.trim()) return;
 
     try {
-      
       await addComment.mutateAsync(newComment);
-      setNewComment({content: ""});
-       
-      
+      setNewComment({ content: "" });
     } catch (error) {
       console.error("Error submitting comment:", error);
     }
@@ -106,23 +103,13 @@ const RecipePage = () => {
 
   const handleDeleteComment = async (commentId: number) => {
     try {
-      const response = await fetch(`/api/comments/comments/${commentId}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
+            
+      await deleteComment.mutateAsync(commentId);
 
-      if (response.ok) {
-        setComments(comments.filter((comment) => comment.id !== commentId));
-        toast("Comment deleted!");
-      } else {
-        console.error("Failed to delete comment");
-      }
     } catch (err) {
       console.error("Error deleting comment:", err);
     }
   };
-
-
 
   const handleRatingSubmit = async (newRating: number) => {
     if (!user) {
@@ -131,33 +118,21 @@ const RecipePage = () => {
     }
 
     try {
-      const response = await fetch(`/api/ratings`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          value: newRating,
-          recipeId: id,
-        }),
-      });
-
-      if (response.ok) {
-        // setCurrentRating(newRating);
-        toast("Rating submitted successfully!");
-        setIsRatingModalOpen(false); // Close the modal after submitting the rating
-      } else {
-        const errorData = await response.json();
-        alert(errorData.message || "Failed to submit rating.");
+      
+      const ratingObj = {
+        value: newRating,
+        recipeId: id
       }
+
+      await addRating.mutateAsync(ratingObj)
+      setIsRatingModalOpen(false);
+
     } catch (error) {
       console.error("Error submitting rating:", error);
+      setIsRatingModalOpen(false);
     }
   };
 
-  console.log("Current User:", user);
-  console.log("Current User:", user?.userName);
 
   if (isLoadingRecipe) {
     return (
@@ -169,7 +144,6 @@ const RecipePage = () => {
 
   return (
     <div className="flex flex-col items-center">
-    
       <h1 className="p-10 my-5 text-2xl text-center md:text-3xl">
         {recipe?.name}
       </h1>
@@ -216,9 +190,7 @@ const RecipePage = () => {
         {isLoadingRatings ? (
           <p>loading ratings...</p>
         ) : (
-          <StarRating
-            initialRating={recipeRatings}
-          />
+          <RecipePageStars averageRating={recipeRatings} />
         )}
         <div className="mt-3">
           {recipe?.ratingCount === 0 ? (
@@ -275,13 +247,13 @@ const RecipePage = () => {
           </ul>
         </div>
         <div className="p-6 rounded-lg bg-[#F8FAE5] shadow-lg min-w-0">
-    <h2 className="my-2 text-2xl font-bold">Instructions</h2>
-    <ul className="p-2 space-y-4 list-disc">
-      {recipe?.instructions.map((instruction) => (
-        <li className="text-xl break-words">{instruction.text}</li>
-      ))}
-    </ul>
-  </div>
+          <h2 className="my-2 text-2xl font-bold">Instructions</h2>
+          <ul className="p-2 space-y-4 list-disc">
+            {recipe?.instructions.map((instruction) => (
+              <li className="text-xl break-words">{instruction.text}</li>
+            ))}
+          </ul>
+        </div>
       </section>
 
       <div className="w-full 2xl:px-56">
@@ -295,18 +267,25 @@ const RecipePage = () => {
                 className="w-full p-2 border border-gray-300 rounded-lg"
                 placeholder="Write a comment..."
                 value={newComment.content}
-                onChange={(e) => setNewComment((prev) => {
-                  return {
-                    ...prev,
-                    content: e.target.value
-                  }
-                })}
+                onChange={(e) =>
+                  setNewComment((prev) => {
+                    return {
+                      ...prev,
+                      content: e.target.value,
+                    };
+                  })
+                }
               />
               <button
                 type="submit"
-                className="px-4 py-2 mt-2 text-white bg-black rounded-lg"
+                className={`px-4 py-2 mt-2 text-white rounded-lg ${
+                  addComment.isPending
+                    ? "bg-gray-500 cursor-not-allowed"
+                    : "bg-black"
+                }`}
+                disabled={addComment.isPending}
               >
-                Submit
+                {addComment.isPending ? "Submitting..." : "Submit"}
               </button>
             </form>
           )}

@@ -37,8 +37,26 @@ export const useComments = (recipeId?: string) => {
         }
     })
 
+    const deleteComment = useMutation({
+        mutationFn: async (commentId:number) => {
+            await agent.delete(`/api/comments/comments/${commentId}`, {
+                withCredentials: true,
+            })
+        },
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({
+                queryKey: ["recipe-comments"]
+            })
+            toast.success("Comment deleted!");
+        },
+        onError: async () => {
+            toast.error("Comment deletion failed");
+        }
+    })
+
     return {
         comments,
-        addComment
+        addComment,
+        deleteComment
     }
 }
