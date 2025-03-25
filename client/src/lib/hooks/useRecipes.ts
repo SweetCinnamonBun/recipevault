@@ -1,11 +1,19 @@
 import { RecipeCreate } from "@/types/Recipe"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import agent from "../api/agent"
 import { toast } from "react-toastify";
 
-export const useRecipes = () => {
+export const useRecipes = (id?: string) => {
 
     const queryClient = useQueryClient();
+
+    const { data: recipe, isLoading:isLoadingRecipe } = useQuery({
+        queryKey: ["recipe", id],
+        queryFn: async () => {
+            const response = await agent.get(`/api/recipes/${id}`)
+            return response.data;
+        }
+    })
 
     const createRecipe = useMutation({
         mutationFn: async (recipe: RecipeCreate) => {
@@ -41,6 +49,8 @@ export const useRecipes = () => {
 
     return {
         createRecipe,
-        deleteRecipe
+        deleteRecipe,
+        recipe,
+        isLoadingRecipe
     }
 }

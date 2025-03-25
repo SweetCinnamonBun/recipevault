@@ -3,7 +3,7 @@ import { FaStar } from 'react-icons/fa';
 
 interface StarRatingProps {
     initialRating: number | null; // Initial rating, passed from the parent component
-    onRatingChange: (rating: number) => void; // Callback to update rating in the parent component
+    onRatingChange?: (rating: number) => void; // Callback to update rating in the parent component
 }
 
 const StarRating: React.FC<StarRatingProps> = ({ initialRating, onRatingChange }) => {

@@ -1,4 +1,4 @@
-import { Recipe } from "@/types/Recipe";
+import { Comment, Recipe } from "@/types/Recipe";
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import { MdAccessTime } from "react-icons/md";
@@ -11,40 +11,30 @@ import StarRating from "@/components/StarRating";
 import RatingModal from "@/components/RatingModal";
 import { toast } from "react-toastify";
 import { RiAccountCircleLine } from "react-icons/ri";
+import { useRecipes } from "@/lib/hooks/useRecipes";
+import { useRatings } from "@/lib/hooks/useRatings";
+import { ClipLoader } from "react-spinners";
+import { useComments } from "@/lib/hooks/useComments";
 
 const RecipePage = () => {
   const { id } = useParams();
-  const [recipe, setRecipe] = useState<Recipe | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState("");
-  const [currentRating, setCurrentRating] = useState<number | null>(null);
-  const [initialRating, setInitialRating] = useState<number | null>(null);
+  const [newComment, setNewComment] = useState({
+    content: ""
+  });
   const [isRatingModalOpen, setIsRatingModalOpen] = useState<boolean>(false);
 
-  const user = useSelector((state) => state.auth.user);
+  const user = useSelector((state) => state.auth.user); 
 
-  useEffect(() => {
-    const fetchRecipe = async () => {
-      try {
-        const response = await fetch(`/api/recipes/${id}`);
-        const data = await response.json();
-        console.log(data);
-        setRecipe(data);
+  const { recipe, isLoadingRecipe } = useRecipes(id);
+  const { recipeRatings, isLoadingRatings } = useRatings(id);
 
-        const ratingResponse = await fetch(`/api/ratings/recipe/${id}/average`);
-        const ratingData = await ratingResponse.json();
-        setInitialRating(ratingData.rating); // Set the initial rating
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchRecipe();
-  }, [id]);
+  const { comments, addComment } = useComments(id);
+
 
   useEffect(() => {
     const checkIfFavorite = async () => {
-      if (!user) return; // Exit early if no user
+      if (!user) return; 
 
       try {
         const response = await fetch("/api/favorites/my-favorites", {
@@ -52,7 +42,7 @@ const RecipePage = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: "include", // Include credentials (cookies or session)
+          credentials: "include", 
         });
 
         if (!response.ok) {
@@ -74,16 +64,16 @@ const RecipePage = () => {
 
   const handleFavoriteToggle = async () => {
     const url = `/api/favorites/${id}`;
-    const method = isFavorite ? "DELETE" : "POST"; // Toggle between POST (add) and DELETE (remove)
+    const method = isFavorite ? "DELETE" : "POST"; 
 
     try {
       const response = await fetch(url, {
         method: method,
-        credentials: "include", // Include credentials (cookies) for authentication
+        credentials: "include", 
       });
 
       if (response.ok) {
-        setIsFavorite((prev) => !prev); // Toggle the state
+        setIsFavorite((prev) => !prev); 
         toast(
           isFavorite
             ? "Recipe removed from favorites"
@@ -98,41 +88,17 @@ const RecipePage = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await fetch(`/api/comments/${id}/comments`);
-        const data = await response.json();
-        setComments(data);
-      } catch (err) {
-        console.log("Error fetching comments:", err);
-      }
-    };
-    fetchComments();
-  }, [id]);
 
-  const handleSubmitComment = async (e) => {
+  const handleSubmitComment = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    if (!newComment.trim()) return; // Prevent empty comments
+    if (!newComment.content.trim()) return; 
 
     try {
-      const response = await fetch(`/api/comments/${id}/comments`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          content: newComment,
-        }),
-      });
-
-      if (response.ok) {
-        const newCommentData = await response.json();
-        setComments((prevComments) => [newCommentData, ...prevComments]); // Use functional update
-        setNewComment("");
-        toast("Comment submitted!");
-      }
+      
+      await addComment.mutateAsync(newComment);
+      setNewComment({content: ""});
+       
+      
     } catch (error) {
       console.error("Error submitting comment:", error);
     }
@@ -156,36 +122,7 @@ const RecipePage = () => {
     }
   };
 
-  // const handleRatingSubmit = async (newRating: number) => {
-  //   if (!user) {
-  //     alert("You must be logged in to rate this recipe.");
-  //     return;
-  //   }
 
-  //   try {
-  //     const response = await fetch(`http://localhost:5028/api/ratings`, {
-  //       method: "POST",
-  //       credentials: "include",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         value: newRating,
-  //         recipeId: id,
-  //       }),
-  //     });
-
-  //     if (response.ok) {
-  //       setCurrentRating(newRating); // Update UI with new rating
-  //       alert("Rating submitted successfully!");
-  //     } else {
-  //       const errorData = await response.json();
-  //       alert(errorData.message || "Failed to submit rating.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error submitting rating:", error);
-  //   }
-  // };
 
   const handleRatingSubmit = async (newRating: number) => {
     if (!user) {
@@ -221,6 +158,14 @@ const RecipePage = () => {
 
   console.log("Current User:", user);
   console.log("Current User:", user?.userName);
+
+  if (isLoadingRecipe) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <ClipLoader color="#0a0301" size={50} />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center">
@@ -268,10 +213,13 @@ const RecipePage = () => {
         ))}
       </div>
       <div className="flex flex-col items-center mt-20">
-        <StarRating
-          initialRating={initialRating}
-          onRatingChange={handleRatingSubmit}
-        />
+        {isLoadingRatings ? (
+          <p>loading ratings...</p>
+        ) : (
+          <StarRating
+            initialRating={recipeRatings}
+          />
+        )}
         <div className="mt-3">
           {recipe?.ratingCount === 0 ? (
             <span>No ratings for this recipe</span>
@@ -346,8 +294,13 @@ const RecipePage = () => {
               <textarea
                 className="w-full p-2 border border-gray-300 rounded-lg"
                 placeholder="Write a comment..."
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
+                value={newComment.content}
+                onChange={(e) => setNewComment((prev) => {
+                  return {
+                    ...prev,
+                    content: e.target.value
+                  }
+                })}
               />
               <button
                 type="submit"
@@ -360,12 +313,12 @@ const RecipePage = () => {
 
           {/* Comments List */}
           <div className="mt-4 ">
-            {comments.length === 0 ? (
+            {comments?.length === 0 ? (
               <p className="pt-5 my-4 text-lg font-bold">
                 There are no comments for this recipe.
               </p>
             ) : (
-              comments.map((comment) => (
+              comments?.map((comment) => (
                 <div
                   key={comment.id}
                   className="pt-4 my-2 space-y-2 border-b border-gray-300 pb-7"
