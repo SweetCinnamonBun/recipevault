@@ -1,28 +1,21 @@
 import { Category } from "@/types/Recipe";
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { RootState } from "@/store/store";
 import { addCategories } from "@/store/recipeSlice";
+import { useCategories } from "@/lib/hooks/useCategories";
 
 
 const SelectCategoriesPage = () => {
-  const [categories, setCategories] = useState([]);
+  
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const navigate = useNavigate();
   const recipeId = useSelector((state: RootState) => state.recipe.id);
 
+  const { categories, addCategoriesToRecipe } = useCategories();
+
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const response = await fetch("/api/categories");
-      const data = await response.json();
-      setCategories(data);
-    };
-
-    fetchCategories();
-  }, []);
 
   const handleCategorySelection = (category: Category) => {
     if (!selectedCategories.some((c) => c.id === category.id)) {
@@ -30,7 +23,7 @@ const SelectCategoriesPage = () => {
     }
   }
 
-  const handleCategoryRemoval = (categoryId: number) => {
+  const handleCategoryRemoval = (categoryId: number | undefined) => {
     setSelectedCategories(selectedCategories.filter((c) => c.id !== categoryId));
   };
 
@@ -45,22 +38,9 @@ const SelectCategoriesPage = () => {
     };
   
     try {
-      // Step 1: POST request to add categories
-      const response = await fetch("/api/categories/add-to-recipe", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-  
-      if (!response.ok) {
-        console.error("Failed to add categories.");
-        return;
-      }
-  
-      console.log("Categories added successfully!");
-  
+     
+      
+      await addCategoriesToRecipe.mutateAsync(requestBody)
       const categoriesResponse = await fetch(`/api/categories/recipes-categories/${recipeId}`);
       
       if (!categoriesResponse.ok) {

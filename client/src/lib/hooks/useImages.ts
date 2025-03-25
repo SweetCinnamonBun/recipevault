@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query"
 import agent from "../api/agent"
+import { toast } from "react-toastify"
 
 export const useImages = () => {
     const postImage = useMutation({
@@ -15,9 +16,21 @@ export const useImages = () => {
         }
     })
 
+    const deleteImage = useMutation({
+        mutationFn: async (fileName:string) => {
+            await agent.delete(`/api/images/delete?fileName=${fileName}`)
+        },
+        onSuccess: async () => {
+            toast("Image deletion successful");
+        },
+        onError: async (error) => {
+            console.error("Image deletion failed...", error);
+        }
+    })
 
 
     return {
         postImage,
+        deleteImage
     }
 }

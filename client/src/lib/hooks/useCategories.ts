@@ -1,7 +1,12 @@
 import { Category } from "@/types/Recipe";
-import { useQuery } from "@tanstack/react-query"
-import axios from "axios";
+import { useMutation, useQuery } from "@tanstack/react-query"
 import agent from "../api/agent";
+
+
+type CategoryAddition = {
+    recipeId: number,
+    categoryIds: (number | undefined)[];
+}
 
 export const useCategories = () => {
     const { data: categories, isPending } = useQuery({
@@ -12,8 +17,19 @@ export const useCategories = () => {
         }
     })
 
+    const addCategoriesToRecipe = useMutation({
+        mutationFn: async (requestBody: CategoryAddition) => {
+             await agent.post("/api/categories/add-to-recipe", requestBody)
+            
+        },
+        onError: async () => {
+            console.error("Problem occurred when adding categories to recipe");
+        }
+    })
+
     return {
         categories,
-        isPending
+        isPending,
+        addCategoriesToRecipe
     }
 }
