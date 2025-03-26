@@ -28,6 +28,7 @@ namespace API.Mappings
             CreateMap<AppUser, UserDto>().ReverseMap();
 
             CreateMap<Rating, RatingDto>().ReverseMap();
+            CreateMap<Rating, RecipeRatingDto>().ReverseMap();
 
         }
     }

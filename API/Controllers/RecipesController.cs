@@ -91,7 +91,8 @@ namespace API.Controllers
                 recipe.ServingSize,
                 recipe.CreatedAt,
                 recipe.ImageUrl,
-                AverageRating = recipe.Ratings.Any() ? recipe.Ratings.Average(r => r.Value) : 0 // Calculate the average rating
+                AverageRating = recipe.Ratings.Any() ? recipe.Ratings.Average(r => r.Value) : 0,
+                Categories = recipe.Categories.Select(c => new { c.Name }).ToList()
             })
         .ToListAsync();
 
@@ -112,6 +113,7 @@ namespace API.Controllers
             .Include(x => x.Ingredients)
             .Include(x => x.Instructions)
             .Include(x => x.Ratings)
+            .Include(x => x.User)
             .FirstOrDefaultAsync((x) => x.Id == id);
 
             if (recipe == null) return NotFound();

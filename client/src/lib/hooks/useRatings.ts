@@ -16,7 +16,9 @@ export const useRatings = (recipeId?: string) => {
         queryFn: async () => {
             const response = await agent.get(`/api/ratings/recipe/${recipeId}/average`);
             return response.data.rating;
-        }
+        },
+        staleTime: 20_000,
+        refetchOnWindowFocus: false
     })
 
     const addRating = useMutation({

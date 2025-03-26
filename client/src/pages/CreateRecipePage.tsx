@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import { FaRegClock } from "react-icons/fa";
 import { useImages } from "@/lib/hooks/useImages";
 import { useRecipes } from "@/lib/hooks/useRecipes";
+import { ClipLoader } from "react-spinners";
 
 const CreateRecipePage = () => {
   const [name, setName] = useState("");
@@ -22,7 +23,7 @@ const CreateRecipePage = () => {
 
   const dispatch = useDispatch();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     let imageUrl = null;
@@ -181,9 +182,14 @@ const CreateRecipePage = () => {
 
           <button
             type="submit"
-            className="w-full p-2 text-white transition bg-green-500 rounded-lg hover:bg-blue-600"
+            className={`w-full p-2 text-white transition  rounded-lg hover:bg-blue-600 ${ createRecipe.isPending ? "bg-green-100" : "bg-green-500"} `}
+            disabled={createRecipe.isPending}
           >
-            Next
+            {createRecipe.isPending ? (
+              <ClipLoader color="#fff" size={20}/>
+            ) : (
+            "Next"
+            )}
           </button>
         </form>
       </div>

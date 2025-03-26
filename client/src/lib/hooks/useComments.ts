@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import agent from "../api/agent"
 import { toast } from "react-toastify"
+import { RecipeComment } from "@/types/Recipe"
 
 interface addComment {
     content: string
@@ -14,9 +15,12 @@ export const useComments = (recipeId?: string) => {
     const { data: comments } = useQuery({
         queryKey: ["recipe-comments", recipeId],
         queryFn: async () => {
-            const response = await agent.get<Comment[]>(`/api/comments/${recipeId}/comments`)
+            const response = await agent.get<RecipeComment[]>(`/api/comments/${recipeId}/comments`)
             return response.data;
-        } 
+        },
+        staleTime: 20_000,
+        refetchOnWindowFocus: false
+
     })
 
     const addComment = useMutation({

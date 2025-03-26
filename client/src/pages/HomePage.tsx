@@ -1,9 +1,7 @@
-import { Button } from "@/components/ui/button";
 import { Category, Recipe } from "@/types/Recipe";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { MdAccessTime } from "react-icons/md";
 import { PiForkKnifeFill } from "react-icons/pi";
-import { FaStar } from "react-icons/fa";
 import { Link } from "react-router";
 import SearchBox from "@/components/SearchBox";
 import { CiFilter } from "react-icons/ci";
@@ -73,9 +71,7 @@ const HomePage = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    isLoading,
-    status,
-    error,
+    isLoading
   } = useInfiniteQuery({
     queryKey: ["recipes", appliedCategories, sortBy, isAscending],
     queryFn: ({ pageParam = 1 }) =>
@@ -117,7 +113,7 @@ const HomePage = () => {
 
   return (
     <div>
-      <section className="flex items-center justify-between px-10 mt-10 mb-16 2xl:px-36 [@media(min-width:1750px)]:px-48 [@media(min-width:1900px)]:px-56">
+      <section className="flex items-center justify-between px-16 mt-10 mb-16 2xl:px-40 [@media(min-width:1750px)]:px-52 [@media(min-width:1900px)]:px-64">
         <div className="w-full">
           <SearchBox />
         </div>
@@ -179,7 +175,7 @@ const HomePage = () => {
                 >
                   <div
                     key={recipe.id}
-                    className=" w-[356px] h-[382px] bg-white rounded-xl cursor-pointer hover:border hover:border-orange-300 hover:shadow-lg [@media(min-width:1450px)]:w-[380px]"
+                    className=" w-[356px] h-[400px] bg-white rounded-xl cursor-pointer hover:border hover:border-orange-300 hover:shadow-lg [@media(min-width:1450px)]:w-[380px]"
                   >
                     <figure className="w-full h-60 ">
                       <img
@@ -192,7 +188,12 @@ const HomePage = () => {
                       <h2 className="py-2 text-xl text-red-700">
                         {recipe.name}
                       </h2>
-                      <div className="flex gap-5">
+                      <div className="flex items-center gap-2">
+                        {recipe.categories?.slice(0, 2).map((category) => (
+                          <span className="px-3 py-1 bg-[#00FF9C] rounded-lg">{category.name}</span>
+                        ))}
+                      </div>
+                      <div className="flex gap-5 mt-2">
                         <div className="flex gap-1">
                           <MdAccessTime className="w-7 h-7" />
                           <p>{recipe.cookingTime}</p>

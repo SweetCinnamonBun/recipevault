@@ -1,21 +1,19 @@
-import { Comment, Recipe } from "@/types/Recipe";
-import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Category, Ingredient, Instruction, Recipe, RecipeComment } from "@/types/Recipe";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router";
 import { MdAccessTime } from "react-icons/md";
 import { PiForkKnifeFill, PiShootingStarLight } from "react-icons/pi";
-import { FaStar, FaUtensils } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import RatingComponent from "@/components/RatingComponent";
-import StarRating from "@/components/StarRating";
 import RatingModal from "@/components/RatingModal";
 import { toast } from "react-toastify";
-import { RiAccountCircleLine } from "react-icons/ri";
+
 import { useRecipes } from "@/lib/hooks/useRecipes";
 import { useRatings } from "@/lib/hooks/useRatings";
 import { ClipLoader } from "react-spinners";
 import { useComments } from "@/lib/hooks/useComments";
 import RecipePageStars from "@/components/RecipePageStars";
+import { RootState } from "@/store/store";
 
 const RecipePage = () => {
   const { id } = useParams();
@@ -25,7 +23,7 @@ const RecipePage = () => {
   });
   const [isRatingModalOpen, setIsRatingModalOpen] = useState<boolean>(false);
 
-  const user = useSelector((state) => state.auth.user);
+  const user = useSelector((state: RootState) => state.auth.user);
 
   const { recipe, isLoadingRecipe } = useRecipes(id);
   const { recipeRatings, isLoadingRatings, addRating } = useRatings(id);
@@ -179,8 +177,11 @@ const RecipePage = () => {
           className="w-full h-[380px] md:h-[520px] rounded-xl"
         />
       </figure>
+      <div className="flex mt-10">
+        <span className="text-lg"><em>Recipe by:</em> <strong>{recipe?.user.profileName}</strong></span>
+      </div>
       <div className="flex flex-wrap justify-center mt-12 gap-y-5">
-        {recipe?.categories.map((category, index) => (
+        {recipe?.categories.map((category: Category, index:number) => (
           <span key={index} className="px-4 py-2 ml-4 bg-[#00FF9C] rounded-lg">
             {category.name}
           </span>
@@ -237,7 +238,7 @@ const RecipePage = () => {
         <div className="p-6  rounded-lg bg-[#F8FAE5] shadow-lg">
           <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
           <ul className="p-2 space-y-4 list-disc">
-            {recipe?.ingredients.map((ingredient) => (
+            {recipe?.ingredients.map((ingredient: Ingredient) => (
               <li className="space-x-2 text-xl">
                 <span>{ingredient.quantity}</span>
                 <span>{ingredient.unit}</span>
@@ -249,7 +250,7 @@ const RecipePage = () => {
         <div className="p-6 rounded-lg bg-[#F8FAE5] shadow-lg min-w-0">
           <h2 className="my-2 text-2xl font-bold">Instructions</h2>
           <ul className="p-2 space-y-4 list-disc">
-            {recipe?.instructions.map((instruction) => (
+            {recipe?.instructions.map((instruction: Instruction) => (
               <li className="text-xl break-words">{instruction.text}</li>
             ))}
           </ul>
@@ -297,7 +298,7 @@ const RecipePage = () => {
                 There are no comments for this recipe.
               </p>
             ) : (
-              comments?.map((comment) => (
+              comments?.map((comment:RecipeComment) => (
                 <div
                   key={comment.id}
                   className="pt-4 my-2 space-y-2 border-b border-gray-300 pb-7"

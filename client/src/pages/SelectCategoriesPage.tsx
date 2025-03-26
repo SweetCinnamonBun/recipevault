@@ -81,7 +81,7 @@ const SelectCategoriesPage = () => {
             ))}
           </div>
           <div className="flex justify-end">
-            <button onClick={handleSubmit} className="px-4 py-2 mr-5 text-lg bg-green-500 rounded-lg">Confirm</button>
+            <button onClick={handleSubmit} disabled={addCategoriesToRecipe.isPending} className={`px-4 py-2 mr-5 text-lg rounded-lg ${addCategoriesToRecipe.isPending ? "bg-green-100" : "bg-green-500"}`}>Confirm</button>
           </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router";
 import { FaHeart, FaPlus, FaStar } from "react-icons/fa";
 import { Category, Recipe } from "@/types/Recipe";
 import Modal from "@/components/Modal";
+import { useRecipes } from "@/lib/hooks/useRecipes";
 
 const UpdateRecipePage = () => {
   type AddIngredient = {
@@ -38,6 +39,7 @@ const UpdateRecipePage = () => {
   const navigate = useNavigate();
 
   const { id } = useParams();
+  const { updateRecipe } = useRecipes(id);
 
   const handleCategoryModalOpen = () => {
     setIsCategoryModalOpen(true);
@@ -155,21 +157,23 @@ const UpdateRecipePage = () => {
 
     // Step 4: Update the recipe
     try {
-      const response = await fetch(`/api/recipes/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
-      });
+      // const response = await fetch(`/api/recipes/${id}`, {
+      //   method: "PUT",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(requestData),
+      // });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Failed to update recipe:", errorData);
-        return;
-      }
+      // if (!response.ok) {
+      //   const errorData = await response.json();
+      //   console.error("Failed to update recipe:", errorData);
+      //   return;
+      // }
 
-      console.log("Recipe updated successfully");
+      // console.log("Recipe updated successfully");
+
+      await updateRecipe.mutateAsync(requestData);
       
       navigate(`/recipe/${id}`,  { replace: true });
     } catch (error) {
@@ -508,7 +512,7 @@ const UpdateRecipePage = () => {
             {categories.map((c, i) => (
               <span
                 key={i}
-                className="px-4 py-2 ml-4 bg-[#00FF9C] rounded-lg"
+                className="px-4 py-2 ml-4 bg-[#00FF9C] rounded-lg cursor-pointer"
                 onClick={() => handleAddCategory(c)}
               >
                 {c.name}

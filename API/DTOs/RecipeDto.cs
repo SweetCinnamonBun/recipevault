@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.DTOs.Account;
 using API.DTOs.Category;
 using API.DTOs.Ingredients;
 using API.DTOs.Instructions;
 using API.DTOs.Ratings;
+using Core.Entities;
 
 namespace API.DTOs
 {
@@ -21,10 +23,12 @@ namespace API.DTOs
         public required string ImageUrl { get; set; }
         public double? AverageRating { get; set; }
         public int? RatingCount { get; set; }
-        public ICollection<RatingDto> Ratings { get; set; } = [];
+        public ICollection<RecipeRatingDto> Ratings { get; set; } = [];
         public ICollection<CategoryDto> Categories { get; set; } = [];
         public ICollection<InstructionDto> Instructions { get; set; } = [];
         public ICollection<IngredientDto> Ingredients { get; set; } = [];
+
+        public UserDto? User { get; set; }
         public string? UserId { get; set; }
     }
 }

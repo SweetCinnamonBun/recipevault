@@ -1,4 +1,4 @@
-import { RecipeCreate } from "@/types/Recipe"
+import { RecipeCreate, RecipeUpdate } from "@/types/Recipe"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import agent from "../api/agent"
 import { toast } from "react-toastify";
@@ -12,7 +12,9 @@ export const useRecipes = (id?: string) => {
         queryFn: async () => {
             const response = await agent.get(`/api/recipes/${id}`)
             return response.data;
-        }
+        },
+        staleTime: 20_000,
+        refetchOnWindowFocus: false
     })
 
     const createRecipe = useMutation({
@@ -27,6 +29,24 @@ export const useRecipes = (id?: string) => {
         },
         onError: async () => {
             console.error("Failed to create recipe")
+        }   
+    })
+
+    const updateRecipe = useMutation({
+        mutationFn: async (recipe: RecipeUpdate) => {
+            await agent.put(`/api/recipes/${id}`, recipe, {
+                withCredentials: true
+            })
+        },
+        onSuccess: async () => {
+           await queryClient.invalidateQueries({
+            queryKey: ["recipe", id]
+           }) 
+           toast.success("Recipe updated!")
+        },
+        onError: async () => {
+            console.error("Failed to create recipe")
+            toast.error("Failed to update recipe...")
         }   
     })
 
@@ -51,6 +71,7 @@ export const useRecipes = (id?: string) => {
         createRecipe,
         deleteRecipe,
         recipe,
-        isLoadingRecipe
+        isLoadingRecipe,
+        updateRecipe
     }
 }

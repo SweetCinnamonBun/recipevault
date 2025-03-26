@@ -60,11 +60,22 @@ export type User = {
   userName: string;
 }
 
-export type Comment = {
-  id?: number;
+export type RecipeComment = {
+  id: number;
   content: string;
   createdAt: string;
   userId: string;
   user: User;
 }
 
+export type RecipeUpdate = {
+  name: string;
+  description: string;
+  cookingTime: string;
+  difficulty: string;
+  servingSize: number;
+  imageUrl: string;
+  categories: []
+  instructions: []
+  ingredients: []
+};

@@ -10,7 +10,8 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: path.resolve(__dirname, "../API/wwwroot"), 
+    outDir: path.resolve(__dirname, "../API/wwwroot"),
+    chunkSizeWarningLimit: 1500, 
     emptyOutDir: true, 
   },
   server: {

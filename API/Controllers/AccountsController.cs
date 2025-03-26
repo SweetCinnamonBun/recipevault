@@ -33,8 +33,7 @@ namespace API.Controllers
         {
             var user = new AppUser
             {
-                FirstName = registerDto.FirstName,
-                LastName = registerDto.LastName,
+                ProfileName = registerDto.ProfileName,
                 UserName = registerDto.Email,
                 Email = registerDto.Email
             };
@@ -75,8 +74,7 @@ namespace API.Controllers
 
             return Ok(new
             {
-                user.FirstName,
-                user.LastName,
+                user.ProfileName,
                 user.Email
             });
         }

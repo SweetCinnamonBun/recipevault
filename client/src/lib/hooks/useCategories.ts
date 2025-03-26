@@ -14,7 +14,9 @@ export const useCategories = () => {
         queryFn: async () => {
             const response = await agent.get<Category[]>("/api/categories");
             return response.data; 
-        }
+        },
+        staleTime: 20_000,
+        refetchOnWindowFocus: false
     })
 
     const addCategoriesToRecipe = useMutation({

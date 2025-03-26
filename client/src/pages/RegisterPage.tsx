@@ -1,18 +1,16 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { setUser } from "@/store/authSlice";
+
 
 const RegisterPage = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [profileName, setProfileName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
@@ -24,12 +22,11 @@ const RegisterPage = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ firstName, lastName, email, password }),
+          body: JSON.stringify({ profileName, email, password }),
         }
       );
 
       if (registerResponse.ok) {
-        // Step 2: Fetch user info after successful login
        navigate("/login");
 
       } else {
@@ -47,7 +44,8 @@ const RegisterPage = () => {
         }
       }
     } catch (err) {
-      if (!err.response) {
+      if (err instanceof Error) {
+        // Network error (e.g., no internet connection)
         setErrMsg("No Server Response");
       } else {
         setErrMsg("Login Failed");
@@ -64,29 +62,15 @@ const RegisterPage = () => {
           </h1>
           <form className="" action="#" onSubmit={handleSubmit}>
           <div className="mb-4">
-              <label htmlFor="email" className="">
-                First Name
+              <label htmlFor="profileName" className="">
+                Profile Name
               </label>
               <input
                 type="text"
-                name="firstName"
-                id="firstName"
-                onChange={(e) => setFirstName(e.target.value)}
-                value={firstName}
-                className="w-full px-2 py-2 mt-2 border-2 border-gray-300 rounded-md focus:border-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label htmlFor="lastName" className="">
-                Last Name
-              </label>
-              <input
-                type="text"
-                name="lastName"
-                id="lastName"
-                onChange={(e) => setLastName(e.target.value)}
-                value={lastName}
+                name="profileName"
+                id="profileName"
+                onChange={(e) => setProfileName(e.target.value)}
+                value={profileName}
                 className="w-full px-2 py-2 mt-2 border-2 border-gray-300 rounded-md focus:border-transparent focus:outline-none focus:ring-2 focus:ring-green-500"
                 required
               />
