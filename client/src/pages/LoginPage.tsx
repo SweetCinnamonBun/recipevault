@@ -1,40 +1,39 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { setUser } from "@/store/authSlice"; 
+import { setUser } from "@/store/authSlice";
+
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errMsg, setErrMsg] = useState("");
   const navigate = useNavigate();
-  const dispatch = useDispatch(); 
+  const dispatch = useDispatch();
+
+  const demoCredentials = {
+    email: "demo@user.com",
+    password: "demoPassword123!",
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-    
-      const loginResponse = await fetch(
-        "/api/login?useCookies=true",
-        {
-          method: "POST",
-          credentials: "include", 
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email, password }),
-        }
-      );
+      const loginResponse = await fetch("/api/login?useCookies=true", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
       if (loginResponse.ok) {
         // Step 2: Fetch user info after successful login
-        const userInfoResponse = await fetch(
-          "/api/accounts/user-info",
-          {
-            credentials: "include", // Include cookies in the request
-          }
-        );
+        const userInfoResponse = await fetch("/api/accounts/user-info", {
+          credentials: "include", // Include cookies in the request
+        });
 
         if (userInfoResponse.ok) {
           const user = await userInfoResponse.json();
@@ -68,6 +67,37 @@ const LoginPage = () => {
       } else {
         setErrMsg("Login Failed");
       }
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    try {
+      const loginResponse = await fetch("/api/login?useCookies=true", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(demoCredentials),
+      });
+
+      if (loginResponse.ok) {
+        const userInfoResponse = await fetch("/api/accounts/user-info", {
+          credentials: "include",
+        });
+
+        if (userInfoResponse.ok) {
+          const user = await userInfoResponse.json();
+          dispatch(setUser(user));
+          navigate("/");
+        } else {
+          setErrMsg("Failed to fetch user information");
+        }
+      } else {
+        setErrMsg("Demo login failed");
+      }
+    } catch (err) {
+      setErrMsg("Error logging in as demo user");
     }
   };
 
@@ -114,6 +144,14 @@ const LoginPage = () => {
             >
               Log in
             </button>
+          
+          </form>
+            <button
+            onClick={handleDemoLogin}
+            className="w-full py-2 mt-4 text-lg font-semibold text-white bg-blue-500 rounded-sm"
+          >
+            Login as Demo User
+          </button>
             <div className="flex justify-center gap-1 mb-3 mt-7">
               <p className="text-sm font-normal text-gray-500">
                 Don’t have an account?
@@ -125,7 +163,6 @@ const LoginPage = () => {
                 Register Account
               </NavLink>
             </div>
-          </form>
         </div>
       </div>
     </div>

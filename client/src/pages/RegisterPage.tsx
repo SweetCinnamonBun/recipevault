@@ -1,5 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import PasswordChecklist from "react-password-checklist"
+
 
 
 const RegisterPage = () => {
@@ -104,6 +106,25 @@ const RegisterPage = () => {
               />
             </div>
             {errMsg && <p className="text-red-600">{errMsg}</p>}
+            <div>
+              <PasswordChecklist
+                rules={[
+                  "minLength",
+                  "specialChar",
+                  "number",
+                  "capital",
+                ]}
+                minLength={6}
+                value={password}
+                className="passwordChecklist"
+                messages={{
+                  minLength: "Password must be at least 6 characters long",
+                  specialChar: "Password must have 1 special character",
+                  number: "Password must have at least 1 number",
+                  capital: "Password must have at least 1 capital letter",
+                }}
+              />
+            </div>
             <button
               type="submit"
               className="w-full py-2 text-lg font-semibold text-white bg-black rounded-sm"
