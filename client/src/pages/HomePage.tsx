@@ -106,9 +106,8 @@ const HomePage = () => {
     setIsSortingOpen(false);
   };
 
-  const handleSortOrderChange = () => {
-    setIsAscending((prev) => !prev);
-    setIsSortingOpen(false);
+  const handleSortOrderChange = (order: boolean) => {
+    setIsAscending(order);
   };
 
   return (
@@ -135,7 +134,7 @@ const HomePage = () => {
             </button>
 
             {isSortingOpen && (
-              <div className="absolute right-0 w-48 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg">
+              <div className="absolute right-0 w-56 mt-2 bg-white border border-gray-300 rounded-lg shadow-lg">
                 <button
                   className="block w-full px-4 py-2 text-left hover:bg-gray-200"
                   onClick={() => handleSortChange("name")}
@@ -148,12 +147,31 @@ const HomePage = () => {
                 >
                   Sort by Date
                 </button>
-                <button
-                  className="block w-full px-4 py-2 text-left hover:bg-gray-200"
-                  onClick={() => handleSortOrderChange()}
-                >
-                  {isAscending ? "Descending" : "Ascending"}
-                </button>
+                <div className="px-4 py-2 mt-1">
+                  <label className="block text-left">Sort Order</label>
+                  <div className="flex mt-3 space-x-4">
+                    <label className="text-center">
+                      <input
+                        type="radio"
+                        value="asc"
+                        checked={isAscending === true}
+                        onChange={() => handleSortOrderChange(true)}
+                        className="mr-2"
+                      />
+                      Ascending
+                    </label>
+                    <label className="text-center">
+                      <input
+                        type="radio"
+                        value="desc"
+                        checked={isAscending === false}
+                        onChange={() => handleSortOrderChange(false)}
+                        className="mr-2"
+                      />
+                      Descending
+                    </label>
+                  </div>
+                </div>
               </div>
             )}
           </div>

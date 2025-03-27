@@ -258,6 +258,7 @@ namespace API.Controllers
 
             var recipes = await context.Recipes
                 .Where(r => r.UserId == user.Id)
+                .Include(c => c.Categories)
                 .Include(x => x.Ratings)
                 .ToListAsync();
 
@@ -274,6 +275,12 @@ namespace API.Controllers
 
                 AverageRating = recipe.Ratings.Any() ? recipe.Ratings.Average(r => r.Value) : 0,
                 RatingCount = recipe.Ratings.Count(),
+                Categories = [.. recipe.Categories.Select(c => new CategoryDto
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Slug = c.Slug
+                })]
 
             });
 

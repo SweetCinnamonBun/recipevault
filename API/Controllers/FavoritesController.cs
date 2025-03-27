@@ -54,10 +54,11 @@ namespace API.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return Unauthorized();
-
             var user = await context.Users
                 .Include(u => u.FavoriteRecipes)
                     .ThenInclude(r => r.Ratings)
+                .Include(u => u.FavoriteRecipes)
+                    .ThenInclude(r => r.Categories)
                 .FirstOrDefaultAsync(u => u.Id == userId);
 
             if (user == null) return NotFound();
@@ -75,12 +76,12 @@ namespace API.Controllers
                 ImageUrl = recipe.ImageUrl,
                 AverageRating = recipe.Ratings.Any() ? recipe.Ratings.Average(r => r.Value) : 0,
                 RatingCount = recipe.Ratings.Count(),
-                Categories = recipe.Categories.Select(c => new CategoryDto
+                Categories = [.. recipe.Categories.Select(c => new CategoryDto
                 {
                     Id = c.Id,
                     Name = c.Name,
                     Slug = c.Slug
-                }).ToList()
+                })]
             }).ToList();
 
             return Ok(result);

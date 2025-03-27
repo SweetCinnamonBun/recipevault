@@ -22,6 +22,7 @@ const UpdateRecipePage = () => {
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [timeUnit, setTimeUnit] = useState("min");
+  const [cookingTimeValue, setCookingTimeValue] = useState<number | "">("");
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [recipe, setRecipe] = useState<Recipe | null>(null);
@@ -48,6 +49,17 @@ const UpdateRecipePage = () => {
   const handleCategoryModalClose = () => {
     setIsCategoryModalOpen(false);
   };
+
+  useEffect(() => {
+    if (recipe?.cookingTime) {
+      const parts = recipe.cookingTime.split(" ");
+      const numericValue = parseInt(parts[0], 10); 
+      const unit = parts[1] || "min"; 
+  
+      setCookingTimeValue(isNaN(numericValue) ? "" : numericValue);
+      setTimeUnit(unit);
+    }
+  }, [recipe]);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -259,15 +271,22 @@ const UpdateRecipePage = () => {
             <input
               type="number"
               className="w-32 px-4 py-3 text-black transition-shadow border border-gray-300 rounded-lg"
-              value={recipe?.cookingTime}
+              value={cookingTimeValue}
               onChange={(e) => {
                 if (!recipe) return;
-                setRecipe({ ...recipe, cookingTime: e.target.value });
+                setCookingTimeValue(e.target.value ? parseInt(e.target.value, 10) : ""); 
+                setRecipe({ ...recipe, cookingTime: `${e.target.value} ${timeUnit}` });
               }}
               required
             />
             <select value={timeUnit}
-                onChange={(e) => setTimeUnit(e.target.value)} className="px-4 py-3 bg-white border border-gray-300 rounded-lg">
+            className="px-3 py-1 bg-white border border-gray-300 rounded-lg"
+                onChange={(e) => {
+                  setTimeUnit(e.target.value);
+                  if (recipe) {
+                    setRecipe({ ...recipe, cookingTime: `${cookingTimeValue} ${e.target.value}` });
+                  }
+                }}>
               <option value="min">Minutes</option>
               <option value="h">Hours</option>
             </select>
@@ -296,7 +315,7 @@ const UpdateRecipePage = () => {
               value={recipe?.servingSize}
               onChange={(e) => {
                 if (!recipe) return;
-                setRecipe({...recipe, servingSize: e.target.value})
+                setRecipe({...recipe, servingSize: Number(e.target.value)})
               }} 
             
             />

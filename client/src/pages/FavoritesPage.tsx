@@ -46,7 +46,7 @@ const FavoritesPage = () => {
             {recipes.map((recipe: Recipe) => (
               <div
                 key={recipe.id}
-                className="w-full max-w-sm h-[382px] bg-white rounded-xl cursor-pointer"
+                className="w-full max-w-sm h-[420px] bg-white rounded-xl cursor-pointer"
               >
                 <Link to={`/recipe/${recipe.id}`} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
                   <figure className="w-full h-60">
@@ -58,7 +58,14 @@ const FavoritesPage = () => {
                   </figure>
                 </Link>
                 <div className="px-3 py-2">
-                  <h2 className="text-xl text-red-700">{recipe.name}</h2>
+                <h2 className="py-2 text-xl text-red-700">{recipe.name}</h2>
+                  <div className="flex items-center gap-2">
+                    {recipe.categories?.slice(0, 2).map((category) => (
+                      <span className="px-3 py-1 bg-[#00FF9C] rounded-lg">
+                        {category.name}
+                      </span>
+                    ))}
+                  </div>
                   <div className="flex gap-5 mt-2">
                     <div className="flex items-center gap-1">
                       <MdAccessTime className="w-7 h-7" />
@@ -66,7 +73,7 @@ const FavoritesPage = () => {
                     </div>
                     <div className="flex items-center gap-1">
                       <PiForkKnifeFill className="w-7 h-7" />
-                      <p>{recipe.cookingTime}</p>
+                      <p>{recipe.servingSize}</p>
                     </div>
                   </div>
                   <div className="flex pt-2 ">
