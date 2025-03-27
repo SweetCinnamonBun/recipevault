@@ -21,7 +21,7 @@ export const useImages = () => {
             await agent.delete(`/api/images/delete?fileName=${fileName}`)
         },
         onSuccess: async () => {
-            toast("Image deletion successful");
+            
         },
         onError: async (error) => {
             console.error("Image deletion failed...", error);

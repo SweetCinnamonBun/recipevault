@@ -8,6 +8,7 @@ import { FaBook, FaEdit, FaTrash } from "react-icons/fa";
 import { MdAccessTime } from "react-icons/md";
 import { PiForkKnifeFill } from "react-icons/pi";
 import { Link } from "react-router-dom";
+import { ClipLoader } from "react-spinners";
 import { toast } from "react-toastify";
 
 const UsersRecipesPage = () => {
@@ -38,10 +39,12 @@ const UsersRecipesPage = () => {
       <h1 className="flex items-center py-2 mt-10 text-2xl text-center bg-white rounded-lg w-52 ">
         <FaBook className="w-6 h-6 mx-3 text-green-500" /> Your Recipes
       </h1>
+      {isLoading ? (
+        <div className="flex items-center justify-center w-full h-[70vh]">
+        <ClipLoader color="#0a0301" size={50} />
+      </div>
+      ) : (
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-14 justify-items-center">
-        {isLoading ? (
-          <p>Loading users recipes...</p>
-        ) : (
           <>
             {usersRecipes?.map((recipe: Recipe) => (
               <div
@@ -104,8 +107,8 @@ const UsersRecipesPage = () => {
               </div>
             ))}
           </>
-        )}
       </div>
+      )}
     </div>
   );
 };

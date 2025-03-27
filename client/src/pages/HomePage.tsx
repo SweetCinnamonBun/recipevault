@@ -12,6 +12,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 import { CgSpinner } from "react-icons/cg";
 import { useCategories } from "@/lib/hooks/useCategories";
+import { ClipLoader } from "react-spinners";
 
 const HomePage = () => {
   // const [error, setError] = useState<string>();
@@ -178,61 +179,63 @@ const HomePage = () => {
         </div>
       </section>
       <div className=" xl:px-10  2xl:px-36 [@media(min-width:1000px)]: [@media(min-width:1750px)]:px-48 [@media(min-width:1900px)]:px-56">
-        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-y-10 justify-items-center">
-          {isLoading ? (
-            <p>Loading Recipes...</p>
-          ) : (
-            <>
-              {recipes?.map((recipe: Recipe, index: number) => (
-                <Link
-                  to={`/recipe/${recipe.id}`}
-                  key={index}
-                  onClick={() =>
-                    window.scrollTo({ top: 0, behavior: "smooth" })
-                  }
-                >
-                  <div
-                    key={recipe.id}
-                    className=" w-[356px] h-[400px] bg-white rounded-xl cursor-pointer hover:border hover:border-orange-300 hover:shadow-lg [@media(min-width:1450px)]:w-[380px]"
+        {isLoading ? (
+          <div className="flex items-center justify-center w-full h-[70vh]">
+          <ClipLoader color="#0a0301" size={50} />
+        </div>
+        ) : (
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-y-10 justify-items-center">
+              <>
+                {recipes?.map((recipe: Recipe, index: number) => (
+                  <Link
+                    to={`/recipe/${recipe.id}`}
+                    key={index}
+                    onClick={() =>
+                      window.scrollTo({ top: 0, behavior: "smooth" })
+                    }
                   >
-                    <figure className="w-full h-60 ">
-                      <img
-                        src={recipe.imageUrl}
-                        alt={recipe.name}
-                        className="w-full h-full rounded-t-xl"
-                      />
-                    </figure>
-                    <div className="px-3">
-                      <h2 className="py-2 text-xl text-red-700">
-                        {recipe.name}
-                      </h2>
-                      <div className="flex items-center gap-2">
-                        {recipe.categories?.slice(0, 2).map((category) => (
-                          <span className="px-3 py-1 bg-[#00FF9C] rounded-lg">{category.name}</span>
-                        ))}
-                      </div>
-                      <div className="flex gap-5 mt-2">
-                        <div className="flex gap-1">
-                          <MdAccessTime className="w-7 h-7" />
-                          <p>{recipe.cookingTime}</p>
-                        </div>
-                        <div className="flex gap-1">
-                          <PiForkKnifeFill className="w-7 h-7" />
-                          <p>{recipe.servingSize || 5}</p>
-                        </div>
-                      </div>
-                      <div className="flex pt-2 ">
-                        <RecipeStars
-                          averageRating={recipe.averageRating || 0}
+                    <div
+                      key={recipe.id}
+                      className=" w-[356px] h-[400px] bg-white rounded-xl cursor-pointer hover:border hover:border-orange-300 hover:shadow-lg [@media(min-width:1450px)]:w-[380px]"
+                    >
+                      <figure className="w-full h-60 ">
+                        <img
+                          src={recipe.imageUrl}
+                          alt={recipe.name}
+                          className="w-full h-full rounded-t-xl"
                         />
+                      </figure>
+                      <div className="px-3">
+                        <h2 className="py-2 text-xl text-red-700">
+                          {recipe.name}
+                        </h2>
+                        <div className="flex items-center gap-2">
+                          {recipe.categories?.slice(0, 2).map((category) => (
+                            <span className="px-3 py-1 bg-[#00FF9C] rounded-lg">{category.name}</span>
+                          ))}
+                        </div>
+                        <div className="flex gap-5 mt-2">
+                          <div className="flex gap-1">
+                            <MdAccessTime className="w-7 h-7" />
+                            <p>{recipe.cookingTime}</p>
+                          </div>
+                          <div className="flex gap-1">
+                            <PiForkKnifeFill className="w-7 h-7" />
+                            <p>{recipe.servingSize || 5}</p>
+                          </div>
+                        </div>
+                        <div className="flex pt-2 ">
+                          <RecipeStars
+                            averageRating={recipe.averageRating || 0}
+                          />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
-            </>
-          )}
-        </div>
+                  </Link>
+                ))}
+              </>
+          </div>
+        )}
         <div ref={ref} className="flex justify-center my-4">
           {showSpinner || isFetchingNextPage ? (
             <CgSpinner className="w-10 h-10 mr-3 animate-spin" fill="orange" />

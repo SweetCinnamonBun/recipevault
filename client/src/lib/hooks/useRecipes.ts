@@ -52,15 +52,22 @@ export const useRecipes = (id?: string) => {
 
     const deleteRecipe = useMutation({
         mutationFn: async (recipeId:number) => {
-            await agent.delete(`api/recipes/${recipeId}`, {
-                withCredentials: true,
-            })
+            return toast.promise(
+                agent.delete(`api/recipes/${recipeId}`, { withCredentials: true }),
+                {
+                    pending: "Deleting recipe...",
+                    success: "Recipe deleted successfully!",
+                    error: "Failed to delete recipe. Please try again.",
+                }
+            );
         },
         onSuccess: async () => {
             await queryClient.invalidateQueries({
                 queryKey: ["users-recipes"]
             })
-            toast("Recipe deleted successfully!");
+            await queryClient.invalidateQueries({
+                queryKey: ["recipes"]
+            })
         },
         onError: async (error) => {
             console.error("something went wrong...", error)

@@ -15,6 +15,7 @@ const CreateRecipePage = () => {
   const [imageFile, setImageFile] = useState(null);
   const [timeUnit, setTimeUnit] = useState("min");
   const [servingSize, setServingSize] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const { postImage } = useImages();
   const { createRecipe } = useRecipes();
@@ -26,6 +27,7 @@ const CreateRecipePage = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setIsLoading(true);
     let imageUrl = null;
 
     // Step 1: Upload the image (if provided)
@@ -40,7 +42,7 @@ const CreateRecipePage = () => {
       } catch (error) {
         console.error("An error occurred while uploading the image:", error);
         return;
-      }
+      } 
     }
 
     const fullCookingTime = `${cookingTime} ${timeUnit}`;
@@ -60,9 +62,11 @@ const CreateRecipePage = () => {
         console.log("Recipe created successfully!");
         window.scrollTo({ top: 0, behavior: "smooth" });
         navigate("/add-categories");
-      
+        setIsLoading(false);
     } catch (error) {
       console.error("An error occurred:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -106,13 +110,13 @@ const CreateRecipePage = () => {
             />
             <label
               htmlFor="imageUpload"
-              className="cursor-pointer border border-gray-300 rounded-lg p-2 flex items-center justify-center w-full min-h-[300px] max-h-[300px] bg-orange-50 hover:bg-green-50 transition relative overflow-hidden my-4"
+              className="cursor-pointer border border-gray-300 rounded-lg p-2 flex items-center justify-center w-full min-h-[459px] max-h-[459px] bg-orange-50 hover:bg-green-50 transition relative overflow-hidden my-4"
             >
               {imageFile ? (
                 <img
                   src={URL.createObjectURL(imageFile)}
                   alt="Selected"
-                  className="object-cover w-full h-full rounded-lg"
+                  className="object-contain w-full h-full rounded-lg"
                 />
               ) : (
                 <span className="text-gray-500">Click to select an image</span>
@@ -182,10 +186,10 @@ const CreateRecipePage = () => {
 
           <button
             type="submit"
-            className={`w-full p-2 text-white transition  rounded-lg hover:bg-blue-600 ${ createRecipe.isPending ? "bg-green-100" : "bg-green-500"} `}
-            disabled={createRecipe.isPending}
+            className={`w-full p-2 text-white transition  rounded-lg hover:bg-blue-600 ${ isLoading ? "bg-green-100" : "bg-green-500"} `}
+            disabled={isLoading}
           >
-            {createRecipe.isPending ? (
+            {isLoading ? (
               <ClipLoader color="#fff" size={20}/>
             ) : (
             "Next"
