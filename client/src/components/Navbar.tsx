@@ -37,14 +37,15 @@ const Navbar = () => {
 
   return (
     <div className="flex items-center justify-between px-20 py-4 bg-white">
-      <div className="flex items-center">
+      <div className="">
+          <Link to="/" className="flex items-center">
         <figure>
-          <Link to="/">
             <div className="w-10 h-10 bg-black rounded-full">
 
             </div>
-          </Link>
         </figure>
+        <span className="ml-2 text-lg italic font-bold">RecipeVault</span>
+          </Link>
       </div>
       {/* <div>
         <SearchBox />
