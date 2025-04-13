@@ -35,7 +35,7 @@ namespace API.Controllers
         public async Task<IActionResult> GetCategoriesForRecipe([FromRoute] int recipeId)
         {
             var recipe = await context.Recipes
-                .Include(r => r.Categories) // Include related categories
+                .Include(r => r.Categories)
                 .FirstOrDefaultAsync(r => r.Id == recipeId);
 
             if (recipe == null)

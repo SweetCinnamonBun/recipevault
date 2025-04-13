@@ -27,7 +27,7 @@ namespace API.Controllers
         {
             var comments = await context.Comments
                 .Where(c => c.RecipeId == recipeId)
-                .Include(c => c.User) // Ensure user details are included
+                .Include(c => c.User)
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
 
@@ -36,8 +36,8 @@ namespace API.Controllers
                 c.Id,
                 c.Content,
                 c.CreatedAt,
-                UserId = c.User.Id,  // Include UserId
-                User = new { c.User.Id, c.User.UserName }  // Return user details
+                UserId = c.User.Id,
+                User = new { c.User.Id, c.User.UserName }
             }));
         }
 
@@ -55,13 +55,13 @@ namespace API.Controllers
                 UserId = userId,
                 RecipeId = recipeId,
                 Content = commentDto.Content,
-                CreatedAt = DateTime.UtcNow // Assuming you track timestamps
+                CreatedAt = DateTime.UtcNow
             };
 
             context.Comments.Add(comment);
             await context.SaveChangesAsync();
 
-            // Fetch the comment with related data (e.g., user details)
+
             var savedComment = await context.Comments
                 .Where(c => c.Id == comment.Id)
                 .Select(c => new
@@ -74,7 +74,7 @@ namespace API.Controllers
                     User = new
                     {
                         c.User.Id,
-                        c.User.UserName // Assuming you have a User navigation property
+                        c.User.UserName
                     }
                 })
                 .FirstOrDefaultAsync();

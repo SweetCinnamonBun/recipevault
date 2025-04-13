@@ -61,7 +61,6 @@ namespace API.Controllers
             context.Ratings.Add(rating);
             await context.SaveChangesAsync();
 
-            // Return the created rating object with a CreatedAtAction response
             return CreatedAtAction(nameof(GetRatingsForRecipe), new { recipeId = rating.RecipeId }, rating);
         }
 
@@ -74,11 +73,11 @@ namespace API.Controllers
 
             if (ratings.Count == 0)
             {
-                return Ok(new { Rating = 0 }); // No ratings available
+                return Ok(new { Rating = 0 });
             }
 
-            var averageRating = ratings.Average(r => r.Value); // Calculate average rating
-            var roundedRating = Math.Round(averageRating, 1); // Round to 1 decimal place
+            var averageRating = ratings.Average(r => r.Value);
+            var roundedRating = Math.Round(averageRating, 1);
 
             return Ok(new { Rating = roundedRating });
         }
