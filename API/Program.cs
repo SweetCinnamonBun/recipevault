@@ -1,4 +1,5 @@
 using API.Mappings;
+using API.Middleware;
 using API.Services;
 using Core.Entities;
 using Infrastructure.Data;
@@ -51,6 +52,7 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 app.MapFallbackToController("Index", "Fallback");
 
+// app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllers();
 app.MapGroup("api").MapIdentityApi<AppUser>();
 
