@@ -2,43 +2,56 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setRecipe } from "@/store/recipeSlice";
 import { useNavigate } from "react-router";
-import { FaRegClock } from "react-icons/fa";
 import { useImages } from "@/lib/hooks/useImages";
 import { useRecipes } from "@/lib/hooks/useRecipes";
 import { ClipLoader } from "react-spinners";
-import {FieldValues, useForm} from "react-hook-form"
+import { useForm } from "react-hook-form";
 import { recipeSchema, RecipeSchema } from "@/lib/schemas/recipeSchema";
-import { zodResolver } from "@hookform/resolvers/zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useDropzone } from "react-dropzone";
 
 const CreateRecipePage = () => {
-  const [name, setName] = useState("");
-  // const [cookingTime, setCookingTime] = useState("");
-  const [description, setDescription] = useState("");
-  const [difficulty, setDifficulty] = useState("Easy");
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [timeUnit, setTimeUnit] = useState("min");
-  const [servingSize, setServingSize] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const { postImage } = useImages();
   const { createRecipe } = useRecipes();
-  const {register, reset, handleSubmit, formState: { errors }} = useForm<RecipeSchema>({
-    mode: 'onTouched',
-    resolver: zodResolver(recipeSchema)
+  const {
+    register,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RecipeSchema>({
+    mode: "onTouched",
+    resolver: zodResolver(recipeSchema),
+    defaultValues: {
+      difficulty: "Easy",
+    },
+  });
+
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: { "image/*": [] },
+    multiple: false,
+    onDrop: (acceptedFiles) => {
+      if (acceptedFiles && acceptedFiles[0]) {
+        setImageFile(acceptedFiles[0]);
+      }
+    },
   });
 
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
-  const onSubmit = async (data:RecipeSchema) => {
+  const onSubmit = async (data: RecipeSchema) => {
     setIsLoading(true);
     let imageUrl = null;
-  
+
     if (imageFile) {
       const imageFormData = new FormData();
       imageFormData.append("ImageFile", imageFile);
-  
+
       try {
         const res = await postImage.mutateAsync(imageFormData);
         imageUrl = res;
@@ -48,15 +61,15 @@ const CreateRecipePage = () => {
         return;
       }
     }
-  
+
     const fullCookingTime = `${data.cookingTime} ${timeUnit}`;
-  
+
     const recipeData = {
       ...data,
       cookingTime: fullCookingTime,
       imageUrl,
     };
-  
+
     try {
       const response = await createRecipe.mutateAsync(recipeData);
       dispatch(setRecipe(response));
@@ -67,62 +80,10 @@ const CreateRecipePage = () => {
     } finally {
       setIsLoading(false);
     }
-  }
-
-
-  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-
-  //   setIsLoading(true);
-  //   let imageUrl = null;
-
-  //   // Step 1: Upload the image (if provided)
-  //   if (imageFile) {
-  //     const imageFormData = new FormData();
-  //     imageFormData.append("ImageFile", imageFile);
-
-  //     try {
-  //      const data = await postImage.mutateAsync(imageFormData);
-  //      imageUrl = data;
-
-  //     } catch (error) {
-  //       console.error("An error occurred while uploading the image:", error);
-  //       return;
-  //     } 
-  //   }
-
-  //   const fullCookingTime = `${cookingTime} ${timeUnit}`;
-  //   const recipeData = {
-  //     name: name,
-  //     cookingTime: fullCookingTime,
-  //     description: description,
-  //     difficulty: difficulty,
-  //     imageUrl: imageUrl,
-  //     servingSize: servingSize, 
-  //   };
-
-  //   try {
-
-  //       const response = await createRecipe.mutateAsync(recipeData)
-  //       dispatch(setRecipe(response));
-  //       console.log("Recipe created successfully!");
-  //       window.scrollTo({ top: 0, behavior: "smooth" });
-  //       navigate("/add-categories");
-  //       setIsLoading(false);
-  //   } catch (error) {
-  //     console.error("An error occurred:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
-  const handleTimeChange = (e) => {
-    setCookingTime(e.target.value);
   };
 
-  const handleUnitChange = (e) => {
+  const handleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setTimeUnit(e.target.value);
-    setCookingTime(""); // Clear previous value when switching units
   };
 
   return (
@@ -143,33 +104,31 @@ const CreateRecipePage = () => {
               required
             />
             {errors.name && (
-    <span className="mt-1 text-sm text-red-500">{errors.name.message}</span>
-  )}
+              <span className="mt-1 text-sm text-red-500">
+                {errors.name.message}
+              </span>
+            )}
           </div>
 
           <div className="my-4">
             <label className="text-lg font-medium">Upload Image:</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setImageFile(e.target.files[0])}
-              className="hidden"
-              id="imageUpload"
-            />
-            <label
-              htmlFor="imageUpload"
+            <div
+              {...getRootProps()}
               className="cursor-pointer border border-gray-300 rounded-lg p-2 flex items-center justify-center w-full min-h-[459px] max-h-[459px] bg-orange-50 hover:bg-green-50 transition relative overflow-hidden my-4"
             >
+              <input {...getInputProps()} />
               {imageFile ? (
                 <img
                   src={URL.createObjectURL(imageFile)}
-                  alt="Selected"
+                  alt="Preview"
                   className="object-contain w-full h-full rounded-lg"
                 />
               ) : (
-                <span className="text-gray-500">Click to select an image</span>
+                <span className="text-gray-500">
+                  Drag & drop or click to select an image
+                </span>
               )}
-            </label>
+            </div>
           </div>
 
           <div className="my-4">
@@ -184,7 +143,6 @@ const CreateRecipePage = () => {
                   {...register("cookingTime")}
                   required
                 />
-                <span className="absolute inset-y-0 flex items-center text-gray-400 left-3"></span>
               </div>
 
               <select
@@ -226,18 +184,21 @@ const CreateRecipePage = () => {
               {...register("description")}
               required
             />
+            {errors.description && (
+              <span className="mt-1 text-sm text-red-500">
+                {errors.description.message}
+              </span>
+            )}
           </div>
 
           <button
             type="submit"
-            className={`w-full p-2 text-white transition  rounded-lg hover:bg-blue-600 ${ isLoading ? "bg-green-100" : "bg-green-500"} `}
+            className={`w-full p-2 text-white transition  rounded-lg hover:bg-blue-600 ${
+              isLoading ? "bg-green-100" : "bg-green-500"
+            } `}
             disabled={isLoading}
           >
-            {isLoading ? (
-              <ClipLoader color="#fff" size={20}/>
-            ) : (
-            "Next"
-            )}
+            {isLoading ? <ClipLoader color="#fff" size={20} /> : "Next"}
           </button>
         </form>
       </div>
