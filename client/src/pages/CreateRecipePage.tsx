@@ -6,10 +6,13 @@ import { FaRegClock } from "react-icons/fa";
 import { useImages } from "@/lib/hooks/useImages";
 import { useRecipes } from "@/lib/hooks/useRecipes";
 import { ClipLoader } from "react-spinners";
+import {FieldValues, useForm} from "react-hook-form"
+import { recipeSchema, RecipeSchema } from "@/lib/schemas/recipeSchema";
+import { zodResolver } from "@hookform/resolvers/zod"
 
 const CreateRecipePage = () => {
   const [name, setName] = useState("");
-  const [cookingTime, setCookingTime] = useState("");
+  // const [cookingTime, setCookingTime] = useState("");
   const [description, setDescription] = useState("");
   const [difficulty, setDifficulty] = useState("Easy");
   const [imageFile, setImageFile] = useState(null);
@@ -19,56 +22,99 @@ const CreateRecipePage = () => {
 
   const { postImage } = useImages();
   const { createRecipe } = useRecipes();
+  const {register, reset, handleSubmit, formState: { errors }} = useForm<RecipeSchema>({
+    mode: 'onTouched',
+    resolver: zodResolver(recipeSchema)
+  });
 
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const onSubmit = async (data:RecipeSchema) => {
     setIsLoading(true);
     let imageUrl = null;
-
-    // Step 1: Upload the image (if provided)
+  
     if (imageFile) {
       const imageFormData = new FormData();
       imageFormData.append("ImageFile", imageFile);
-
+  
       try {
-       const data = await postImage.mutateAsync(imageFormData);
-       imageUrl = data;
-
+        const res = await postImage.mutateAsync(imageFormData);
+        imageUrl = res;
       } catch (error) {
-        console.error("An error occurred while uploading the image:", error);
-        return;
-      } 
-    }
-
-    const fullCookingTime = `${cookingTime} ${timeUnit}`;
-    const recipeData = {
-      name: name,
-      cookingTime: fullCookingTime,
-      description: description,
-      difficulty: difficulty,
-      imageUrl: imageUrl,
-      servingSize: servingSize, 
-    };
-
-    try {
-
-        const response = await createRecipe.mutateAsync(recipeData)
-        dispatch(setRecipe(response));
-        console.log("Recipe created successfully!");
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        navigate("/add-categories");
+        console.error("Image upload failed:", error);
         setIsLoading(false);
+        return;
+      }
+    }
+  
+    const fullCookingTime = `${data.cookingTime} ${timeUnit}`;
+  
+    const recipeData = {
+      ...data,
+      cookingTime: fullCookingTime,
+      imageUrl,
+    };
+  
+    try {
+      const response = await createRecipe.mutateAsync(recipeData);
+      dispatch(setRecipe(response));
+      navigate("/add-categories");
+      reset(); // Reset form values
     } catch (error) {
-      console.error("An error occurred:", error);
+      console.error("Recipe creation failed:", error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }
+
+
+  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+
+  //   setIsLoading(true);
+  //   let imageUrl = null;
+
+  //   // Step 1: Upload the image (if provided)
+  //   if (imageFile) {
+  //     const imageFormData = new FormData();
+  //     imageFormData.append("ImageFile", imageFile);
+
+  //     try {
+  //      const data = await postImage.mutateAsync(imageFormData);
+  //      imageUrl = data;
+
+  //     } catch (error) {
+  //       console.error("An error occurred while uploading the image:", error);
+  //       return;
+  //     } 
+  //   }
+
+  //   const fullCookingTime = `${cookingTime} ${timeUnit}`;
+  //   const recipeData = {
+  //     name: name,
+  //     cookingTime: fullCookingTime,
+  //     description: description,
+  //     difficulty: difficulty,
+  //     imageUrl: imageUrl,
+  //     servingSize: servingSize, 
+  //   };
+
+  //   try {
+
+  //       const response = await createRecipe.mutateAsync(recipeData)
+  //       dispatch(setRecipe(response));
+  //       console.log("Recipe created successfully!");
+  //       window.scrollTo({ top: 0, behavior: "smooth" });
+  //       navigate("/add-categories");
+  //       setIsLoading(false);
+  //   } catch (error) {
+  //     console.error("An error occurred:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
   const handleTimeChange = (e) => {
     setCookingTime(e.target.value);
@@ -83,7 +129,7 @@ const CreateRecipePage = () => {
     <>
       <div className="flex items-center justify-center  mb-[100px]">
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           encType="multipart/form-data"
           className="w-3/5 px-10 py-4 mt-20 bg-white rounded-lg"
         >
@@ -93,10 +139,12 @@ const CreateRecipePage = () => {
             <input
               className="p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-orange-300"
               type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              {...register("name")}
               required
             />
+            {errors.name && (
+    <span className="mt-1 text-sm text-red-500">{errors.name.message}</span>
+  )}
           </div>
 
           <div className="my-4">
@@ -133,8 +181,7 @@ const CreateRecipePage = () => {
                 <input
                   type="number"
                   className="w-full px-4 py-3 transition-shadow border border-gray-300 rounded-lg"
-                  value={cookingTime}
-                  onChange={handleTimeChange}
+                  {...register("cookingTime")}
                   required
                 />
                 <span className="absolute inset-y-0 flex items-center text-gray-400 left-3"></span>
@@ -154,8 +201,7 @@ const CreateRecipePage = () => {
           <div className="my-4">
             <label className="text-lg font-medium">Difficulty:</label>
             <select
-              value={difficulty}
-              onChange={(e) => setDifficulty(e.target.value)}
+              {...register("difficulty")}
               className="w-full p-2 bg-white border border-gray-300 rounded-lg"
             >
               <option value="Easy">Easy</option>
@@ -168,8 +214,7 @@ const CreateRecipePage = () => {
             <input
               type="number"
               className="w-24 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              value={servingSize}
-              onChange={(e) => setServingSize(e.target.value)} // Update the state when serving size changes
+              {...register("servingSize")} // Update the state when serving size changes
               required
             />
           </div>
@@ -178,8 +223,7 @@ const CreateRecipePage = () => {
             <label className="text-lg font-medium">Description:</label>
             <textarea
               className="w-full h-40 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              {...register("description")}
               required
             />
           </div>
