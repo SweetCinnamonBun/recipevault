@@ -40,6 +40,11 @@ namespace API.Controllers
 
             var result = await signInManager.UserManager.CreateAsync(user, registerDto.Password);
 
+            if (result.Succeeded)
+            {
+                await signInManager.UserManager.AddToRoleAsync(user, "Customer");
+            }
+
             if (!result.Succeeded)
             {
                 foreach (var error in result.Errors)
