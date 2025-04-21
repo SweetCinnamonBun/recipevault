@@ -1,5 +1,7 @@
 using API.Mappings;
 using API.Middleware;
+using API.Repositories;
+using API.Repositories.Interfaces;
 using API.Services;
 using Core.Entities;
 using Infrastructure.Data;
@@ -38,6 +40,8 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<AppUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<BlogContext>();
+
+// builder.Services.AddScoped<IRecipeRepository, SQLRecipeRepository>();
 
 
 

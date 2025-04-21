@@ -14,6 +14,7 @@ using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -41,21 +42,27 @@ namespace API.Controllers
         public async Task<IActionResult> GetRecipes([FromQuery] string? search, [FromQuery] List<string>? categories,
         [FromQuery] int? page, [FromQuery] int pageSize = 50, [FromQuery] bool isAscending = true, [FromQuery] string? sortBy = null)
         {
+
             var query = context.Recipes.AsQueryable();
 
+            // Check if string is not empty
             if (!string.IsNullOrEmpty(search))
             {
+                // Find all the recipes that match the search query
                 query = query.Where(recipe => recipe.Name.Contains(search));
             }
 
+            // Check that there are categories
             if (categories != null && categories.Count != 0)
             {
+                // Get recipes that match a category name from the incoming categories list.
                 query = query.Where(recipe =>
                     recipe.Categories.Any(category => categories.Contains(category.Name)));
             }
-
+            // Check if sortBy is not empty
             if (string.IsNullOrWhiteSpace(sortBy) == false)
             {
+                // Check for which column should the sorting be applied
                 if (sortBy.Equals("name", StringComparison.OrdinalIgnoreCase))
                 {
                     query = isAscending ? query.OrderBy(x => x.Name) : query.OrderByDescending(x => x.Name);
@@ -70,35 +77,37 @@ namespace API.Controllers
                 }
             }
 
-
+            // Set the page to 1 if page is null or page is less than 1
             if (page == null || page < 1) page = 1;
 
             int totalPages = 0;
 
+            // Counting the total pages of the query result
             decimal count = query.Count();
             totalPages = (int)Math.Ceiling(count / pageSize);
 
+            // Applying pagination
             query = query.Skip((int)(page - 1) * pageSize).Take(pageSize);
 
-
-            var recipes = await query.Select(recipe => new
+            // Map the recipe objects to Dto's and add an average rating to each recipe.
+            var recipeDtos = await query.Select(recipe => new RecipeDto
             {
-                recipe.Id,
-                recipe.Name,
-                recipe.Description,
-                recipe.CookingTime,
-                recipe.Difficulty,
-                recipe.ServingSize,
-                recipe.CreatedAt,
-                recipe.ImageUrl,
+                Id = recipe.Id,
+                Name = recipe.Name,
+                Description = recipe.Description,
+                CookingTime = recipe.CookingTime,
+                Difficulty = recipe.Difficulty,
+                ServingSize = recipe.ServingSize,
+                CreatedAt = recipe.CreatedAt,
+                ImageUrl = recipe.ImageUrl,
                 AverageRating = recipe.Ratings.Any() ? recipe.Ratings.Average(r => r.Value) : 0,
-                Categories = recipe.Categories.Select(c => new { c.Name }).ToList()
+                Categories = recipe.Categories.Select(c => new CategoryDto { Name = c.Name, Slug = c.Slug }).ToList()
             })
         .ToListAsync();
 
             var response = new
             {
-                Recipes = recipes,
+                Recipes = recipeDtos,
                 PageSize = pageSize,
                 TotalPages = totalPages
             };
@@ -109,6 +118,7 @@ namespace API.Controllers
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetRecipe([FromRoute] int id)
         {
+            // Get the specific recipe that corresponds to the Id from the request.
             var recipe = await context.Recipes.Include(x => x.Categories)
             .Include(x => x.Ingredients)
             .Include(x => x.Instructions)
@@ -118,8 +128,10 @@ namespace API.Controllers
 
             if (recipe == null) return NotFound();
 
+            // Map domain model to dto
             var dto = mapper.Map<RecipeDto>(recipe);
 
+            // Add Average Rating and Rating Count to the Dto
             dto.AverageRating = recipe.Ratings.Count != 0 ? Math.Round(recipe.Ratings.Average(r => r.Value), 2) : 0;
             dto.RatingCount = recipe.Ratings.Count;
 
@@ -132,56 +144,38 @@ namespace API.Controllers
         public async Task<IActionResult> CreateRecipe([FromBody] CreateRecipeDto recipeDto)
         {
 
-            // if (recipeDto.ImageFile == null)
-            // {
-            //     ModelState.AddModelError("ImageFile", "Please select an image");
-            //     return BadRequest(ModelState);
-            // }
 
-            // Save the image file
-            // string imageFileName = DateTime.Now.ToString("yyyyMMddHHmmssfff") + Path.GetExtension(recipeDto.ImageFile.FileName);
-            // string imagesFolder = Path.Combine(env.WebRootPath, "images", "recipes");
-
-            // if (!Directory.Exists(imagesFolder))
-            // {
-            //     Directory.CreateDirectory(imagesFolder);
-            // }
-
-            // string imagePath = Path.Combine(imagesFolder, imageFileName);
-            // using (var stream = new FileStream(imagePath, FileMode.Create))
-            // {
-            //     await recipeDto.ImageFile.CopyToAsync(stream);
-            // }
-
-            // Create the Recipe entity
-
+            // Access the currently logged in user.
             var user = await signInManager.UserManager.Users.FirstOrDefaultAsync(x => x.Email == User.FindFirstValue(ClaimTypes.Email));
 
             if (user == null) return NotFound();
 
-
-            Recipe recipe = new()
+            if (ModelState.IsValid)
             {
-                Name = recipeDto.Name,
-                Description = recipeDto.Description,
-                CookingTime = recipeDto.CookingTime,
-                Difficulty = recipeDto.Difficulty,
-                ServingSize = recipeDto.ServingSize,
-                ImageUrl = recipeDto.ImageUrl,
-                CreatedAt = DateTime.Now,
-                UserId = user.Id
-            };
+                // Create new recipe
+                Recipe recipe = new()
+                {
+                    Name = recipeDto.Name,
+                    Description = recipeDto.Description,
+                    CookingTime = recipeDto.CookingTime,
+                    Difficulty = recipeDto.Difficulty,
+                    ServingSize = recipeDto.ServingSize,
+                    ImageUrl = recipeDto.ImageUrl,
+                    CreatedAt = DateTime.Now,
+                    UserId = user.Id
+                };
 
-            Console.WriteLine(recipe);
-            Console.WriteLine(recipeDto);
+                // Save the recipe to generate RecipeId
+                await context.Recipes.AddAsync(recipe);
+                await context.SaveChangesAsync();
 
-            // Save the recipe to generate RecipeId
-            await context.Recipes.AddAsync(recipe);
-            await context.SaveChangesAsync();
+                var resultDto = mapper.Map<RecipeDto>(recipe);
 
-            var resultDto = mapper.Map<RecipeDto>(recipe);
+                return CreatedAtAction(nameof(GetRecipe), new { id = recipe.Id }, resultDto);
+            }
 
-            return CreatedAtAction(nameof(GetRecipe), new { id = recipe.Id }, resultDto);
+            return BadRequest();
+
         }
 
 
@@ -228,7 +222,7 @@ namespace API.Controllers
 
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> DeleteProduct(int id)
+        public async Task<IActionResult> DeleteRecipe(int id)
         {
             var recipe = await context.Recipes.FindAsync(id);
 
@@ -236,9 +230,6 @@ namespace API.Controllers
             {
                 return NotFound();
             }
-
-            // string imagesFolder = env.WebRootPath + "/images/recipes/";
-            // System.IO.File.Delete(imagesFolder + recipe.ImageFileName);
 
             context.Recipes.Remove(recipe);
             await context.SaveChangesAsync();
