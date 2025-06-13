@@ -288,7 +288,7 @@ namespace API.Controllers
                 .Where(i => !updatedIngredients.Any(ui => ui.Id == i.Id))
                 .ToList();
 
-            // Remove ingredients that are not in the updated list
+            // Remove ingredients that are not in the updated list / Remove old ingredients
             context.Ingredients.RemoveRange(ingredientsToRemove);
 
             // Find new ingredients to add
