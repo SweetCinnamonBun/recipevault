@@ -16,7 +16,8 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import UsersRecipesPage from "./pages/UsersRecipesPage";
-
+import DashboardPage from "./pages/DashboardPage";
+import FakeProtectedRoute from "./components/FakeProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -33,11 +34,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <LoginPage />
+        element: <LoginPage />,
       },
       {
         path: "/register",
-        element: <RegisterPage />
+        element: <RegisterPage />,
       },
       // Protected routes
       {
@@ -65,13 +66,23 @@ const router = createBrowserRouter([
           },
           {
             path: "/favorites",
-            element: <FavoritesPage />
+            element: <FavoritesPage />,
           },
           {
             path: "/your-recipes",
-            element: <UsersRecipesPage />
-          }
+            element: <UsersRecipesPage />,
+          },
         ],
+      },
+    ],
+  },
+  {
+    path: "/dashboard",
+    element: <ProtectedRoute />,
+    children: [
+      {
+        index: true,
+        element: <DashboardPage />,
       },
     ],
   },
@@ -99,4 +110,3 @@ function App() {
 }
 
 export default App;
-
