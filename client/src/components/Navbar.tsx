@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { setUser } from "@/store/authSlice";
 import { useDispatch } from "react-redux";
 import { FaHome, FaHeart, FaUser, FaBook, FaPlus } from "react-icons/fa";
+import { MdDashboard } from "react-icons/md";
 
 const Navbar = () => {
   const user = useSelector((state) => state.auth.user);
@@ -59,13 +60,13 @@ const Navbar = () => {
           <span>Home</span>
         </Link>
 
-        <Link
+        {/* <Link
           to="/favorites"
           className="flex flex-col items-center space-x-1 hover:text-red-500"
         >
           <FaHeart className="w-5 h-5" />
           <span>Favorites</span>
-        </Link>
+        </Link> */}
 
         {/* <Link
           to="/profile"
@@ -75,7 +76,7 @@ const Navbar = () => {
           <span>Profile</span>
         </Link> */}
 
-        <Link
+        {/* <Link
           to="/your-recipes"
           className="flex flex-col items-center space-x-1 hover:text-green-500"
         >
@@ -89,6 +90,13 @@ const Navbar = () => {
         >
           <FaPlus className="w-5 h-5" />
           <span>Create Recipe</span>
+        </Link> */}
+        <Link
+          to="/dashboard"
+          className="flex flex-col items-center space-x-1 hover:text-purple-500"
+        >
+          <MdDashboard className="w-5 h-5" />
+          <span>Dashboard</span>
         </Link>
       </div>
       <div className="space-x-4">

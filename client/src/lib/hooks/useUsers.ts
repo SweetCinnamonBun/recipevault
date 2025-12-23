@@ -15,7 +15,9 @@ export const useUsers = () => {
                 withCredentials: true,
             })
             return response.data;
-        }
+        },
+        staleTime: 1000 * 60 * 10,
+        refetchOnWindowFocus: false,
     })
 
     const { data: currentUser, isLoading:isLoadingUser } = useQuery({
@@ -26,7 +28,9 @@ export const useUsers = () => {
             })
             dispatch(setUser(response.data))
             return response.data;
-        }
+        },
+        staleTime: 1000 * 60 * 10,
+        refetchOnWindowFocus: false,
     })
 
     return {

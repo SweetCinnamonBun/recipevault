@@ -9,7 +9,7 @@ const RecipeStars = ({averageRating}: {averageRating: number}) => {
         {[...Array(5)].map((_, i) => (
             <FaStar
                 key={i}
-                className="w-6 h-6"
+                className="w-5 h-5"
                 color={i < Math.round(averageRating) ? "#f8ec07" : "black"}
             />
         ))}

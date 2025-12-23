@@ -18,6 +18,7 @@ import FavoritesPage from "./pages/FavoritesPage";
 import UsersRecipesPage from "./pages/UsersRecipesPage";
 import DashboardPage from "./pages/DashboardPage";
 import FakeProtectedRoute from "./components/FakeProtectedRoute";
+import YourRecipesPage from "./pages/YourRecipesPage";
 
 const router = createBrowserRouter([
   {
@@ -81,8 +82,17 @@ const router = createBrowserRouter([
     element: <ProtectedRoute />,
     children: [
       {
-        index: true,
-        element: <DashboardPage />,
+        element: <DashboardPage />, // 👈 layout route
+        children: [
+          {
+            index: true,
+            element: <YourRecipesPage />,
+          },
+          {
+            path: "create-recipe",
+            element: <CreateRecipePage />,
+          },
+        ],
       },
     ],
   },

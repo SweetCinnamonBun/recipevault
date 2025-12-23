@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, ScrollRestoration } from "react-router-dom";
 import Navbar from "./Navbar";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
@@ -41,6 +41,7 @@ const RootLayout = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
+    <ScrollRestoration />
     <Navbar />    
     <main className="flex-grow md:p-4">
       <Outlet /> 
