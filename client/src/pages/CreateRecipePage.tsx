@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addCategories, addIngredients, addInstructions, setRecipe } from "@/store/recipeSlice";
 import { useNavigate } from "react-router";
 import { useImages } from "@/lib/hooks/useImages";
 import { useRecipes } from "@/lib/hooks/useRecipes";
@@ -11,7 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useDropzone } from "react-dropzone";
 import { Category } from "@/types/Recipe";
 import { useCategories } from "@/lib/hooks/useCategories";
-import { RootState } from "@/store/store";
+import { toast } from "react-toastify";
 
 type AddIngredient = {
   quantity: string;
@@ -24,91 +22,25 @@ type AddInstruction = {
 };
 
 const CreateRecipePage = () => {
-  const [ingredients, setIngredients] = useState<AddIngredient[]>([]);
-    const [instructions, setInstructions] = useState<AddInstruction[]>([]);
-    const [newIngredient, setNewIngredient] = useState<AddIngredient>({
-      quantity: "",
-      unit: "",
-      name: "",
-    });
-    const [newInstruction, setNewInstruction] = useState<AddInstruction>({
-      text: "",
-    });
-  
-  
-    const handleSubmit2 = () => {
-      dispatch(addIngredients(ingredients));
-      dispatch(addInstructions(instructions));
-      console.log("Ingredients and instructions added to Redux store!");
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      navigate("/recipe-preview");
-    };
-  
-    // const recipeId = useSelector((state: RootState) => state.recipe.id);
-
-  
-    const handleAddIngredient = () => {
-      if (newIngredient.name.trim()) {
-        setIngredients([...ingredients, newIngredient]);
-        setNewIngredient({ quantity: "", unit: "", name: "" });
-      }
-    };
-  
-    const handleAddInstruction = () => {
-      if (newInstruction.text.trim()) {
-        setInstructions([...instructions, newInstruction]);
-        setNewInstruction({ text: "" });
-      }
-    };
-  
-    const handleSubmit3 = async () => {
-      try {
-        // Make POST requests for ingredients and instructions
-        const [ingredientsResponse, instructionsResponse] = await Promise.all([
-          fetch(
-            `/api/ingredients/bulk?recipeId=${recipeId}`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(ingredients),
-            }
-          ),
-          fetch(
-            `/api/instructions/bulk?recipeId=${recipeId}`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(instructions),
-            }
-          ),
-        ]);
-  
-        if (ingredientsResponse.ok && instructionsResponse.ok) {
-          console.log("Ingredients and instructions added successfully!");
-          // Navigate or update state as needed
-          window.scrollTo({ top: 0, behavior: "smooth" });
-          navigate("/recipe-preview");
-          
-        } else {
-          console.error("Failed to add ingredients or instructions.");
-        }
-      } catch (error) {
-        console.error("An error occurred:", error);
-      }
-    };
+  // const recipeId = useSelector((state: RootState) => state.recipe.id);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [timeUnit, setTimeUnit] = useState("min");
   const [isLoading, setIsLoading] = useState(false);
-
+  const [ingredients, setIngredients] = useState<AddIngredient[]>([]);
+  const [instructions, setInstructions] = useState<AddInstruction[]>([]);
+  const [newIngredient, setNewIngredient] = useState<AddIngredient>({
+    quantity: "",
+    unit: "",
+    name: "",
+  });
+  const [newInstruction, setNewInstruction] = useState<AddInstruction>({
+    text: "",
+  });
+  
   const { postImage } = useImages();
   const { createRecipe } = useRecipes();
   const {
     register,
-    reset,
     handleSubmit,
     formState: { errors },
   } = useForm<RecipeSchema>({
@@ -130,53 +62,14 @@ const CreateRecipePage = () => {
   });
 
   const navigate = useNavigate();
-
-  const dispatch = useDispatch();
-
-  const onSubmit = async (data: RecipeSchema) => {
-    setIsLoading(true);
-    let imageUrl = null;
-
-    if (imageFile) {
-      const imageFormData = new FormData();
-      imageFormData.append("ImageFile", imageFile);
-
-      try {
-        const res = await postImage.mutateAsync(imageFormData);
-        imageUrl = res;
-      } catch (error) {
-        console.error("Image upload failed:", error);
-        setIsLoading(false);
-        return;
-      }
-    }
-
-    const fullCookingTime = `${data.cookingTime} ${timeUnit}`;
-
-    const recipeData = {
-      ...data,
-      cookingTime: fullCookingTime,
-      imageUrl,
-    };
-
-    try {
-      const response = await createRecipe.mutateAsync(recipeData);
-      dispatch(setRecipe(response));
-      navigate("/add-categories");
-      reset(); // Reset form values
-    } catch (error) {
-      console.error("Recipe creation failed:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const dispatch = useDispatch();
 
   const handleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setTimeUnit(e.target.value);
   };
 
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
-  const recipeId = useSelector((state: RootState) => state.recipe.id);
+
 
   const { categories, addCategoriesToRecipe } = useCategories();
 
@@ -192,32 +85,88 @@ const CreateRecipePage = () => {
     );
   };
 
-  const handleSubmitCategories = async () => {
-    // Extract selected category IDs
-    const categoryIds = selectedCategories.map((category) => category.id);
+  const handleAddIngredient = () => {
+    if (newIngredient.name.trim()) {
+      setIngredients([...ingredients, newIngredient]);
+      setNewIngredient({ quantity: "", unit: "", name: "" });
+    }
+  };
 
-    // Create the JSON body
-    const requestBody = {
-      recipeId: recipeId,
-      categoryIds: categoryIds,
-    };
+  const handleAddInstruction = () => {
+    if (newInstruction.text.trim()) {
+      setInstructions([...instructions, newInstruction]);
+      setNewInstruction({ text: "" });
+    }
+  };
+
+  const handleCreateRecipe = async (data: RecipeSchema) => {
+    setIsLoading(true);
 
     try {
-      await addCategoriesToRecipe.mutateAsync(requestBody);
-      const categoriesResponse = await fetch(
-        `/api/categories/recipes-categories/${recipeId}`
-      );
-
-      if (!categoriesResponse.ok) {
-        console.error("Failed to fetch updated categories.");
-        return;
+      let imageUrl = null;
+      if (imageFile) {
+        const imageFormData = new FormData();
+        imageFormData.append("ImageFile", imageFile);
+        imageUrl = await postImage.mutateAsync(imageFormData);
       }
-      const updatedCategories = await categoriesResponse.json();
-      dispatch(addCategories(updatedCategories));
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      navigate("/ingredients-and-instructions");
+
+      const fullCookingTime = `${data.cookingTime} ${timeUnit}`;
+      const recipeData = {
+        ...data,
+        cookingTime: fullCookingTime,
+        imageUrl,
+      };
+      const createdRecipe = await createRecipe.mutateAsync(recipeData);
+      const recipeId = createdRecipe.id;
+
+      // dispatch(setRecipe(createdRecipe));
+
+      if (selectedCategories.length > 0) {
+        await addCategoriesToRecipe.mutateAsync({
+          recipeId,
+          categoryIds: selectedCategories.map((x) => x.id),
+        });
+        // dispatch(addCategories(selectedCategories))
+      }
+
+      if (ingredients.length > 0) {
+        const ingredientsResponse = await fetch(
+          `/api/ingredients/bulk?recipeId=${recipeId}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(ingredients),
+          }
+        );
+
+        if (!ingredientsResponse.ok) {
+          throw new Error("Failed to add ingredients");
+        }
+      }
+
+      if (instructions.length > 0) {
+        const instructionsResponse = await fetch(
+          `/api/instructions/bulk?recipeId=${recipeId}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(instructions),
+          }
+        );
+
+        if (!instructionsResponse.ok) {
+          throw new Error("Failed to add instructions");
+        }
+
+        // Save to Redux
+      }
+
+      navigate("/dashboard");
+      toast.success("Recipe created");
     } catch (error) {
-      console.error("An error occurred:", error);
+      console.log(" ", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -225,7 +174,7 @@ const CreateRecipePage = () => {
     <>
       <div className="flex items-center justify-center  mb-[100px]">
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(handleCreateRecipe)}
           encType="multipart/form-data"
           className="w-3/5 px-10 py-4 mt-20 bg-white rounded-lg"
         >
@@ -352,19 +301,6 @@ const CreateRecipePage = () => {
                   </span>
                 ))}
               </div>
-              <div className="flex justify-end">
-                <button
-                  onClick={handleSubmitCategories}
-                  disabled={addCategoriesToRecipe.isPending}
-                  className={`px-4 py-2 mr-5 text-lg rounded-lg ${
-                    addCategoriesToRecipe.isPending
-                      ? "bg-green-100"
-                      : "bg-green-500"
-                  }`}
-                >
-                  Confirm
-                </button>
-              </div>
             </div>
           </div>
           <div className="flex flex-col items-center justify-center w-full min-h-screen p-4">
@@ -436,6 +372,7 @@ const CreateRecipePage = () => {
                     className="p-2 border border-gray-400 rounded"
                   />
                   <button
+                    type="button"
                     onClick={handleAddIngredient}
                     className="px-4 py-2 mt-4 text-white bg-green-500 rounded hover:bg-green-600"
                   >
@@ -469,6 +406,7 @@ const CreateRecipePage = () => {
                     className="w-full p-2 border border-gray-400 rounded"
                   />
                   <button
+                    type="button"
                     onClick={handleAddInstruction}
                     className="px-4 py-2 mt-4 text-white bg-green-500 rounded hover:bg-green-600"
                   >
@@ -477,14 +415,6 @@ const CreateRecipePage = () => {
                 </div>
               </div>
             </section>
-            <div className="my-10">
-              <button
-                onClick={handleSubmit3}
-                className="px-4 py-2 text-lg bg-green-400 rounded-lg"
-              >
-                Confirm
-              </button>
-            </div>
           </div>
           <button
             type="submit"

@@ -38,12 +38,12 @@ const YourRecipesPage = () => {
           </h1>
         </nav>
         <main className="px-10 mt-8">
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 justify-items-center">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 justify-items-center">
             <>
               {usersRecipes?.map((recipe: Recipe) => (
                 <div
                   key={recipe.id}
-                  className="w-full max-w-xl h-[420px] bg-white rounded-xl cursor-pointer"
+                  className="w-full h-[402px] bg-white rounded-xl cursor-pointer"
                 >
                   <Link
                     to={`/recipe/${recipe.id}`}
@@ -51,7 +51,7 @@ const YourRecipesPage = () => {
                       window.scrollTo({ top: 0, behavior: "smooth" })
                     }
                   >
-                    <figure className="w-full h-60">
+                    <figure className="w-full h-52">
                       <img
                         src={recipe.imageUrl}
                         alt={recipe.name}

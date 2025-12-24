@@ -25,7 +25,9 @@ export const useRecipes = (id?: string) => {
             return response.data;
         },
         onSuccess: async () => {
-           
+           await queryClient.invalidateQueries({
+            queryKey: ["users-recipes"]
+           })
         },
         onError: async () => {
             console.error("Failed to create recipe")
