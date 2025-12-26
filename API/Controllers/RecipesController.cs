@@ -5,6 +5,7 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using API.DTOs;
+using API.DTOs.AI;
 using API.DTOs.Category;
 using API.DTOs.Ingredients;
 using API.DTOs.Instructions;
@@ -17,6 +18,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using OpenAI.Chat;
+using OpenAI.Images;
 
 namespace API.Controllers
 {
@@ -28,13 +31,16 @@ namespace API.Controllers
         private readonly IWebHostEnvironment env;
         private readonly IMapper mapper;
         private readonly SignInManager<AppUser> signInManager;
+        private readonly string? openAIApiKey;
 
-        public RecipesController(BlogContext context, IWebHostEnvironment env, IMapper mapper, SignInManager<AppUser> signInManager)
+        public RecipesController(BlogContext context, IWebHostEnvironment env,
+         IMapper mapper, SignInManager<AppUser> signInManager, IConfiguration configuration)
         {
             this.context = context;
             this.env = env;
             this.mapper = mapper;
             this.signInManager = signInManager;
+            this.openAIApiKey = configuration["ConnectionStrings:OpenAIApiKey"];
         }
 
 
@@ -278,6 +284,40 @@ namespace API.Controllers
             return Ok(result);
         }
 
+
+        [HttpPost("generate-ai-text")]
+        public async Task<IActionResult> GenerateRecipeWithImage([FromBody] RecipeAiImageRequestDto requestDto)
+        {
+            var chatClient = new ChatClient("gpt-4.1-mini", openAIApiKey);
+
+            var chatResult = await chatClient.CompleteChatAsync(new ChatMessage[]
+            {
+        new UserChatMessage($"Create a detailed cooking recipe for: {requestDto.Prompt}")
+            });
+
+            var recipeText = chatResult?.Value?.Content?.FirstOrDefault()?.Text ?? "No recipe generated.";
+
+            // var imageClient = new ImageClient("gpt-image-1", openAIApiKey);
+
+            // var imageResult = await imageClient.GenerateImageAsync(
+            //     $"A high-quality food photograph of {requestDto.Prompt}",
+            //     new ImageGenerationOptions
+            //     {
+            //         Size = OpenAI.Images.GeneratedImageSize.W1024xH1024  // Fully qualified
+            //     });
+
+            // var imageUrl = imageResult?.Value?.ImageUri?.ToString() ?? string.Empty;
+
+            return Ok(new
+            {
+                Recipe = recipeText
+            });
+        }
+
+
+
+
+
         private void UpdateIngredients(Recipe existingRecipe, ICollection<IngredientDto> updatedIngredients)
         {
             // Find existing ingredient IDs
@@ -367,4 +407,6 @@ namespace API.Controllers
         }
 
     }
+
+
 }

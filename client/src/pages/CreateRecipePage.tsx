@@ -347,11 +347,11 @@ const CreateRecipePage = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center justify-center w-full min-h-screen p-4">
-            <h1 className="w-full py-2 mt-5 text-4xl italic text-center bg-white rounded-lg mb-14">
+          <div className="flex flex-col w-full min-h-screen ">
+            <h1 className="w-full py-2 mb-8 text-2xl underline bg-white rounded-lg">
               Create Ingredients and Instructions
             </h1>
-            <section className="grid w-11/12 grid-cols-2 p-4  gap-x-8 min-h-[700px]">
+            <section className="grid w-full grid-cols-2  gap-x-8 min-h-[700px]">
               {/* Ingredients Section */}
               <div className="p-6 bg-white rounded-lg shadow-lg">
                 <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
@@ -480,11 +480,8 @@ const CreateRecipePage = () => {
       </div>
       {isModalOpen && (
         <RecipePreviewModal onClose={() => setIsModalOpen(false)}>
-          <div className="flex flex-col items-center max-h-[90vh] overflow-y-auto">
-            <h1 className="w-full py-2 mt-5 mb-20 text-3xl italic text-center underline bg-white rounded-lg">
-              Recipe Preview
-            </h1>
-            <h1 className="my-5 text-3xl">{recipePreview?.name}</h1>
+          <div className="flex flex-col items-center max-h-[90vh] overflow-y-auto bg-[#FFF1DB]">
+            <h1 className="my-16 text-3xl">{recipePreview?.name}</h1>
             <div className="flex justify-between px-5 py-5 mt-2 mb-8 w-96 gap-x-5">
               <div className="">
                 <div className="flex flex-col items-center">
@@ -532,33 +529,33 @@ const CreateRecipePage = () => {
                 {recipePreview?.description}
               </div>
             </section>
-            <section className="grid w-11/12 grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 h-[750px] 2xl:px-52">
-  {/* Ingredients */}
-  <div className="flex flex-col p-6 shadow-lg rounded-lg bg-[#F8FAE5]">
-    <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
-    <ul className="flex-1 p-2 space-y-4 overflow-y-auto list-disc">
-      {recipePreview?.ingredients.map((ingredient, index) => (
-        <li key={index} className="space-x-2 text-xl">
-          <span>{ingredient.quantity}</span>
-          <span>{ingredient.unit}</span>
-          <span>{ingredient.name}</span>
-        </li>
-      ))}
-    </ul>
-  </div>
+            <section className="grid w-11/12 grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 min-h-[624px] 2xl:px-52 mb-20">
+              {/* Ingredients */}
+              <div className="flex flex-col p-6 shadow-lg rounded-lg bg-[#F8FAE5]">
+                <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
+                <ul className="flex-1 p-2 space-y-4 overflow-y-auto list-disc">
+                  {recipePreview?.ingredients.map((ingredient, index) => (
+                    <li key={index} className="space-x-2 text-xl">
+                      <span>{ingredient.quantity}</span>
+                      <span>{ingredient.unit}</span>
+                      <span>{ingredient.name}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-  {/* Instructions */}
-  <div className="flex flex-col p-6 shadow-lg rounded-lg bg-[#F8FAE5]">
-    <h2 className="my-2 text-2xl font-bold">Instructions</h2>
-    <ul className="flex-1 p-2 space-y-4 overflow-y-auto list-disc">
-      {recipePreview?.instructions.map((instruction, index) => (
-        <li key={index} className="text-xl">
-          {instruction.text}
-        </li>
-      ))}
-    </ul>
-  </div>
-</section>
+              {/* Instructions */}
+              <div className="flex flex-col p-6 shadow-lg rounded-lg bg-[#F8FAE5]">
+                <h2 className="my-2 text-2xl font-bold">Instructions</h2>
+                <ul className="flex-1 p-2 space-y-4 overflow-y-auto list-disc">
+                  {recipePreview?.instructions.map((instruction, index) => (
+                    <li key={index} className="text-xl">
+                      {instruction.text}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </section>
             {/* <button
                 className={`px-6 py-3 text-xl  rounded-lg my-14 ${
                   isLoading ? "bg-green-100" : "bg-green-400"

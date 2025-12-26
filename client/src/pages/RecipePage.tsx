@@ -230,7 +230,7 @@ const RecipePage = () => {
         </span>
       </div>
       <section className="w-11/12 my-10 2xl:px-52">
-        <div className="w-full p-4 text-xl bg-white shadow-lg rounded-xl h-96">
+        <div className="w-full p-6 text-xl bg-white shadow-lg rounded-xl h-96">
           {recipe?.description}
         </div>
       </section>

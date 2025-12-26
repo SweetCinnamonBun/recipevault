@@ -32,7 +32,7 @@ const DashboardPage = () => {
   };
 
   return (
-    <section className="grid grid-cols-[232px_1fr] min-h-screen">
+    <section className="grid grid-cols-[222px_1fr] min-h-screen">
       <aside className="bg-white">
         <div className="sticky top-0 flex flex-col items-center">
           <Link to="/" className="p-10 text-2xl">

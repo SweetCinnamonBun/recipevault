@@ -60,13 +60,13 @@ const Navbar = () => {
           <span>Home</span>
         </Link>
 
-        {/* <Link
+        <Link
           to="/favorites"
           className="flex flex-col items-center space-x-1 hover:text-red-500"
         >
           <FaHeart className="w-5 h-5" />
           <span>Favorites</span>
-        </Link> */}
+        </Link>
 
         {/* <Link
           to="/profile"
