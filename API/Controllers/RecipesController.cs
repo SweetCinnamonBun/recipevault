@@ -288,31 +288,91 @@ namespace API.Controllers
         [HttpPost("generate-ai-text")]
         public async Task<IActionResult> GenerateRecipeWithImage([FromBody] RecipeAiImageRequestDto requestDto)
         {
-            var chatClient = new ChatClient("gpt-4.1-mini", openAIApiKey);
+
+            var chatClient = new ChatClient("gpt-3.5-turbo", openAIApiKey);
 
             var chatResult = await chatClient.CompleteChatAsync(new ChatMessage[]
             {
-        new UserChatMessage($"Create a detailed cooking recipe for: {requestDto.Prompt}")
+                new UserChatMessage($"Create a detailed cooking recipe for: {requestDto.Prompt}")
             });
 
-            var recipeText = chatResult?.Value?.Content?.FirstOrDefault()?.Text ?? "No recipe generated.";
+            var recipeText =
+                chatResult?.Value?.Content?.FirstOrDefault()?.Text
+                ?? "No recipe generated.";
 
-            // var imageClient = new ImageClient("gpt-image-1", openAIApiKey);
 
-            // var imageResult = await imageClient.GenerateImageAsync(
-            //     $"A high-quality food photograph of {requestDto.Prompt}",
-            //     new ImageGenerationOptions
-            //     {
-            //         Size = OpenAI.Images.GeneratedImageSize.W1024xH1024  // Fully qualified
-            //     });
+            // string imageUrl = string.Empty;
 
-            // var imageUrl = imageResult?.Value?.ImageUri?.ToString() ?? string.Empty;
+            // try
+            // {
+            //     var imageClient = new ImageClient("gpt-image-1", openAIApiKey);
+
+            //     var imageResult = await imageClient.GenerateImageAsync(
+            //         $"A high-quality food photograph of {requestDto.Prompt}",
+            //         new ImageGenerationOptions
+            //         {
+            //             Size = OpenAI.Images.GeneratedImageSize.W1024xH1024
+            //         });
+
+            //     imageUrl = imageResult?.Value?.ImageUri?.ToString() ?? string.Empty;
+            // }
+            // catch (Exception ex)
+            // {
+            //     // Log the error (403 happens here if org is not verified)
+            //     Console.WriteLine($"Image generation failed: {ex.Message}");
+            // }
+
 
             return Ok(new
             {
-                Recipe = recipeText
+                Recipe = recipeText,
             });
         }
+
+        // [HttpPost("generate-image")]
+        // public async Task<IActionResult> GenerateRecipeImage([FromBody] RecipeAiImageRequestDto requestDto)
+        // {
+        //     if (string.IsNullOrWhiteSpace(requestDto?.Prompt))
+        //     {
+        //         return BadRequest("Prompt is required.");
+        //     }
+
+        //     string imageUrl = string.Empty;
+
+        //     try
+        //     {
+        //         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
+        //         var imageClient = new ImageClient("gpt-image-1", openAIApiKey);
+
+        //         var imageResult = await imageClient.GenerateImageAsync(
+        //             $"A high-quality food photograph of {requestDto.Prompt}",
+        //             new ImageGenerationOptions
+        //             {
+        //                 Size = OpenAI.Images.GeneratedImageSize.W1024xH1024
+        //             },
+        //             cts.Token
+        //         );
+
+        //         imageUrl = imageResult?.Value?.ImageUri?.ToString() ?? string.Empty;
+        //     }
+        //     catch (OperationCanceledException)
+        //     {
+        //         // Timeout – fail fast
+        //         Console.WriteLine("Image generation timed out.");
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         // 403 / entitlement / other failures
+        //         Console.WriteLine($"Image generation failed: {ex.Message}");
+        //     }
+
+        //     return Ok(new
+        //     {
+        //         ImageUrl = imageUrl,
+        //         ImageGenerated = !string.IsNullOrEmpty(imageUrl)
+        //     });
+        // }
 
 
 
