@@ -164,10 +164,12 @@ const RecipePage = () => {
         ))}
       </div>
       {/* Recipe basic info */}
-      <div className="flex flex-wrap w-full py-5 mt-2 gap-x-2">
+      <div className="flex flex-wrap w-full py-5 mt-2 gap-y-3 gap-x-2">
         <div className="">
-          <div className="grid grid-cols-[max-content_1fr] items-center gap-1">
-            <MdAccessTime className="w-7 h-7" />
+          <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
+            <div className="px-2 py-2 bg-blue-200 rounded-full">
+              <MdAccessTime className="w-6 h-6 bg-gray-300" />
+            </div>
             <div className="flex flex-col">
               <span className="text-sm md:text-md">Cooking time</span>
               <span className="text-md md:text-lg">{recipe?.cookingTime}</span>
@@ -175,8 +177,10 @@ const RecipePage = () => {
           </div>
         </div>
         <div className="">
-          <div className="grid grid-cols-[max-content_1fr] items-center gap-1">
-            <PiShootingStarLight className="w-7 h-7" />
+          <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
+            <div className="px-2 py-2 bg-blue-200 rounded-full">
+              <PiShootingStarLight className="w-6 h-6" />
+            </div>
             <div className="flex flex-col">
               <span className="text-sm md:text-md">Difficulty</span>
               <span className="text-md md:text-lg">{recipe?.difficulty}</span>
@@ -184,8 +188,11 @@ const RecipePage = () => {
           </div>
         </div>
         <div className="">
-          <div className="grid grid-cols-[max-content_1fr] items-center gap-1">
-            <PiForkKnifeFill className="w-7 h-7" />
+          <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
+            <div className="px-2 py-2 bg-blue-200 rounded-full">
+
+              <PiForkKnifeFill className="w-6 h-6" />
+            </div>
             <div className="flex flex-col">
               <span className="text-sm md:text-md">Serving Size</span>
               <span className="text-md md:text-lg">{recipe?.servingSize}</span>
@@ -254,8 +261,10 @@ const RecipePage = () => {
           {isFavorite ? "Remove from favorites" : "Add to your favorites"}
         </span>
       </div> */}
-      <section className="w-full">
-        <div className=" px-4 py-2 rounded-lg bg-[#F8FAE5] shadow-lg">
+      
+      {/* Ingredients section */}
+      <section className="w-full mt-10">
+        <div className=" px-4 py-2 pb-6 rounded-lg bg-[white] shadow-md">
           <h2 className="text-xl font-bold ">Ingredients</h2>
           <ul className="px-4 mt-4 space-y-1 list-disc ">
             {recipe?.ingredients.map((ingredient: Ingredient) => (
@@ -279,7 +288,7 @@ const RecipePage = () => {
           className="
             px-4 py-3
             text-lg
-            bg-red-300
+            bg-white
             rounded-md
             grid
             grid-cols-[max-content_1fr]
