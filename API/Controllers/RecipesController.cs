@@ -329,50 +329,50 @@ namespace API.Controllers
             });
         }
 
-        // [HttpPost("generate-image")]
-        // public async Task<IActionResult> GenerateRecipeImage([FromBody] RecipeAiImageRequestDto requestDto)
-        // {
-        //     if (string.IsNullOrWhiteSpace(requestDto?.Prompt))
-        //     {
-        //         return BadRequest("Prompt is required.");
-        //     }
+        [HttpPost("generate-image")]
+        public async Task<IActionResult> GenerateRecipeImage([FromBody] RecipeAiImageRequestDto requestDto)
+        {
+            if (string.IsNullOrWhiteSpace(requestDto?.Prompt))
+            {
+                return BadRequest("Prompt is required.");
+            }
 
-        //     string imageUrl = string.Empty;
+            string imageUrl = string.Empty;
 
-        //     try
-        //     {
-        //         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            try
+            {
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
 
-        //         var imageClient = new ImageClient("gpt-image-1", openAIApiKey);
+                var imageClient = new ImageClient("gpt-image-1", openAIApiKey);
 
-        //         var imageResult = await imageClient.GenerateImageAsync(
-        //             $"A high-quality food photograph of {requestDto.Prompt}",
-        //             new ImageGenerationOptions
-        //             {
-        //                 Size = OpenAI.Images.GeneratedImageSize.W1024xH1024
-        //             },
-        //             cts.Token
-        //         );
+                var imageResult = await imageClient.GenerateImageAsync(
+                    $"A high-quality food photograph of {requestDto.Prompt}",
+                    new ImageGenerationOptions
+                    {
+                        Size = OpenAI.Images.GeneratedImageSize.W1024xH1024
+                    },
+                    cts.Token
+                );
 
-        //         imageUrl = imageResult?.Value?.ImageUri?.ToString() ?? string.Empty;
-        //     }
-        //     catch (OperationCanceledException)
-        //     {
-        //         // Timeout – fail fast
-        //         Console.WriteLine("Image generation timed out.");
-        //     }
-        //     catch (Exception ex)
-        //     {
-        //         // 403 / entitlement / other failures
-        //         Console.WriteLine($"Image generation failed: {ex.Message}");
-        //     }
+                imageUrl = imageResult?.Value?.ImageUri?.ToString() ?? string.Empty;
+            }
+            catch (OperationCanceledException)
+            {
+                // Timeout – fail fast
+                Console.WriteLine("Image generation timed out.");
+            }
+            catch (Exception ex)
+            {
+                // 403 / entitlement / other failures
+                Console.WriteLine($"Image generation failed: {ex.Message}");
+            }
 
-        //     return Ok(new
-        //     {
-        //         ImageUrl = imageUrl,
-        //         ImageGenerated = !string.IsNullOrEmpty(imageUrl)
-        //     });
-        // }
+            return Ok(new
+            {
+                ImageUrl = imageUrl,
+                ImageGenerated = !string.IsNullOrEmpty(imageUrl)
+            });
+        }
 
 
 
