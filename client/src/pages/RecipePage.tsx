@@ -20,6 +20,8 @@ import { ClipLoader } from "react-spinners";
 import { useComments } from "@/lib/hooks/useComments";
 import RecipePageStars from "@/components/RecipePageStars";
 import { RootState } from "@/store/store";
+import useEmblaCarousel from 'embla-carousel-react'
+
 
 const RecipePage = () => {
   const { id } = useParams();
@@ -28,6 +30,7 @@ const RecipePage = () => {
     content: "",
   });
   const [isRatingModalOpen, setIsRatingModalOpen] = useState<boolean>(false);
+   const [emblaRef] = useEmblaCarousel()
 
   const user = useSelector((state: RootState) => state.auth.user);
 
@@ -213,7 +216,7 @@ const RecipePage = () => {
               <em>Recipe by:</em> <strong>{recipe?.user.profileName}</strong>
             </span>
           </div>
-          <section className="w-full 2xl:px-52">
+          <section className="w-full">
             <div className="w-full p-6 text-lg bg-white shadow-lg rounded-xl h-96 lg:h-56">
               {recipe?.description}
             </div>
@@ -314,9 +317,17 @@ const RecipePage = () => {
           </ul>
         </div>
       </section>
-
-      <div className="w-full 2xl:px-56">
-        <section className="w-11/12 p-6 mx-auto my-10 bg-white rounded-lg">
+            <div className="embla" ref={emblaRef}>
+          
+          <div className="embla__container">
+            
+            <div className="embla__slide">Slide 1</div>
+            <div className="embla__slide">Slide 2</div>
+            <div className="embla__slide">Slide 3</div>
+          </div>
+        </div>
+      <div className="w-full">
+        <section className="p-6 mx-auto my-10 bg-white rounded-lg">
           <h2 className="text-2xl font-bold">Comments</h2>
 
           {/* Comment Submission Form */}
@@ -348,7 +359,7 @@ const RecipePage = () => {
               </button>
             </form>
           )}
-
+          
           {/* Comments List */}
           <div className="mt-4 ">
             {comments?.length === 0 ? (
@@ -378,6 +389,7 @@ const RecipePage = () => {
             )}
           </div>
         </section>
+        
       </div>
     </div>
   );
