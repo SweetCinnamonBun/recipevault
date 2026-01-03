@@ -141,77 +141,85 @@ const RecipePage = () => {
   }
 
   return (
-    <div className="flex flex-col items-center mx-3">
-      <figure className="w-full sm:w-3/4 px-1 lg:w-[70%] [@media(min-width:1100px)]:w-[60%] [@media(min-width:1300px)]:w-[50%] 2xl:w-[50%] [@media(min-width:1750px)]:w-[40%] mt-8">
-        <img
-          src={recipe?.imageUrl}
-          alt={recipe?.name}
-          className="w-full h-[266px] md:h-[520px] rounded-xl  object-center"
-        />
-      </figure>
-      <h1 className="self-start mx-2 mt-4 text-2xl md:text-3xl">
-        {recipe?.name}
-      </h1>
-      {/* Categories */}
-      <div className="flex flex-wrap self-start gap-1 mt-10">
-        {recipe?.categories.map((category: Category, index: number) => (
-          <span
-            key={index}
-            className="px-4 py-2 text-sm ml-1 bg-[#00FF9C] rounded-3xl"
-          >
-            {category.name}
-          </span>
-        ))}
-      </div>
-      {/* Recipe basic info */}
-      <div className="flex flex-wrap w-full py-5 mt-2 gap-y-3 gap-x-2">
-        <div className="">
-          <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
-            <div className="px-2 py-2 bg-blue-200 rounded-full">
-              <MdAccessTime className="w-6 h-6 bg-gray-300" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm md:text-md">Cooking time</span>
-              <span className="text-md md:text-lg">{recipe?.cookingTime}</span>
-            </div>
-          </div>
-        </div>
-        <div className="">
-          <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
-            <div className="px-2 py-2 bg-blue-200 rounded-full">
-              <PiShootingStarLight className="w-6 h-6" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm md:text-md">Difficulty</span>
-              <span className="text-md md:text-lg">{recipe?.difficulty}</span>
-            </div>
-          </div>
-        </div>
-        <div className="">
-          <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
-            <div className="px-2 py-2 bg-blue-200 rounded-full">
+    <div className="flex flex-col items-center mx-3 min-[1200px]:px-14 2xl:px-24">
+      <div className="grid w-full gap-6 xl:grid-cols-2 xl:mt-8">
+        <figure className="w-full px-1 mt-8 lg:mt-0">
+          <img
+            src={recipe?.imageUrl}
+            alt={recipe?.name}
+            className="w-full h-[266px] md:h-[520px] xl:h-full rounded-xl  object-center"
+          />
+        </figure>
 
-              <PiForkKnifeFill className="w-6 h-6" />
+        <div className="bg-red-300 lg:p-4 rounded-xl">
+          <h1 className="self-start mx-2 mt-4 text-2xl md:text-3xl xl:mt-2">
+            {recipe?.name}
+          </h1>
+          {/* Categories */}
+          <div className="flex flex-wrap self-start gap-1 mt-10">
+            {recipe?.categories.map((category: Category, index: number) => (
+              <span
+                key={index}
+                className="px-4 py-2 text-sm ml-1 bg-[#00FF9C] rounded-3xl"
+              >
+                {category.name}
+              </span>
+            ))}
+          </div>
+          {/* Recipe basic info */}
+          <div className="flex flex-wrap w-full py-5 mt-2 gap-y-3 gap-x-2">
+            <div className="">
+              <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
+                <div className="px-2 py-2 bg-blue-200 rounded-full">
+                  <MdAccessTime className="w-6 h-6 bg-gray-300" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-sm md:text-md">Cooking time</span>
+                  <span className="text-md md:text-lg">
+                    {recipe?.cookingTime}
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-sm md:text-md">Serving Size</span>
-              <span className="text-md md:text-lg">{recipe?.servingSize}</span>
+            <div className="">
+              <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
+                <div className="px-2 py-2 bg-blue-200 rounded-full">
+                  <PiShootingStarLight className="w-6 h-6" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-sm md:text-md">Difficulty</span>
+                  <span className="text-md md:text-lg">
+                    {recipe?.difficulty}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="">
+              <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
+                <div className="px-2 py-2 bg-blue-200 rounded-full">
+                  <PiForkKnifeFill className="w-6 h-6" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-sm md:text-md">Serving Size</span>
+                  <span className="text-md md:text-lg">
+                    {recipe?.servingSize}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div className="flex self-start mb-4">
-        <span className="text-md">
-          <em>Recipe by:</em> <strong>{recipe?.user.profileName}</strong>
-        </span>
-      </div>
-      <section className="w-full 2xl:px-52">
-        <div className="w-full p-6 text-lg bg-white shadow-lg rounded-xl h-96">
-          {recipe?.description}
-        </div>
-      </section>
+          <div className="flex self-start mb-4">
+            <span className="text-md">
+              <em>Recipe by:</em> <strong>{recipe?.user.profileName}</strong>
+            </span>
+          </div>
+          <section className="w-full 2xl:px-52">
+            <div className="w-full p-6 text-lg bg-white shadow-lg rounded-xl h-96 lg:h-56">
+              {recipe?.description}
+            </div>
+          </section>
 
-      {/* <div className="flex flex-col items-center mt-20">
+          {/* <div className="flex flex-col items-center mt-20">
         {isLoadingRatings ? (
           <p>loading ratings...</p>
         ) : (
@@ -242,15 +250,15 @@ const RecipePage = () => {
           )}
         </div>
       </div> */}
-      <section className="flex items-center justify-end w-full my-6">
-        <button
-          type="button"
-          className="px-3 py-2 text-sm text-white bg-red-600 rounded-2xl"
-        >
-          Download Recipe PDF
-        </button>
-      </section>
-      {/* <div className="flex flex-col items-center gap-2 mt-14">
+          <section className="flex items-center justify-end w-full my-6">
+            <button
+              type="button"
+              className="px-3 py-2 text-sm text-white bg-red-600 rounded-2xl"
+            >
+              Download Recipe PDF
+            </button>
+          </section>
+          {/* <div className="flex flex-col items-center gap-2 mt-14">
         <FaHeart
           className={`w-7 h-7 cursor-pointer ${
             isFavorite ? "text-red-500" : "text-black"
@@ -261,9 +269,10 @@ const RecipePage = () => {
           {isFavorite ? "Remove from favorites" : "Add to your favorites"}
         </span>
       </div> */}
-      
+        </div>
+      </div>
       {/* Ingredients section */}
-      <section className="w-full mt-10">
+      <section className="w-full mt-14 xl:w-3/5 xl:self-start">
         <div className=" px-4 py-2 pb-6 rounded-lg bg-[white] shadow-md">
           <h2 className="text-xl font-bold ">Ingredients</h2>
           <ul className="px-4 mt-4 space-y-1 list-disc ">
@@ -277,15 +286,16 @@ const RecipePage = () => {
           </ul>
         </div>
       </section>
-      <section className="w-full mt-10">
-  <h2 className="text-xl font-bold">Cooking instructions</h2>
+      <section className="w-full mt-10 xl:w-3/5 xl:self-start">
+        <h2 className="text-xl font-bold">Cooking instructions</h2>
 
-  <div className="py-2 rounded-lg ">
-    <ul className="mt-4 space-y-2">
-      {recipe?.instructions.map((instruction: Instruction, index: number) => (
-        <li
-          key={instruction.id}
-          className="
+        <div className="py-2 rounded-lg ">
+          <ul className="mt-4 space-y-2">
+            {recipe?.instructions.map(
+              (instruction: Instruction, index: number) => (
+                <li
+                  key={instruction.id}
+                  className="
             px-4 py-3
             text-lg
             bg-white
@@ -295,14 +305,15 @@ const RecipePage = () => {
             items-center
             gap-3
           "
-        >
-          <span className="px-1 font-semibold">{index + 1}.</span>
-          <p className="min-w-0 break-words">{instruction.text}</p>
-        </li>
-      ))}
-    </ul>
-  </div>
-</section>
+                >
+                  <span className="px-1 font-semibold">{index + 1}.</span>
+                  <p className="min-w-0 break-words">{instruction.text}</p>
+                </li>
+              )
+            )}
+          </ul>
+        </div>
+      </section>
 
       <div className="w-full 2xl:px-56">
         <section className="w-11/12 p-6 mx-auto my-10 bg-white rounded-lg">
