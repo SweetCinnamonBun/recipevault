@@ -5,7 +5,7 @@ import {
   Recipe,
   RecipeComment,
 } from "@/types/Recipe";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { MdAccessTime } from "react-icons/md";
 import { PiForkKnifeFill, PiShootingStarLight } from "react-icons/pi";
@@ -20,8 +20,10 @@ import { ClipLoader } from "react-spinners";
 import { useComments } from "@/lib/hooks/useComments";
 import RecipePageStars from "@/components/RecipePageStars";
 import { RootState } from "@/store/store";
-import useEmblaCarousel from 'embla-carousel-react'
-
+import useEmblaCarousel from "embla-carousel-react";
+import { FaStar } from "react-icons/fa";
+import { FaArrowRight } from "react-icons/fa";
+import { FaArrowLeft } from "react-icons/fa";
 
 const RecipePage = () => {
   const { id } = useParams();
@@ -30,7 +32,6 @@ const RecipePage = () => {
     content: "",
   });
   const [isRatingModalOpen, setIsRatingModalOpen] = useState<boolean>(false);
-   const [emblaRef] = useEmblaCarousel()
 
   const user = useSelector((state: RootState) => state.auth.user);
 
@@ -68,6 +69,14 @@ const RecipePage = () => {
 
     checkIfFavorite();
   }, [id, user]);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ slidesToScroll: "auto" });
+
+  const scrollPrev = useCallback(() => {
+    if (emblaApi) emblaApi.scrollPrev();
+  }, [emblaApi]);
+  const scrollNext = useCallback(() => {
+    if (emblaApi) emblaApi.scrollNext();
+  }, [emblaApi]);
 
   const handleFavoriteToggle = async () => {
     const url = `/api/favorites/${id}`;
@@ -154,7 +163,7 @@ const RecipePage = () => {
           />
         </figure>
 
-        <div className="bg-red-300 lg:p-4 rounded-xl">
+        <div className="bg-orange-200 lg:p-4 rounded-xl">
           <h1 className="self-start mx-2 mt-4 text-2xl md:text-3xl xl:mt-2">
             {recipe?.name}
           </h1>
@@ -317,15 +326,203 @@ const RecipePage = () => {
           </ul>
         </div>
       </section>
-            <div className="embla" ref={emblaRef}>
-          
-          <div className="embla__container">
-            
-            <div className="embla__slide">Slide 1</div>
-            <div className="embla__slide">Slide 2</div>
-            <div className="embla__slide">Slide 3</div>
+      {/* More recipes from author */}
+      <section className="mt-10 card-carousel">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-xl font-bold">More recipes from author</h2>
+          <div className="flex gap-4">
+            <button
+              className="px-4 py-2 bg-white rounded-lg shadow embla__prev hover:bg-gray-100"
+              onClick={scrollPrev}
+            >
+              <FaArrowLeft className="w-6 h-6" />
+            </button>
+
+            <button
+              className="px-4 py-2 bg-white rounded-lg shadow embla__next hover:bg-gray-100"
+              onClick={scrollNext}
+            >
+              <FaArrowRight className="w-6 h-6" />
+            </button>
           </div>
         </div>
+        <div className="embla">
+          <div className="embla__viewport" ref={emblaRef}>
+            <div className="embla__container">
+              <div className="embla__slide">
+                <div className="w-full rounded-xl">
+                  <figure className="h-72 rounded-xl">
+                    <img
+                      src={recipe?.imageUrl}
+                      alt="recipe image"
+                      className="object-cover w-full h-full rounded-xl"
+                    />
+                  </figure>
+                  <div className="px-2 pb-4 mt-2 space-y-2 card-body">
+                    <h3 className="text-xl ">{recipe?.name}</h3>
+                    <div className="flex gap-3 basic-info ">
+                      <div className="flex items-center gap-1">
+                        <div className="px-1 py-1 bg-blue-200 rounded-full">
+                          <MdAccessTime className="w-4 h-4" />
+                        </div>
+                        <span>{recipe?.cookingTime}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="px-1 py-1 bg-blue-200 rounded-full">
+                          <PiForkKnifeFill className="w-4 h-4" />
+                        </div>
+                        <span>{recipe?.servingSize}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="px-1 py-1 bg-blue-200 rounded-full">
+                          <FaStar className="w-4 h-4" fill="yellow" />
+                        </div>
+                        <span>{recipe?.averageRating}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="embla__slide">
+                <div className="w-full rounded-xl">
+                  <figure className="h-72 rounded-xl">
+                    <img
+                      src={recipe?.imageUrl}
+                      alt="recipe image"
+                      className="object-cover w-full h-full rounded-xl"
+                    />
+                  </figure>
+                  <div className="px-2 pb-4 mt-2 space-y-2 card-body">
+                    <h3 className="text-xl ">{recipe?.name}</h3>
+                    <div className="flex gap-3 basic-info ">
+                      <div className="flex items-center gap-1">
+                        <div className="px-1 py-1 bg-blue-200 rounded-full">
+                          <MdAccessTime className="w-4 h-4" />
+                        </div>
+                        <span>{recipe?.cookingTime}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="px-1 py-1 bg-blue-200 rounded-full">
+                          <PiForkKnifeFill className="w-4 h-4" />
+                        </div>
+                        <span>{recipe?.servingSize}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="px-1 py-1 bg-blue-200 rounded-full">
+                          <FaStar className="w-4 h-4" fill="yellow" />
+                        </div>
+                        <span>{recipe?.averageRating}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="embla__slide">
+                <div className="w-full rounded-xl">
+                  <figure className="h-72 rounded-xl">
+                    <img
+                      src={recipe?.imageUrl}
+                      alt="recipe image"
+                      className="object-cover w-full h-full rounded-xl"
+                    />
+                  </figure>
+                  <div className="px-2 pb-4 mt-2 space-y-2 card-body">
+                    <h3 className="text-xl ">{recipe?.name}</h3>
+                    <div className="flex gap-3 basic-info ">
+                      <div className="flex items-center gap-1">
+                        <div className="px-1 py-1 bg-blue-200 rounded-full">
+                          <MdAccessTime className="w-4 h-4" />
+                        </div>
+                        <span>{recipe?.cookingTime}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="px-1 py-1 bg-blue-200 rounded-full">
+                          <PiForkKnifeFill className="w-4 h-4" />
+                        </div>
+                        <span>{recipe?.servingSize}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="px-1 py-1 bg-blue-200 rounded-full">
+                          <FaStar className="w-4 h-4" fill="yellow" />
+                        </div>
+                        <span>{recipe?.averageRating}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="embla__slide">
+                <div className="w-full bg-white rounded-xl">
+                  <figure className="h-72 rounded-xl">
+                    <img
+                      src={recipe?.imageUrl}
+                      alt="recipe image"
+                      className="object-cover w-full h-full rounded-xl"
+                    />
+                  </figure>
+                  <div className="px-2 pb-4 mt-2 space-y-2 card-body">
+                    <h3 className="text-xl ">{recipe?.name}</h3>
+                    <div className="flex gap-3 basic-info ">
+                      <div className="flex items-center gap-1">
+                        <div className="px-1 py-1 bg-blue-200 rounded-full">
+                          <MdAccessTime className="w-4 h-4" />
+                        </div>
+                        <span>{recipe?.cookingTime}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="px-1 py-1 bg-blue-200 rounded-full">
+                          <PiForkKnifeFill className="w-4 h-4" />
+                        </div>
+                        <span>{recipe?.servingSize}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="px-1 py-1 bg-blue-200 rounded-full">
+                          <FaStar className="w-4 h-4" fill="yellow" />
+                        </div>
+                        <span>{recipe?.averageRating}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="embla__slide">
+                <div className="w-full bg-white rounded-xl">
+                  <figure className="h-72 rounded-xl">
+                    <img
+                      src={recipe?.imageUrl}
+                      alt="recipe image"
+                      className="object-cover w-full h-full rounded-xl"
+                    />
+                  </figure>
+                  <div className="px-2 pb-4 mt-2 space-y-2 card-body">
+                    <h3 className="text-xl ">{recipe?.name}</h3>
+                    <div className="flex gap-3 basic-info ">
+                      <div className="flex items-center gap-1">
+                        <div className="px-1 py-1 bg-blue-200 rounded-full">
+                          <MdAccessTime className="w-4 h-4" />
+                        </div>
+                        <span>{recipe?.cookingTime}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="px-1 py-1 bg-blue-200 rounded-full">
+                          <PiForkKnifeFill className="w-4 h-4" />
+                        </div>
+                        <span>{recipe?.servingSize}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="px-1 py-1 bg-blue-200 rounded-full">
+                          <FaStar className="w-4 h-4" fill="yellow" />
+                        </div>
+                        <span>{recipe?.averageRating}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       <div className="w-full">
         <section className="p-6 mx-auto my-10 bg-white rounded-lg">
           <h2 className="text-2xl font-bold">Comments</h2>
@@ -359,7 +556,7 @@ const RecipePage = () => {
               </button>
             </form>
           )}
-          
+
           {/* Comments List */}
           <div className="mt-4 ">
             {comments?.length === 0 ? (
@@ -389,7 +586,6 @@ const RecipePage = () => {
             )}
           </div>
         </section>
-        
       </div>
     </div>
   );
