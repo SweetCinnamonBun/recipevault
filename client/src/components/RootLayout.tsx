@@ -4,15 +4,13 @@ import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { setUser } from "@/store/authSlice";
 import { useUsers } from "@/lib/hooks/useUsers";
-
-
+import Footer from "./Footer";
 
 const RootLayout = () => {
-
   const { currentUser } = useUsers();
 
   // const dispatch = useDispatch();
-  
+
   // useEffect(() => {
   //   const checkAuth = async () => {
   //     try {
@@ -36,17 +34,18 @@ const RootLayout = () => {
   // }, [dispatch]);
 
   if (currentUser) {
-    console.log("User has logged in!")
+    console.log("User has logged in!");
   }
 
   return (
     <div className="flex flex-col min-h-screen">
-    <ScrollRestoration />
-    <Navbar />    
-    <main className="flex-grow md:p-4">
-      <Outlet /> 
-    </main>
-  </div>
+      <ScrollRestoration />
+      <Navbar />
+      <main className="flex-1">
+        <Outlet />
+      </main>
+      <Footer />
+    </div>
   );
 };
 
