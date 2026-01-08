@@ -13,6 +13,7 @@ import { useInView } from "react-intersection-observer";
 import { CgSpinner } from "react-icons/cg";
 import { useCategories } from "@/lib/hooks/useCategories";
 import { ClipLoader } from "react-spinners";
+import HeroImg from "@/assets/images/pexels-ella-olsson-572949-1640777.jpg";
 
 const HomePage = () => {
   // const [error, setError] = useState<string>();
@@ -107,8 +108,42 @@ const HomePage = () => {
   };
 
   return (
-    <div>
-      <section className="flex items-center justify-between px-16 mt-10 mb-16 2xl:px-40 [@media(min-width:1750px)]:px-52 [@media(min-width:1900px)]:px-64">
+    <section>
+      {/* Hero section */}
+      <section className="w-full bg-[#fcfafa] h-[580px] flex items-center px-14">
+        <div className="w-full">
+          <div className="grid items-center grid-cols-1 gap-12 md:grid-cols-[1fr_2fr]">
+            {/* Left content */}
+            <div className="space-y-6">
+              <h1 className="text-4xl font-bold leading-tight text-gray-900 md:text-5xl">
+                RecipeVault
+              </h1>
+
+              <p className="max-w-md text-lg text-gray-700">
+                Save, organize, and access your favorite recipes anytime. Build
+                your personal recipe collection in one secure place.
+              </p>
+
+              <Link
+                to="/register"
+                className="inline-block px-6 py-3 font-medium text-white transition bg-black rounded-lg hover:bg-gray-800"
+              >
+                Create Account
+              </Link>
+            </div>
+
+            {/* Right image */}
+            <figure className="justify-center hidden md:flex md:justify-end">
+              <img
+                src={HeroImg}
+                alt="hero-image"
+                className="w-full max-w-[700px] mix-blend-multiply"
+              />
+            </figure>
+          </div>
+        </div>
+      </section>
+      <section className="flex items-center justify-between px-14 mt-10 mb-16 2xl:px-40 [@media(min-width:1750px)]:px-52 [@media(min-width:1900px)]:px-64">
         <div className="w-full">
           <SearchBox />
         </div>
@@ -190,7 +225,7 @@ const HomePage = () => {
                     window.scrollTo({ top: 0, behavior: "smooth" })
                   }
                 >
-                  <div className="w-full bg-white rounded-2xl hover:shadow-md hover:bg-gray-50">
+                  <div className="w-full h-full bg-white rounded-2xl hover:shadow-md hover:bg-gray-50">
                     <figure className="h-72 rounded-2xl">
                       <img
                         src={recipe?.imageUrl}
@@ -201,9 +236,16 @@ const HomePage = () => {
                     <div className="px-3 pb-4 mt-2 space-y-2 card-body">
                       <h3 className="text-xl ">{recipe?.name}</h3>
                       <div className="flex items-center gap-2">
-                        {recipe.categories?.slice(0, 2).map((category: Category) => (
-                          <span key={category.slug} className="px-3 py-1 text-sm bg-green-300 rounded-xl">{category.name}</span>
-                        ))}
+                        {recipe.categories
+                          ?.slice(0, 2)
+                          .map((category: Category) => (
+                            <span
+                              key={category.slug}
+                              className="px-3 py-1 text-sm bg-green-300 rounded-xl"
+                            >
+                              {category.name}
+                            </span>
+                          ))}
                       </div>
                       <div className="flex gap-3 basic-info ">
                         <div className="flex items-center gap-1">
@@ -273,7 +315,7 @@ const HomePage = () => {
           </div>
         </Modal>
       )}
-    </div>
+    </section>
   );
 };
 

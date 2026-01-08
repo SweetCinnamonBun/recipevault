@@ -43,7 +43,7 @@ const Navbar = () => {
     <>
       {/* Navbar */}
       <nav className="relative z-50 bg-white border-b">
-        <div className="flex items-center justify-between px-4 py-4 lg:px-20">
+        <div className="flex items-center justify-between px-4 py-4 lg:px-14">
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <div className="w-10 h-10 bg-black rounded-full" />
