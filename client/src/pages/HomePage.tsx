@@ -107,6 +107,18 @@ const HomePage = () => {
     setIsAscending(order);
   };
 
+  const categoriesDropdown = [
+    "Meal types",
+    "Baking",
+    "Diets",
+    "Ingredients",
+    "Themes",
+    "Cuisine",
+    "Product",
+    "Preparation",
+    "Created by",
+  ];
+
   return (
     <section>
       {/* Hero section */}
@@ -143,7 +155,7 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-      <section className="flex items-center justify-between px-14 mt-10 mb-16 2xl:px-40 [@media(min-width:1750px)]:px-52 [@media(min-width:1900px)]:px-64">
+      {/* <section className="flex items-center justify-between px-14 mt-10 mb-16 2xl:px-40 [@media(min-width:1750px)]:px-52 [@media(min-width:1900px)]:px-64">
         <div className="w-full">
           <SearchBox />
         </div>
@@ -206,6 +218,45 @@ const HomePage = () => {
               </div>
             )}
           </div>
+        </div>
+      </section> */}
+
+      <section className="mt-20 mb-6 px-14">
+        <div className="flex items-center justify-between my-10">
+          <h2 className="text-3xl font-semibold">Recipes</h2>
+          <div className="w-1/2">
+            <SearchBox />
+          </div>
+        </div>
+        <div className="flex flex-wrap items-center justify-between w-full gap-3">
+          {categoriesDropdown.map((category) => (
+            <button
+              key={category}
+              className="flex items-center px-4 py-2   bg-[#DE3163] rounded-lg text-white hover:bg-[#c52a56] transition"
+              onClick={() => setIsFiltersModalOpen(true)}
+            >
+              <span>{category}</span>
+              <CiFilter className="w-5 h-5" />
+            </button>
+          ))}
+        </div>
+      </section>
+      <section className="flex justify-between my-8 px-14">
+        <div className="flex items-center gap-2 text-sm">
+          <span className="px-4 py-2 bg-green-200 rounded-2xl">Breakfast</span>
+          <span className="px-4 py-2 bg-green-200 rounded-2xl">
+            Slow Cooker
+          </span>
+          <span className="px-4 py-2 bg-green-200 rounded-2xl">Beverages</span>
+        </div>
+        <div>
+          <select
+            name="light-sorting"
+            className="px-6 py-3 text-base transition bg-white border rounded-lg shadow-sm cursor-pointer b focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
+          >
+            <option value="popular">Popular</option>
+            <option value="newest">Newest</option>
+          </select>
         </div>
       </section>
       <div className=" xl:px-10  2xl:px-36 [@media(min-width:1000px)]: [@media(min-width:1750px)]:px-48 [@media(min-width:1900px)]:px-56">
