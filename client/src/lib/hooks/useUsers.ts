@@ -3,6 +3,7 @@ import agent from "../api/agent"
 import { Recipe } from "@/types/Recipe"
 import { useDispatch } from "react-redux"
 import { setUser } from "@/store/authSlice"
+import { resolve } from "path"
 
 export const useUsers = () => {
 
@@ -11,13 +12,17 @@ export const useUsers = () => {
     const { data: usersRecipes, isLoading } = useQuery({
         queryKey: ["users-recipes"],
         queryFn: async () => {
+
+            await new Promise((resolve) => setTimeout(resolve, 3000))
+
             const response = await agent.get<Recipe[]>("/api/recipes/my-recipes", {
                 withCredentials: true,
             })
             return response.data;
         },
-        staleTime: 1000 * 60 * 10,
-        refetchOnWindowFocus: false,
+        // staleTime: 1000 * 60 * 10,
+        // refetchOnWindowFocus: false,
+        
     })
 
     const { data: currentUser, isLoading:isLoadingUser } = useQuery({
