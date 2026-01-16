@@ -14,6 +14,7 @@ import { CgSpinner } from "react-icons/cg";
 import { useCategories } from "@/lib/hooks/useCategories";
 import { ClipLoader } from "react-spinners";
 import HeroImg from "@/assets/images/pexels-ella-olsson-572949-1640777.jpg";
+import { FaChevronDown } from "react-icons/fa6";
 
 const HomePage = () => {
   // const [error, setError] = useState<string>();
@@ -232,11 +233,11 @@ const HomePage = () => {
           {categoriesDropdown.map((category) => (
             <button
               key={category}
-              className="flex items-center px-4 py-2   bg-[#DE3163] rounded-lg text-white hover:bg-[#c52a56] transition"
+              className="flex items-center px-4 py-2 space-x-1   bg-[#DE3163] rounded-lg text-white hover:bg-[#c52a56] transition"
               onClick={() => setIsFiltersModalOpen(true)}
             >
               <span>{category}</span>
-              <CiFilter className="w-5 h-5" />
+              <FaChevronDown className="w-4 h-4" />
             </button>
           ))}
         </div>
