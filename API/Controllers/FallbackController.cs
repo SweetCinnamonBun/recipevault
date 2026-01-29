@@ -1,18 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class FallbackController : Controller
     {
+        [Route("{*path}")]
         public IActionResult Index()
         {
-            return PhysicalFile(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "index.html"), "text/HTML");
+            return PhysicalFile(
+                Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "index.html"),
+                "text/html"
+            );
         }
     }
 }

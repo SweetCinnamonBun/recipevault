@@ -10,6 +10,7 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
+import { IoFastFood } from "react-icons/io5";
 
 const Navbar = () => {
   const user = useSelector((state) => state.auth.user);
@@ -65,6 +66,10 @@ const Navbar = () => {
             <Link to="/dashboard" className="flex flex-col items-center hover:text-purple-500">
               <MdDashboard />
               <span>Dashboard</span>
+            </Link>
+            <Link to="/all-recipes" className="flex flex-col items-center hover:text-purple-500">
+              <IoFastFood />
+              <span>All-Recipes</span>
             </Link>
           </div>
 

@@ -19,6 +19,7 @@ import UsersRecipesPage from "./pages/UsersRecipesPage";
 import DashboardPage from "./pages/DashboardPage";
 import FakeProtectedRoute from "./components/FakeProtectedRoute";
 import YourRecipesPage from "./pages/YourRecipesPage";
+import RecipesPage from "./pages/RecipesPage";
 
 const router = createBrowserRouter([
   {
@@ -72,6 +73,10 @@ const router = createBrowserRouter([
           {
             path: "/your-recipes",
             element: <UsersRecipesPage />,
+          },
+          {
+            path: "/all-recipes",
+            element: <RecipesPage />,
           },
         ],
       },

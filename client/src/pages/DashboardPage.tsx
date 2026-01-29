@@ -32,37 +32,37 @@ const DashboardPage = () => {
   };
 
   return (
-    <section className="grid grid-cols-[222px_1fr] min-h-screen">
-      <aside className="bg-white">
+    <section className="grid grid-cols-[270px_1fr] min-h-screen">
+      <aside className="bg-white ">
         <div className="sticky top-0 flex flex-col items-center">
           <Link to="/" className="p-10 text-2xl">
             RecipeVault
           </Link>
           <ul className="flex flex-col w-full px-1 gap-y-3">
-            <li className="px-2 py-2 mx-1 rounded-lg bg-amber-200">
+            <li className="px-2 py-3 mx-1 rounded-lg bg-amber-200">
               <Link
                 to="/dashboard"
                 className="grid grid-cols-[auto_1fr] gap-2 text-md items-center"
               >
-                <FaBook className="w-7 h-7" />
+                <FaBook className="w-6 h-6" />
                 <span>Your recipes</span>
               </Link>
             </li>
-            <li className="px-2 py-2 mx-1 rounded-lg bg-amber-200 hover:bg-amber-100">
+            <li className="px-2 py-3 mx-1 rounded-lg bg-amber-200 hover:bg-amber-100">
               <Link
                 to="/dashboard/create-recipe"
                 className="grid grid-cols-[auto_1fr] gap-2 text-md items-center"
               >
-                <FaPlus className="w-7 h-7" />
+                <FaPlus className="w-6 h-6" />
                 <span>Create recipe</span>
               </Link>
             </li>
-            <li className="px-2 py-2 mx-1 rounded-lg bg-amber-200">
+            <li className="px-2 py-3 mx-1 rounded-lg bg-amber-200">
               <Link
                 to="/dashboard"
                 className="grid grid-cols-[auto_1fr] gap-2 text-md items-center"
               >
-                <GrAnalytics className="w-7 h-7" />
+                <GrAnalytics className="w-6 h-6" />
                 <span>Analytics</span>
               </Link>
             </li>

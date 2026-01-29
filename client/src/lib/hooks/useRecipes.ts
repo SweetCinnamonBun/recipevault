@@ -2,6 +2,7 @@ import { RecipeCreate, RecipeUpdate } from "@/types/Recipe"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import agent from "../api/agent"
 import { toast } from "react-toastify";
+import { Filters } from "@/pages/RecipesPage";
 
 export const useRecipes = (id?: string) => {
 
@@ -84,3 +85,37 @@ export const useRecipes = (id?: string) => {
         updateRecipe
     }
 }
+
+
+
+
+export const useFetchRecipes = (filters: Filters) => {
+  const {
+    search = "",
+    page = 1,
+    pageSize = 12,
+    categories = [],
+    sortBy = "createdAt",
+    isAscending = false,
+  } = filters;
+
+  const categoryQuery = categories.map((c) => `categories=${encodeURIComponent(c)}`).join("&");
+
+  const queryString = `/api/recipes?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(
+    search
+  )}&${categoryQuery}&sortBy=${sortBy}&isAscending=${isAscending}`;
+
+
+  const { data: recipes, isLoading } = useQuery({
+    queryKey: ["all-recipes", filters],
+    queryFn: async () => {
+      const response = await agent.get(queryString);
+      // ✅ Ensure data is always an array
+      return response.data
+    },
+    refetchOnWindowFocus: false,
+    staleTime: 20_000
+  });
+
+  return { recipes, isLoading };
+};
