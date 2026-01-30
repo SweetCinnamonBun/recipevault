@@ -24,6 +24,7 @@ import Modal from "@/components/Modal";
 import { MdAccessTime } from "react-icons/md";
 import { PiForkKnifeFill, PiShootingStarLight } from "react-icons/pi";
 import RecipePreviewModal from "@/components/RecipePreviewModal";
+import { FaBook, FaPlus } from "react-icons/fa";
 
 type AddIngredient = {
   quantity: string;
@@ -53,10 +54,10 @@ const CreateRecipePage = () => {
 
   const recipePreview = useSelector((state: RootState) => state.recipe);
   const ingredientsPreview = useSelector(
-    (state: RootState) => state.recipe.ingredients
+    (state: RootState) => state.recipe.ingredients,
   );
   const instructionsPreview = useSelector(
-    (state: RootState) => state.recipe.instructions
+    (state: RootState) => state.recipe.instructions,
   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -105,7 +106,7 @@ const CreateRecipePage = () => {
 
   const handleCategoryRemoval = (categoryId: number | undefined) => {
     setSelectedCategories(
-      selectedCategories.filter((c) => c.id !== categoryId)
+      selectedCategories.filter((c) => c.id !== categoryId),
     );
   };
 
@@ -160,7 +161,7 @@ const CreateRecipePage = () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(ingredients),
-          }
+          },
         );
 
         if (!ingredientsResponse.ok) {
@@ -177,7 +178,7 @@ const CreateRecipePage = () => {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(instructions),
-          }
+          },
         );
 
         if (!instructionsResponse.ok) {
@@ -208,7 +209,7 @@ const CreateRecipePage = () => {
         instructions,
         categories: selectedCategories,
         imageUrl: imageFile ? URL.createObjectURL(imageFile) : null,
-      })
+      }),
     );
 
     setIsModalOpen(true);
@@ -216,11 +217,16 @@ const CreateRecipePage = () => {
 
   return (
     <>
-      <div className="flex items-center justify-center  mb-[100px]">
+      <nav className="px-10">
+        <h1 className="flex items-center py-2 mt-8 text-2xl text-center bg-white rounded-lg w-52 ">
+          <FaPlus className="w-6 h-6 mx-3 text-red-500" /> Create Recipe
+        </h1>
+      </nav>
+      <div className="flex items-center justify-center  mb-[100px] px-14">
         <form
           onSubmit={handleSubmit(handleCreateRecipe)}
           encType="multipart/form-data"
-          className="w-3/5 px-10 py-4 mt-20 bg-white rounded-lg"
+          className="w-full px-10 py-4 mt-10 bg-white rounded-lg 2xl:w-10/12 "
         >
           <div className="flex flex-col">
             <h2 className="mt-4 mb-4 text-2xl underline">Recipe details</h2>
@@ -242,7 +248,7 @@ const CreateRecipePage = () => {
             <label className="text-lg font-medium">Upload Image:</label>
             <div
               {...getRootProps()}
-              className="cursor-pointer border border-gray-300 rounded-lg p-2 flex items-center justify-center w-full min-h-[459px] max-h-[459px] bg-orange-50 hover:bg-green-50 transition relative overflow-hidden my-4"
+              className="cursor-pointer border border-gray-300 rounded-lg p-2 flex items-center justify-center w-full 2xl:w-1/2 min-h-[459px] max-h-[459px] bg-orange-50 hover:bg-green-50 transition relative overflow-hidden my-4"
             >
               <input {...getInputProps()} />
               {imageFile ? (
@@ -521,7 +527,7 @@ const CreateRecipePage = () => {
                   >
                     {category.name}
                   </span>
-                )
+                ),
               )}
             </div>
             <section className="w-11/12 my-10 2xl:px-52">

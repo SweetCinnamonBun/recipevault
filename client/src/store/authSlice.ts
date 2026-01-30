@@ -5,7 +5,7 @@ type User = {
   firstName: string;
   lastName: string;
   email: string;
-  userName: string;
+  profileName: string;
 };
 
 // Define the initial state
