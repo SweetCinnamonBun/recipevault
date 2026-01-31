@@ -156,11 +156,11 @@ const RecipePage = () => {
     <div className="min-h-screen">
       <section className="flex flex-col items-center px-3 min-[1200px]:px-10">
         <div className="grid w-full gap-6 xl:grid-cols-2 xl:mt-8">
-          <figure className="w-full px-1 mt-8 lg:mt-0  h-80 md:h-[476px] xl:h-full">
+          <figure className="w-full px-1 mt-8 lg:mt-0  h-80 md:h-[596px] ">
             <img
               src={recipe?.imageUrl}
               alt={recipe?.name}
-              className="w-full h-80 md:h-[476px] xl:h-full rounded-xl  object-center"
+              className="object-center w-full h-full rounded-xl"
             />
           </figure>
 

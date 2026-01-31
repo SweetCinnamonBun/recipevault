@@ -21,10 +21,11 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import Modal from "@/components/Modal";
-import { MdAccessTime } from "react-icons/md";
+import { MdAccessTime, MdOutlinePreview } from "react-icons/md";
 import { PiForkKnifeFill, PiShootingStarLight } from "react-icons/pi";
 import RecipePreviewModal from "@/components/RecipePreviewModal";
-import { FaBook, FaPlus } from "react-icons/fa";
+import { FaBook, FaEdit, FaPlus, FaTrash } from "react-icons/fa";
+import CreatingRecipeModal from "@/components/CreatingRecipeModal";
 
 type AddIngredient = {
   quantity: string;
@@ -61,6 +62,7 @@ const CreateRecipePage = () => {
   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   const { postImage } = useImages();
   const { createRecipe } = useRecipes();
@@ -125,6 +127,7 @@ const CreateRecipePage = () => {
   };
 
   const handleCreateRecipe = async (data: RecipeSchema) => {
+    setIsCreating(true);
     setIsLoading(true);
 
     try {
@@ -194,6 +197,7 @@ const CreateRecipePage = () => {
     } catch (error) {
       console.log(" ", error);
     } finally {
+      setIsCreating(false);
       setIsLoading(false);
     }
   };
@@ -217,6 +221,7 @@ const CreateRecipePage = () => {
 
   return (
     <>
+    <div className="relative">
       <nav className="px-10">
         <h1 className="flex items-center py-2 mt-8 text-2xl text-center bg-white rounded-lg w-52 ">
           <FaPlus className="w-6 h-6 mx-3 text-red-500" /> Create Recipe
@@ -248,15 +253,41 @@ const CreateRecipePage = () => {
             <label className="text-lg font-medium">Upload Image:</label>
             <div
               {...getRootProps()}
-              className="cursor-pointer border border-gray-300 rounded-lg p-2 flex items-center justify-center w-full 2xl:w-1/2 min-h-[459px] max-h-[459px] bg-orange-50 hover:bg-green-50 transition relative overflow-hidden my-4"
+              className="cursor-pointer border-2 border-dashed border-gray-300 rounded-lg p-2 flex items-center justify-center w-full lg:w-1/2 min-h-[300px] max-h-[305px] hover:bg-green-50 transition relative overflow-hidden my-4"
             >
               <input {...getInputProps()} />
+
               {imageFile ? (
-                <img
-                  src={URL.createObjectURL(imageFile)}
-                  alt="Preview"
-                  className="object-contain w-full h-full rounded-lg"
-                />
+                <div className="relative w-full h-full">
+                  <img
+                    src={URL.createObjectURL(imageFile)}
+                    alt="Preview"
+                    className="object-contain w-full h-full rounded-lg max-h-64"
+                  />
+                  <div className="absolute flex gap-2 transform -translate-x-1/2 bottom-4 left-1/2">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setImageFile(null);
+                      }}
+                      className="flex items-center justify-center w-12 h-12 text-white bg-orange-400 rounded hover:bg-red-600"
+                    >
+                      <FaTrash className="w-6 h-6"/>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        document
+                          .querySelector<HTMLInputElement>('input[type="file"]')
+                          ?.click();
+                      }}
+                      className="flex items-center justify-center w-12 h-12 text-white bg-orange-400 rounded hover:bg-blue-600"
+                    >
+                      <FaEdit className="w-6 h-6"/>
+                    </button>
+                  </div>
+                </div>
               ) : (
                 <span className="text-gray-500">
                   Drag & drop or click to select an image
@@ -469,8 +500,10 @@ const CreateRecipePage = () => {
           <button
             type="button"
             onClick={handlePreview}
-            className="w-full p-2 mt-4 text-white bg-blue-500 rounded-lg hover:bg-blue-600"
+            className="flex items-center justify-center gap-2 p-3 mt-10 text-white bg-blue-500 rounded-2xl w-52 mb-14 hover:bg-blue-600"
           >
+            {" "}
+            <MdOutlinePreview className="w-6 h-6" />
             Preview Recipe
           </button>
           <button
@@ -574,6 +607,9 @@ const CreateRecipePage = () => {
           </div>
         </RecipePreviewModal>
       )}
+      <CreatingRecipeModal isOpen={isCreating} />
+    </div>
+      
     </>
   );
 };
