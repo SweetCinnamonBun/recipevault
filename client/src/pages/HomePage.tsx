@@ -1,7 +1,7 @@
 import { Category, Recipe } from "@/types/Recipe";
 import { useEffect, useState } from "react";
 import { MdAccessTime } from "react-icons/md";
-import { PiForkKnifeFill } from "react-icons/pi";
+import { PiBowlFoodLight, PiForkKnifeFill } from "react-icons/pi";
 import { FaStar } from "react-icons/fa";
 import { Link } from "react-router";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -10,6 +10,7 @@ import { CgSpinner } from "react-icons/cg";
 import { ClipLoader } from "react-spinners";
 import HeroImg from "@/assets/images/pexels-ella-olsson-572949-1640777.jpg";
 import { IoFastFood } from "react-icons/io5";
+import CardCarousel from "@/components/CardCarousel";
 
 const HomePage = () => {
   const { ref, inView } = useInView();
@@ -54,40 +55,45 @@ const HomePage = () => {
   const recipes: Recipe[] = data?.pages.flatMap((page) => page.recipes) ?? [];
 
   return (
-    <section>
+    <section className="">
       {/* HERO */}
-      <section className="w-full bg-[#fcfafa] h-[580px] flex items-center px-14">
-        <div className="grid items-center grid-cols-1 gap-12 md:grid-cols-[1fr_2fr] w-full">
-          <div className="space-y-6">
-            <h1 className="text-4xl font-bold text-gray-900 md:text-5xl">
-              RecipeVault
-            </h1>
+      <section className="px-4 sm:px-6 md:px-14 lg:px-24 xl:px-44">
+        <section className="w-full h-[580px] flex items-center">
+          <div className="grid items-center grid-cols-1 gap-12 md:grid-cols-[1fr_2fr] w-full">
+            <div className="space-y-6">
+              <h1 className="text-4xl font-bold text-gray-900 md:text-5xl">
+                RecipeVault
+              </h1>
 
-            <p className="max-w-md text-lg text-gray-700">
-              Save, organize, and access your favorite recipes anytime. Build
-              your personal recipe collection in one secure place.
-            </p>
+              <p className="max-w-md text-lg text-gray-700">
+                Save, organize, and access your favorite recipes anytime. Build
+                your personal recipe collection in one secure place.
+              </p>
 
-            <Link
-              to="/register"
-              className="inline-block px-6 py-3 text-white transition bg-black rounded-lg hover:bg-gray-800"
-            >
-              Create Account
-            </Link>
+              <Link
+                to="/register"
+                className="inline-block px-6 py-3 text-white transition bg-black rounded-lg hover:bg-gray-800"
+              >
+                Create Account
+              </Link>
+            </div>
+
+            <figure className="justify-end hidden md:flex">
+              <img
+                src={HeroImg}
+                alt="Hero"
+                className="w-full max-w-[700px] mix-blend-multiply"
+              />
+            </figure>
           </div>
-
-          <figure className="justify-end hidden md:flex">
-            <img
-              src={HeroImg}
-              alt="Hero"
-              className="w-full max-w-[700px] mix-blend-multiply"
-            />
-          </figure>
-        </div>
+        </section>
       </section>
-
+      {/* Carousel section */}
+      <section className="px-4 pt-20 pb-24 mb-10 bg-red-200 sm:px-6 md:px-14 lg:px-24 xl:px-44">
+        <CardCarousel title="Trending recipes" recipes={recipes} />
+      </section>
       {/* POPULAR RECIPES */}
-      <section className="mt-20 mb-10 px-14">
+      <section className="px-4 mt-20 mb-10 sm:px-6 md:px-14 lg:px-24 xl:px-44">
         <div className="flex items-center justify-between mb-10">
           <h2 className="text-3xl font-semibold">Popular Recipes</h2>
 
@@ -96,11 +102,11 @@ const HomePage = () => {
             className="flex items-center gap-2 px-4 py-3 text-lg font-medium text-white transition bg-red-600 rounded-xl hover:bg-red-300 hover:text-black"
           >
             Explore Recipes
-            <IoFastFood className="w-6 h-6"  />
+            <IoFastFood className="w-6 h-6" />
           </Link>
         </div>
 
-        <div className="">
+        <div>
           {isLoading ? (
             <div className="flex items-center justify-center h-[70vh]">
               <ClipLoader color="#0a0301" size={50} />
@@ -169,7 +175,20 @@ const HomePage = () => {
             )}
           </div>
         </div>
+        
       </section>
+      <section className="flex flex-col items-center justify-center px-4 py-10 mt-20 bg-red-200 sm:px-6 md:px-14 lg:px-24 xl:px-44 rounded-xl">
+          <h2 className="flex flex-col items-center gap-2 mb-4 text-3xl font-semibold text-center sm:text-left">
+            <PiBowlFoodLight className="w-14 h-14" />
+            Subscribe to our Newsletter
+          </h2>
+          <p className="mb-6 text-center text-gray-700 sm:text-left">
+            Stay updated with the newest recipes, cooking tips, and exclusive
+            content.
+          </p>
+          <button className="px-6 py-2 text-xl text-white bg-black rounded-3xl">Subscribe</button>  
+          
+        </section>
     </section>
   );
 };
