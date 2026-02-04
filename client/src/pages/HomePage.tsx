@@ -89,7 +89,7 @@ const HomePage = () => {
         </section>
       </section>
       {/* Carousel section */}
-      <section className="px-4 pt-20 pb-24 mb-10 bg-red-200 sm:px-6 md:px-14 lg:px-24 xl:px-44">
+      <section className="px-4 pt-20 pb-24 mb-10 bg-[rgb(255,220,195)] sm:px-6 md:px-14 lg:px-24 xl:px-44">
         <CardCarousel title="Trending recipes" recipes={recipes} />
       </section>
       {/* POPULAR RECIPES */}

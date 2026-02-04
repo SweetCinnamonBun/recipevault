@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDebounce } from "use-debounce";
 import FilterDrawer from "@/components/FilterDrawer";
-import FiltersModal from "@/components/FilterModal";
+import FiltersModal from "@/components/FiltersModal";
 import { type Recipe, type Category } from "../types/Recipe";
 import agent from "@/lib/api/agent";
 import { useFetchRecipes } from "@/lib/hooks/useRecipes";
 import RecipeCard from "@/components/RecipeCard";
 import { ClipLoader } from "react-spinners";
+import { FaSearch } from "react-icons/fa";
 
 export type Filters = {
   search?: string;
@@ -111,21 +112,24 @@ const RecipesPage = () => {
   return (
     <section className="px-5 mb-40 md:px-12">
       {/* Search Bar + Mobile Filter Button */}
-      {/* <div className="flex flex-col gap-4 mt-24 md:flex-row md:justify-end">
-        <input
-          type="text"
-          className="w-full h-10 px-3 border border-gray-300 rounded-lg md:w-96"
-          placeholder="Search recipes..."
-          value={query}
-          onChange={(e) => handleSearchChange(e.target.value)}
-        />
+      <div className="flex flex-col gap-4 mt-6 md:flex-row md:justify-between lg:hidden">
+        <div className="relative w-full md:w-96">
+          <FaSearch className="absolute text-gray-700 -translate-y-1/2 left-3 top-1/2" />
+          <input
+            type="text"
+            className="w-full h-10 pl-10 pr-3 border border-gray-300 rounded-lg"
+            placeholder="Search recipes..."
+            value={query}
+            onChange={(e) => handleSearchChange(e.target.value)}
+          />
+        </div>
         <button
           className="px-4 py-2 border rounded-md md:hidden"
           onClick={() => setDrawerOpen(true)}
         >
           Filters
         </button>
-      </div> */}
+      </div>
       <div className="flex items-center justify-between pl-5 mt-20">
         <div className="flex items-center justify-center">
           {(filters.search ||
@@ -182,13 +186,16 @@ const RecipesPage = () => {
           )}
         </div>
         <div>
-          <input
-            type="text"
-            className="w-full h-10 px-3 border border-gray-300 rounded-lg md:w-96"
-            placeholder="Search recipes..."
-            value={query}
-            onChange={(e) => handleSearchChange(e.target.value)}
-          />
+          <div className="relative hidden w-full lg:relative md:w-96">
+            <FaSearch className="absolute text-gray-700 -translate-y-1/2 left-3 top-1/2" />
+            <input
+              type="text"
+              className="w-full h-10 pl-10 pr-3 border border-gray-300 rounded-lg"
+              placeholder="Search recipes..."
+              value={query}
+              onChange={(e) => handleSearchChange(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
@@ -267,7 +274,7 @@ const RecipesPage = () => {
         </aside>
 
         {/* Recipe Grid */}
-        <div className="grid grid-cols-1 auto-rows-[406px] gap-y-5 md:grid-cols-2 lg:grid-cols-3 gap-x-6">
+        <div className="grid grid-cols-1 gap-y-5 md:grid-cols-[250px_1fr] lg:grid-cols-3 gap-x-6 mt-8 lg:mt-0">
           {isLoading ? (
             <div className="flex items-center justify-center w-full h-96">
               <ClipLoader color="#000" size={50} />
