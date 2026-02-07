@@ -50,36 +50,35 @@ builder.Services.AddIdentityApiEndpoints<AppUser>()
 
 var app = builder.Build();
 
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials()
+app.UseCors(x => x
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()
     .WithOrigins("http://localhost:5173", "https://localhost:5173"));
 
-app.UseDefaultFiles();
-app.UseStaticFiles();
-app.MapFallbackToController("Index", "Fallback");
-
-// app.UseMiddleware<ExceptionMiddleware>();
-app.MapControllers();
-app.MapGroup("api").MapIdentityApi<AppUser>();
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-
     app.UseSwagger();
-    app.UseSwaggerUI();
-
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Recipevautl API V1");
+        c.RoutePrefix = "swagger";
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "RecipeVault API V1");
     });
 }
-
-app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+// ✅ API endpoints
 app.MapControllers();
+app.MapGroup("api").MapIdentityApi<AppUser>();
+
+// ✅ Static files AFTER routing
+app.UseStaticFiles();
+app.UseDefaultFiles();
+
+// ❗ SPA fallback MUST be last
+app.MapFallbackToController("Index", "Fallback");
 
 app.Run();

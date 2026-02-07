@@ -57,7 +57,8 @@ export type AddInstruction = {
 
 export type User = {
   id?: string;
-  userName: string;
+  userName?: string;
+  profileName?: string;
 }
 
 export type RecipeComment = {

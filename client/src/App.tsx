@@ -87,7 +87,7 @@ const router = createBrowserRouter([
     element: <ProtectedRoute />,
     children: [
       {
-        element: <DashboardPage />, // 👈 layout route
+        element: <DashboardPage />, 
         children: [
           {
             index: true,
@@ -97,19 +97,14 @@ const router = createBrowserRouter([
             path: "create-recipe",
             element: <CreateRecipePage />,
           },
+          {
+            path: "update-recipe/:id",
+            element: <UpdateRecipePage />
+          }
         ],
       },
     ],
   },
-  // Uncomment and add these routes if needed
-  // {
-  //   path: "/login",
-  //   element: <LoginPage />,
-  // },
-  // {
-  //   path: "/register",
-  //   element: <RegisterPage />,
-  // },
 ]);
 
 const queryClient = new QueryClient();

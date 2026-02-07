@@ -286,7 +286,7 @@ namespace API.Controllers
 
 
         [HttpPost("generate-ai-text")]
-        public async Task<IActionResult> GenerateRecipeWithImage([FromBody] RecipeAiImageRequestDto requestDto)
+        public async Task<IActionResult> GenerateRecipeWithText([FromBody] RecipeAiImageRequestDto requestDto)
         {
 
             var chatClient = new ChatClient("gpt-3.5-turbo", openAIApiKey);
@@ -299,29 +299,6 @@ namespace API.Controllers
             var recipeText =
                 chatResult?.Value?.Content?.FirstOrDefault()?.Text
                 ?? "No recipe generated.";
-
-
-            // string imageUrl = string.Empty;
-
-            // try
-            // {
-            //     var imageClient = new ImageClient("gpt-image-1", openAIApiKey);
-
-            //     var imageResult = await imageClient.GenerateImageAsync(
-            //         $"A high-quality food photograph of {requestDto.Prompt}",
-            //         new ImageGenerationOptions
-            //         {
-            //             Size = OpenAI.Images.GeneratedImageSize.W1024xH1024
-            //         });
-
-            //     imageUrl = imageResult?.Value?.ImageUri?.ToString() ?? string.Empty;
-            // }
-            // catch (Exception ex)
-            // {
-            //     // Log the error (403 happens here if org is not verified)
-            //     Console.WriteLine($"Image generation failed: {ex.Message}");
-            // }
-
 
             return Ok(new
             {

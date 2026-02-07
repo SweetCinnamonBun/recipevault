@@ -508,12 +508,12 @@ const CreateRecipePage = () => {
           </button>
           <button
             type="submit"
-            className={`w-full p-2 text-white transition  rounded-lg hover:bg-blue-600 ${
+            className={`w-full p-3 text-white transition  rounded-lg hover:bg-blue-600 ${
               isLoading ? "bg-green-100" : "bg-green-500"
             } `}
             disabled={isLoading}
           >
-            {isLoading ? <ClipLoader color="#fff" size={20} /> : "Next"}
+            {isLoading ? <ClipLoader color="#fff" size={20} /> : "Create Recipe"}
           </button>
         </form>
       </div>
