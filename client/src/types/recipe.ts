@@ -40,7 +40,7 @@ export type Instruction = {
 
 
 export type Category = {
-  id?: number;
+  id: number;
   name: string;
   slug: string;
 }

@@ -57,7 +57,7 @@ const UsersRecipes = ({ handleDelete }: UsersRecipesProps) => {
             </div>
             <div className="flex justify-between pt-2">
               <div className="flex justify-end w-full">
-                <Link to={`/update-recipe/${recipe.id}`}>
+                <Link to={`/dashboard/update-recipe/${recipe.id}`}>
                   <div className="flex justify-center py-2 mr-5 bg-green-100 rounded-lg cursor-pointer w-11 hover:bg-green-500">
                     <FaEdit className="w-5 h-5 text-black" />
                   </div>

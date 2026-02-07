@@ -1,4 +1,4 @@
-import { RecipeCreate, RecipeUpdate } from "@/types/Recipe"
+import { Recipe, RecipeCreate, RecipeUpdate } from "@/types/Recipe"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import agent from "../api/agent"
 import { toast } from "react-toastify";
@@ -8,7 +8,7 @@ export const useRecipes = (id?: string) => {
 
     const queryClient = useQueryClient();
 
-    const { data: recipe, isLoading:isLoadingRecipe } = useQuery({
+    const { data: recipe, isLoading:isLoadingRecipe } = useQuery<Recipe>({
         queryKey: ["recipe", id],
         queryFn: async () => {
             const response = await agent.get(`/api/recipes/${id}`)
