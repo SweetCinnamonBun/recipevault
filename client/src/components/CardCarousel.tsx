@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { FaArrowLeft, FaArrowRight, FaStar } from "react-icons/fa";
 import { MdAccessTime } from "react-icons/md";
 import { PiForkKnifeFill } from "react-icons/pi";
@@ -7,12 +7,12 @@ import { Recipe } from "@/types/Recipe";
 
 
 
-interface CardCarouselProps {
+interface Props {
   title?: string;
   recipes: Recipe[];
 }
 
-const CardCarousel = ({ title, recipes } : CardCarouselProps) => {
+const CardCarousel = ({ title, recipes } : Props) => {
   const [emblaRef, embla] = useEmblaCarousel({ slidesToScroll: "auto" });
 
   const scrollPrev = useCallback(() => embla?.scrollPrev(), [embla]);
@@ -21,7 +21,7 @@ const CardCarousel = ({ title, recipes } : CardCarouselProps) => {
   return (
     <section className="">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-3xl font-semibold">{title}</h2>
+        <h2 className="text-2xl font-semibold sm:text-3xl">{title}</h2>
         <div className="flex gap-4">
           <button
             className="px-4 py-2 bg-white rounded-lg shadow hover:bg-gray-100"

@@ -116,6 +116,10 @@
   }
 }
 
+ .bg-hero-mobile {
+    background-image: url('./assets/images/pexels-ella-olsson-572949-1640777.jpg');
+  }
+
 .embla {
   overflow: hidden;
 }

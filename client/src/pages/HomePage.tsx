@@ -11,6 +11,7 @@ import { ClipLoader } from "react-spinners";
 import HeroImg from "@/assets/images/pexels-ella-olsson-572949-1640777.jpg";
 import { IoFastFood } from "react-icons/io5";
 import CardCarousel from "@/components/CardCarousel";
+import Newsletter from "@/components/Newsletter";
 
 const HomePage = () => {
   const { ref, inView } = useInView();
@@ -57,37 +58,40 @@ const HomePage = () => {
   return (
     <section className="">
       {/* HERO */}
-      <section className="px-4 sm:px-6 md:px-14 lg:px-24 xl:px-44">
-        <section className="w-full h-[580px] flex items-center">
-          <div className="grid items-center grid-cols-1 gap-12 md:grid-cols-[1fr_2fr] w-full">
-            <div className="space-y-6">
-              <h1 className="text-4xl font-bold text-gray-900 md:text-5xl">
-                RecipeVault
-              </h1>
+      <section className=" lg:px-24 xl:px-44">
+        <section
+          className="bg-hero-mobile relative w-full h-[580px] flex items-center 
+    bg-cover bg-center bg-no-repeat lg:bg-none lg:flex"
+        >
+          {/* Overlay for mobile */}
+          <div className="absolute inset-0 bg-black/70 filter backdrop-grayscale lg:hidden"></div>
 
-              <p className="max-w-md text-lg text-gray-700">
+          <div className="relative z-10 grid items-center grid-cols-1 gap-12 lg:grid-cols-[1fr_2fr] w-full">
+            {/* Text Section */}
+            <div className="space-y-6 text-center text-white lg:text-left lg:text-gray-900">
+              <h1 className="text-4xl font-bold lg:text-5xl">RecipeVault</h1>
+
+              <p className="max-w-md mx-auto text-lg lg:mx-0">
                 Save, organize, and access your favorite recipes anytime. Build
                 your personal recipe collection in one secure place.
               </p>
 
               <Link
                 to="/register"
-                className="inline-block px-6 py-3 text-white transition bg-black rounded-lg hover:bg-gray-800"
+                className="inline-block px-6 py-3 text-white transition bg-red-500 rounded-lg hover:bg-gray-800"
               >
                 Create Account
               </Link>
             </div>
 
-            <figure className="justify-end hidden md:flex">
-              <img
-                src={HeroImg}
-                alt="Hero"
-                className="w-full max-w-[700px] mix-blend-multiply"
-              />
+            {/* Desktop Image */}
+            <figure className="justify-end hidden lg:flex">
+              <img src={HeroImg} alt="Hero" className="w-full max-w-[700px]" />
             </figure>
           </div>
         </section>
       </section>
+
       {/* Carousel section */}
       <section className="px-4 pt-20 pb-24 mb-10 bg-[rgb(255,220,195)] sm:px-6 md:px-14 lg:px-24 xl:px-44">
         <CardCarousel title="Trending recipes" recipes={recipes} />
@@ -95,11 +99,11 @@ const HomePage = () => {
       {/* POPULAR RECIPES */}
       <section className="px-4 mt-20 mb-10 sm:px-6 md:px-14 lg:px-24 xl:px-44">
         <div className="flex items-center justify-between mb-10">
-          <h2 className="text-3xl font-semibold">Popular Recipes</h2>
+          <h2 className="text-2xl font-semibold sm:text-3xl">Popular Recipes</h2>
 
           <Link
             to="/all-recipes"
-            className="flex items-center gap-2 px-4 py-3 text-lg font-medium text-white transition bg-red-600 rounded-xl hover:bg-red-300 hover:text-black"
+            className="flex items-center gap-2 px-4 py-3 font-medium text-white transition bg-red-600 text-md sm:text-lg rounded-xl hover:bg-red-300 hover:text-black"
           >
             Explore Recipes
             <IoFastFood className="w-6 h-6" />
@@ -175,20 +179,9 @@ const HomePage = () => {
             )}
           </div>
         </div>
-        
       </section>
-      <section className="flex flex-col items-center justify-center px-4 py-10 mt-20 bg-red-200 sm:px-6 md:px-14 lg:px-24 xl:px-44 rounded-xl">
-          <h2 className="flex flex-col items-center gap-2 mb-4 text-3xl font-semibold text-center sm:text-left">
-            <PiBowlFoodLight className="w-14 h-14" />
-            Subscribe to our Newsletter
-          </h2>
-          <p className="mb-6 text-center text-gray-700 sm:text-left">
-            Stay updated with the newest recipes, cooking tips, and exclusive
-            content.
-          </p>
-          <button className="px-6 py-2 text-xl text-white bg-black rounded-3xl">Subscribe</button>  
-          
-        </section>
+      {/* Newsletter section */}
+      <Newsletter />
     </section>
   );
 };

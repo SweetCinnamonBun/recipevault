@@ -3,12 +3,7 @@ import SearchBox from "./SearchBox";
 import { Link, useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "@/store/authSlice";
-import {
-  FaHome,
-  FaHeart,
-  FaBars,
-  FaTimes,
-} from "react-icons/fa";
+import { FaHome, FaHeart, FaBars, FaTimes } from "react-icons/fa";
 import { MdDashboard } from "react-icons/md";
 import { IoFastFood } from "react-icons/io5";
 
@@ -48,26 +43,36 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <div className="w-10 h-10 bg-black rounded-full" />
-            <span className="ml-2 text-lg italic font-bold">
-              RecipeVault
-            </span>
+            <span className="ml-2 text-lg italic font-bold">RecipeVault</span>
           </Link>
 
           {/* Desktop Nav */}
           <div className="items-center hidden font-semibold lg:flex space-x-7">
-            <Link to="/" className="flex flex-col items-center hover:text-yellow-500">
+            <Link
+              to="/"
+              className="flex flex-col items-center hover:text-yellow-500"
+            >
               <FaHome />
               <span>Home</span>
             </Link>
-            <Link to="/favorites" className="flex flex-col items-center hover:text-red-500">
+            <Link
+              to="/favorites"
+              className="flex flex-col items-center hover:text-red-500"
+            >
               <FaHeart />
               <span>Favorites</span>
             </Link>
-            <Link to="/dashboard" className="flex flex-col items-center hover:text-purple-500">
+            <Link
+              to="/dashboard"
+              className="flex flex-col items-center hover:text-purple-500"
+            >
               <MdDashboard />
               <span>Dashboard</span>
             </Link>
-            <Link to="/all-recipes" className="flex flex-col items-center hover:text-purple-500">
+            <Link
+              to="/all-recipes"
+              className="flex flex-col items-center hover:text-purple-500"
+            >
               <IoFastFood />
               <span>All-Recipes</span>
             </Link>
@@ -118,19 +123,19 @@ const Navbar = () => {
         onClick={() => setMenuOpen(false)}
       />
 
-      {/* Side Drawer */}
+      {/* Mobile side drawer */}
       <aside
         className={`fixed top-0 right-0 h-full w-72 bg-white z-50 transform transition-transform duration-300 ease-in-out
         ${menuOpen ? "translate-x-0" : "translate-x-full"}`}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b">
+        <div className="flex items-center justify-between px-6 py-4">
           <span className="text-lg font-bold"></span>
           <button onClick={() => setMenuOpen(false)}>
             <FaTimes className="text-xl" />
           </button>
         </div>
-
-        <div className="px-6 py-6 space-y-5">
+         {/* Navigation links */} 
+        <div className="px-6 py-6 space-y-5 text-lg">
           <Link
             to="/"
             onClick={() => setMenuOpen(false)}
@@ -157,7 +162,7 @@ const Navbar = () => {
             <MdDashboard />
             <span>Dashboard</span>
           </Link>
-
+          {/* Login & Logout buttons */}
           <div className="pt-6 space-y-3 border-t">
             {user ? (
               <button
@@ -192,4 +197,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-

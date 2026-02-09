@@ -3,14 +3,14 @@ import { Link } from "react-router";
 
 const Footer = () => {
   return (
-    <div className="w-full h-full py-8 bg-black lg:mt-20 lg:px-32">
+    <div className="w-full h-full py-8 bg-black lg:px-32">
       <div>
         <div className="flex flex-col items-center lg:flex-row md:items-start lg:items-center lg:justify-between md:px-10">
-          <Link to="/" className="text-white w-42 h-7">
+          <Link to="/" className="text-2xl font-bold text-white w-42 h-7">
             RecipeVault
           </Link>
 
-          <ul className="flex flex-col my-10 text-center text-white gap-y-5 md:flex-row md:gap-y-0 md:gap-x-10">
+          <ul className="flex flex-col my-10 font-semibold text-center text-white gap-y-5 md:flex-row md:gap-y-0 md:gap-x-10">
             <li>
               <Link to="/" className="transition-colors hover:text-orange-500">
                 HOME
@@ -32,10 +32,18 @@ const Footer = () => {
                 DASHBOARD
               </Link>
             </li>
+            <li>
+              <Link
+                to="/all-recipes"
+                className="transition-colors hover:text-orange-500"
+              >
+                ALL RECIPES
+              </Link>
+            </li>
           </ul>
         </div>
 
-        <p className="px-5 my-10 text-center text-white md:px-10 md:text-start lg:max-w-xl">
+        <p className="px-5 mt-2 mb-10 text-center text-white md:px-10 md:text-start lg:max-w-xl">
           RecipeVault is your ultimate destination for discovering and sharing
           amazing recipes. Our passionate team of chefs and food enthusiasts is
           dedicated to helping you explore new flavors, master cooking
@@ -46,7 +54,7 @@ const Footer = () => {
 
         <div className="flex flex-col items-center px-5 md:items-start md:px-10 gap-y-10 lg:gap-y-0 lg:flex-row lg:justify-between">
           <span className="text-white">
-            Copyright 2025. All Rights Reserved
+            Copyright 2026. All Rights Reserved
           </span>
 
           {/* Social Icons */}
