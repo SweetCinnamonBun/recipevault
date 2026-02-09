@@ -76,7 +76,7 @@ export type RecipeUpdate = {
   difficulty: string;
   servingSize: number;
   imageUrl: string;
-  categories: []
-  instructions: []
-  ingredients: []
+  categories: Category[];       
+  ingredients: Ingredient[];    
+  instructions: Instruction[];
 };

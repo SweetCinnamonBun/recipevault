@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router";
 import { FaBook, FaPlus, FaTrash, FaEdit } from "react-icons/fa";
-import { Category, Recipe } from "@/types/Recipe";
+import { Category, Recipe, RecipeUpdate } from "@/types/Recipe";
 import Modal from "@/components/Modal";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import agent from "@/lib/api/agent";
@@ -9,65 +9,82 @@ import { toast } from "react-toastify";
 import { useRecipes } from "@/lib/hooks/useRecipes";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { recipeSchema } from "@/lib/schemas/recipeSchema";
+import { RecipeSchema, recipeSchema } from "@/lib/schemas/recipeSchema";
 import { useCategories } from "@/lib/hooks/useCategories";
+import { useDropzone } from "react-dropzone";
+import { ClipLoader } from "react-spinners";
+import { useImages } from "@/lib/hooks/useImages";
 
 type AddIngredient = { quantity: string; unit: string; name: string };
 type AddInstruction = { text: string };
 
 const UpdateRecipePage = () => {
-  const {
-    register,
-    handleSubmit,
-    getValues,
-    reset,
-    formState: { errors },
-  } = useForm({ mode: "onTouched", resolver: zodResolver(recipeSchema) });
-  const [updateRecipe, setUpdateRecipe] = useState<Recipe | null>(null);
-  const [timeUnit, setTimeUnit] = useState("min");
-  const [cookingTimeValue, setCookingTimeValue] = useState<number>();
+    const { id } = useParams();
+  const { recipe, updateRecipe } = useRecipes(id);
+  const { categories } = useCategories();
 
-  const [allCategories, setAllCategories] = useState<Category[]>([]);
+  // Form state
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [difficulty, setDifficulty] = useState("Easy");
+  const [servingSize, setServingSize] = useState(1);
+  const [cookingTimeValue, setCookingTimeValue] = useState<number>(0);
+  const [timeUnit, setTimeUnit] = useState("min");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
-  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [ingredients, setIngredients] = useState<AddIngredient[]>([]);
   const [newIngredient, setNewIngredient] = useState<AddIngredient>({
     quantity: "",
     unit: "",
     name: "",
   });
+  const [instructions, setInstructions] = useState<AddInstruction[]>([]);
+  const [newInstruction, setNewInstruction] = useState<AddInstruction>({ text: "" });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [instructions, setInstructions] = useState<Instruction[]>([]);
-  const [newInstruction, setNewInstruction] = useState<AddInstruction>({
-    text: "",
-  });
+  const {postImage} = useImages()
 
-  const { id } = useParams();
-
-  const { recipe } = useRecipes(id);
-
+  // Load recipe into state
   useEffect(() => {
     if (recipe) {
+      setName(recipe.name);
+      setDescription(recipe.description);
+      setDifficulty(recipe.difficulty);
+      setServingSize(recipe.servingSize);
       setSelectedCategories(recipe.categories || []);
-      if (recipe.cookingTime) {
-        const [value, unit] = recipe.cookingTime.split(" ");
-        setTimeUnit(unit || "min");
-        const numericValue = parseInt(value, 10);
-        setCookingTimeValue(isNaN(numericValue) ? 0 : numericValue);
-      }
-
-      reset({
-        name: recipe.name,
-        description: recipe.description,
-        difficulty: recipe.difficulty,
-        servingSize: recipe.servingSize,
-      });
-
       setIngredients(recipe.ingredients || []);
       setInstructions(recipe.instructions || []);
-    }
-  }, [recipe, reset]);
+      setExistingImageUrl(recipe.imageUrl ?? null);
 
-  const { categories } = useCategories();
+      if (recipe.cookingTime) {
+        const [value, unit] = recipe.cookingTime.split(" ");
+        setCookingTimeValue(parseInt(value, 10) || 0);
+        setTimeUnit(unit || "min");
+      }
+    }
+  }, [recipe]);
+
+  // Dropzone for image
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: { "image/*": [] },
+    multiple: false,
+    onDrop: (acceptedFiles) => {
+      if (acceptedFiles && acceptedFiles[0]) setImageFile(acceptedFiles[0]);
+    },
+  });
+
+  // Helper functions
+  const deleteImageByUrl = async (imageUrl: string) => {
+    try {
+      const fileName = imageUrl.split("/").pop();
+      if (!fileName) return;
+      const res = await fetch(`/api/images/delete?fileName=${fileName}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete image");
+    } catch (err) {
+      console.error("Image delete failed:", err);
+    }
+  };
 
   const handleCategorySelection = (category: Category) => {
     if (!selectedCategories.find((c) => c.id === category.id)) {
@@ -76,200 +93,66 @@ const UpdateRecipePage = () => {
   };
 
   const handleCategoryRemoval = (categoryId: number) => {
-    setSelectedCategories(
-      selectedCategories.filter((c) => c.id !== categoryId),
-    );
+    setSelectedCategories(selectedCategories.filter((c) => c.id !== categoryId));
   };
-
-  const handleRemoveIngredient = (indexToRemove: number) => {
-    setIngredients((prev) =>
-      prev.filter((_, index) => index !== indexToRemove),
-    );
-  };
-
-  const handleRemoveInstruction = (indexToRemove: number) => {
-    setInstructions((prev) =>
-      prev.filter((_, index) => index !== indexToRemove),
-    );
-  };
-
-  // const [categories, setCategories] = useState<Category[]>([]);
-  // const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
-  // const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
-
-  // const [imageFile, setImageFile] = useState<File | null>(null);
-
-  // const [newIngredient, setNewIngredient] = useState<AddIngredient>({
-  //   quantity: "",
-  //   unit: "",
-  //   name: "",
-  // });
-  // const [newInstruction, setNewInstruction] = useState<AddInstruction>({
-  //   text: "",
-  // });
-
-  // const navigate = useNavigate();
-  // const { id } = useParams();
-  // const queryClient = useQueryClient();
-
-  // // ---------- Fetch Recipe ----------
-  // useEffect(() => {
-  //   const fetchRecipe = async () => {
-  //     try {
-  //       const res = await fetch(`/api/recipes/${id}`);
-  //       const data = await res.json();
-  //       setRecipe(data);
-  //       setSelectedCategories(data.categories || []);
-
-  //       // Parse cooking time
-  //       if (data.cookingTime) {
-  //         const [value, unit] = data.cookingTime.split(" ");
-  //         setTimeUnit(unit || "min");
-  //       }
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
-  //   fetchRecipe();
-  // }, [id]);
-
-  // // ---------- Fetch Categories ----------
-  // useEffect(() => {
-  //   const fetchCategories = async () => {
-  //     try {
-  //       const res = await fetch("/api/categories");
-  //       const data = await res.json();
-  //       setCategories(data);
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-  //   };
-  //   fetchCategories();
-  // }, []);
-
-  // // ---------- Mutation ----------
-  // const updateRecipe = useMutation({
-  //   mutationFn: async (updatedRecipe: Recipe) => {
-  //     // Handle image upload if a new image is selected
-  //     let imageUrl = updatedRecipe.imageUrl || "";
-  //     if (imageFile) {
-  //       const formData = new FormData();
-  //       formData.append("ImageFile", imageFile);
-  //       const uploadRes = await fetch("/api/images/upload", {
-  //         method: "POST",
-  //         body: formData,
-  //       });
-  //       const uploadData = await uploadRes.json();
-  //       imageUrl = uploadData.imageUrl;
-
-  //       // Delete old image
-  //       if (updatedRecipe.imageUrl) {
-  //         const oldFile = updatedRecipe.imageUrl.split("/").pop();
-  //         await fetch(`/api/images/delete?fileName=${oldFile}`, {
-  //           method: "DELETE",
-  //         });
-  //       }
-  //     }
-
-  //     await agent.put(`/api/recipes/${id}`, { ...updatedRecipe, imageUrl });
-  //   },
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["recipe", id] });
-  //     toast.success("Recipe updated!");
-  //     navigate(`/recipe/${id}`);
-  //   },
-  //   onError: () => {
-  //     console.error("Failed to update recipe");
-  //     toast.error("Failed to update recipe...");
-  //   },
-  // });
-
-  // // ---------- Handlers ----------
-  // const handleChange = (field: keyof Recipe, value: any) => {
-  //   if (!recipe) return;
-  //   setRecipe({ ...recipe, [field]: value });
-  // };
-
-  // const handleAddIngredient = () => {
-  //   if (!recipe || !newIngredient.name.trim()) return;
-  //   setRecipe({
-  //     ...recipe,
-  //     ingredients: [...recipe.ingredients, newIngredient],
-  //   });
-  //   setNewIngredient({ quantity: "", unit: "", name: "" });
-  // };
-
-  // const handleDeleteIngredient = (index: number) => {
-  //   if (!recipe) return;
-  //   setRecipe({
-  //     ...recipe,
-  //     ingredients: recipe.ingredients.filter((_, i) => i !== index),
-  //   });
-  // };
-
-  // const handleAddInstruction = () => {
-  //   if (!recipe || !newInstruction.text.trim()) return;
-  //   setRecipe({
-  //     ...recipe,
-  //     instructions: [...recipe.instructions, newInstruction],
-  //   });
-  //   setNewInstruction({ text: "" });
-  // };
-
-  // const handleDeleteInstruction = (index: number) => {
-  //   if (!recipe) return;
-  //   setRecipe({
-  //     ...recipe,
-  //     instructions: recipe.instructions.filter((_, i) => i !== index),
-  //   });
-  // };
-
-  // const handleCategorySelection = (category: Category) => {
-  //   if (!selectedCategories.find((c) => c.id === category.id)) {
-  //     setSelectedCategories([...selectedCategories, category]);
-  //   }
-  // };
-
-  // const handleCategoryRemoval = (categoryId: number) => {
-  //   setSelectedCategories(
-  //     selectedCategories.filter((c) => c.id !== categoryId),
-  //   );
-  // };
-
-  // const handleUpdateClick = () => {
-  //   if (!recipe) return;
-  //   updateRecipe.mutate({ ...recipe, categories: selectedCategories });
-  // };
 
   const handleAddIngredient = () => {
-    if (
-      !newIngredient.quantity.trim() ||
-      !newIngredient.unit ||
-      !newIngredient.name.trim()
-    ) {
-      return;
-    }
+    if (!newIngredient.name || !newIngredient.quantity || !newIngredient.unit) return;
+    setIngredients([...ingredients, newIngredient]);
+    setNewIngredient({ quantity: "", unit: "", name: "" });
+  };
 
-    setIngredients((prev) => [...prev, newIngredient]);
-
-    setNewIngredient({
-      quantity: "",
-      unit: "",
-      name: "",
-    });
+  const handleRemoveIngredient = (index: number) => {
+    setIngredients(ingredients.filter((_, i) => i !== index));
   };
 
   const handleAddInstruction = () => {
-    if (!newInstruction.text.trim()) {
-      return;
-    }
-
-    setInstructions((prev) => [...prev, newInstruction]);
-
+    if (!newInstruction.text) return;
+    setInstructions([...instructions, newInstruction]);
     setNewInstruction({ text: "" });
   };
 
-  const onSubmit = (data) => console.log(data);
+  const handleRemoveInstruction = (index: number) => {
+    setInstructions(instructions.filter((_, i) => i !== index));
+  };
+
+  // Form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      let imageUrl = existingImageUrl || "";
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("ImageFile", imageFile);
+        imageUrl = await postImage.mutateAsync(formData);
+        if (existingImageUrl) await deleteImageByUrl(existingImageUrl);
+      }
+
+      const fullCookingTime = `${cookingTimeValue} ${timeUnit}`;
+
+      const updatedData: RecipeUpdate = {
+        name,
+        description,
+        difficulty,
+        servingSize,
+        cookingTime: fullCookingTime,
+        imageUrl,
+        categories: selectedCategories,
+        ingredients,
+        instructions,
+      };
+
+      await updateRecipe.mutateAsync(updatedData);
+     
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   return (
     <div className="relative">
@@ -283,40 +166,65 @@ const UpdateRecipePage = () => {
         <form
           encType="multipart/form-data"
           className="w-full px-10 py-4 mt-10 bg-white rounded-lg 2xl:w-10/12"
-          // onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit}
         >
-          {/* Name */}
+           {/* Name */}
           <div className="flex flex-col my-4">
             <label className="mb-2 text-lg font-medium">Name:</label>
             <input
               type="text"
-              {...register("name")}
-              defaultValue={recipe?.name ?? ""}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-orange-300"
               required
             />
-            {errors.name && (
-              <span className="mt-1 text-sm text-red-500">
-                {errors.name.message}
-              </span>
-            )}
           </div>
 
-          {/* Cooking Time */}
+          {/* Image */}
           <div className="my-4">
-            <label className="flex items-center gap-2 mb-2 text-lg font-medium">
-              Cooking Time:
-            </label>
+            <label className="text-lg font-medium">Upload Image:</label>
+            <div
+              {...getRootProps()}
+              className="cursor-pointer border-2 border-dashed border-gray-300 rounded-lg p-2 flex items-center justify-center w-full lg:w-1/2 min-h-[300px] hover:bg-green-50 transition relative overflow-hidden my-4"
+            >
+              <input {...getInputProps()} />
+              {imageFile || existingImageUrl ? (
+                <div className="relative w-full h-full">
+                  <img
+                    src={imageFile ? URL.createObjectURL(imageFile) : existingImageUrl!}
+                    alt="Recipe"
+                    className="object-contain w-full h-full rounded-lg max-h-64"
+                  />
+                  <div className="absolute flex gap-2 transform -translate-x-1/2 bottom-4 left-1/2">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        document.querySelector<HTMLInputElement>('input[type="file"]')?.click();
+                      }}
+                      className="flex items-center justify-center w-12 h-12 text-white bg-orange-400 rounded hover:bg-orange-500"
+                    >
+                      <FaEdit className="w-6 h-6" />
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <span className="text-gray-500">Drag & drop or click to select an image</span>
+              )}
+            </div>
+          </div>
+
+          {/* Cooking time */}
+          <div className="my-4">
+            <label className="flex items-center gap-2 mb-2 text-lg font-medium">Cooking Time:</label>
             <div className="flex items-center space-x-3">
-              <div className="relative w-24">
-                <input
-                  type="number"
-                  className="w-full px-4 py-3 transition-shadow border border-gray-300 rounded-lg"
-                  value={cookingTimeValue}
-                  onChange={(e) => setCookingTimeValue(Number(e.target.value))}
-                  required
-                />
-              </div>
+              <input
+                type="number"
+                className="w-24 px-4 py-3 transition-shadow border border-gray-300 rounded-lg"
+                value={cookingTimeValue}
+                onChange={(e) => setCookingTimeValue(Number(e.target.value))}
+                required
+              />
               <select
                 value={timeUnit}
                 onChange={(e) => setTimeUnit(e.target.value)}
@@ -332,8 +240,8 @@ const UpdateRecipePage = () => {
           <div className="my-4">
             <label className="text-lg font-medium">Difficulty:</label>
             <select
-              {...register("difficulty")}
-              defaultValue={recipe?.difficulty ?? "Easy"}
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value)}
               className="w-full p-2 bg-white border border-gray-300 rounded-lg"
             >
               <option value="Easy">Easy</option>
@@ -342,13 +250,13 @@ const UpdateRecipePage = () => {
             </select>
           </div>
 
-          {/* Serving Size */}
+          {/* Serving size */}
           <div className="flex flex-col my-4">
             <label className="text-lg font-medium">Serving Size:</label>
             <input
               type="number"
-              {...register("servingSize")}
-              defaultValue={recipe?.servingSize ?? 1}
+              value={servingSize}
+              onChange={(e) => setServingSize(Number(e.target.value))}
               className="w-24 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -358,16 +266,11 @@ const UpdateRecipePage = () => {
           <div className="my-4">
             <label className="text-lg font-medium">Description:</label>
             <textarea
-              {...register("description")}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               className="w-full h-40 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              defaultValue={recipe?.description ?? ""}
               required
             />
-            {errors.description && (
-              <span className="mt-1 text-sm text-red-500">
-                {errors.description.message}
-              </span>
-            )}
           </div>
           <h2 className="mt-10 mb-2 text-2xl underline">Categories</h2>
           <div className="">
@@ -433,6 +336,18 @@ const UpdateRecipePage = () => {
                 <div className="flex flex-col mt-4 gap-y-2">
                   <input
                     type="text"
+                    placeholder="Name"
+                    value={newIngredient.name}
+                    onChange={(e) =>
+                      setNewIngredient({
+                        ...newIngredient,
+                        name: e.target.value,
+                      })
+                    }
+                    className="p-2 border border-gray-400 rounded"
+                  />
+                  <input
+                    type="text"
                     placeholder="Quantity"
                     value={newIngredient.quantity}
                     onChange={(e) =>
@@ -467,18 +382,7 @@ const UpdateRecipePage = () => {
                     <option value="lb">Pounds (lb)</option>
                     <option value="pcs">Pieces (pcs)</option>
                   </select>
-                  <input
-                    type="text"
-                    placeholder="Name"
-                    value={newIngredient.name}
-                    onChange={(e) =>
-                      setNewIngredient({
-                        ...newIngredient,
-                        name: e.target.value,
-                      })
-                    }
-                    className="p-2 border border-gray-400 rounded"
-                  />
+
                   <button
                     type="button"
                     onClick={handleAddIngredient}
@@ -535,15 +439,6 @@ const UpdateRecipePage = () => {
               </div>
             </section>
           </div>
-          {/* <button
-            type="button"
-            onClick={handlePreview}
-            className="flex items-center justify-center gap-2 p-3 mt-10 text-white bg-blue-500 rounded-2xl w-52 mb-14 hover:bg-blue-600"
-          >
-            {" "}
-            <MdOutlinePreview className="w-6 h-6" />
-            Preview Recipe
-          </button>
           <button
             type="submit"
             className={`w-full p-3 text-white transition  rounded-lg hover:bg-blue-600 ${
@@ -551,8 +446,12 @@ const UpdateRecipePage = () => {
             } `}
             disabled={isLoading}
           >
-            {isLoading ? <ClipLoader color="#fff" size={20} /> : "Create Recipe"}
-          </button> */}
+            {isLoading ? (
+              <ClipLoader color="#fff" size={20} />
+            ) : (
+              "Update Recipe"
+            )}
+          </button>
         </form>
       </div>
     </div>
