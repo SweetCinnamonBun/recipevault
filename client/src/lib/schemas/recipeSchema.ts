@@ -10,7 +10,7 @@ export const recipeSchema = z.object({
     description: z.string().min(10, "Description must be at least 10 characters long"),
     cookingTime: z.string({ required_error: "Cooking time is required."}),
     difficulty: z.string({required_error: "difficulty is required"}),
-    servingSize: z.number().min(1, "Serving size must be at least 1")
+    servingSize: z.string().min(1, "Serving size must be at least 1")
 })
 
 export type RecipeSchema = z.infer<typeof recipeSchema>;
