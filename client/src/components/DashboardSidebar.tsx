@@ -18,7 +18,7 @@ const DashboardSidebar = ({user}: DashboardSidebarProps) => {
           </Link>
 
           <ul className="flex flex-col flex-1 gap-y-3">
-            <li className="px-2 py-3 rounded-lg bg-amber-200">
+            <li className="px-2 py-3 rounded-lg bg-amber-200 hover:bg-amber-100">
               <Link
                 to="/dashboard"
                 className="grid grid-cols-[auto_1fr] gap-2 items-center text-md"
@@ -34,15 +34,6 @@ const DashboardSidebar = ({user}: DashboardSidebarProps) => {
               >
                 <FaPlus className="w-6 h-6" />
                 <span>Create recipe</span>
-              </Link>
-            </li>
-            <li className="px-2 py-3 rounded-lg bg-amber-200">
-              <Link
-                to="/dashboard/analytics"
-                className="grid grid-cols-[auto_1fr] gap-2 items-center text-md"
-              >
-                <GrAnalytics className="w-6 h-6" />
-                <span>Analytics</span>
               </Link>
             </li>
           </ul>

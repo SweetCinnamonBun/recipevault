@@ -44,7 +44,7 @@ const FavoritesPage = () => {
   }, []);
 
   return (
-    <div className="px-4 2xl:px-20">
+    <div className="px-4 mb-20 2xl:px-20">
           <h1 className="flex items-center py-2 mt-10 text-2xl text-center bg-white rounded-lg w-52 ">
             <FaHeart className="w-6 h-6 mx-3 text-red-500" /> Your Favorites
           </h1>

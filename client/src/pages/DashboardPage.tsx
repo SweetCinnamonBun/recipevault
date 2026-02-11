@@ -22,7 +22,7 @@ const DashboardPage = () => {
   return (
     <section className="grid grid-cols-[270px_1fr] min-h-screen">
       <DashboardSidebar user={user} />
-      <section>
+      <section className="mb-10">
       <header className="flex items-center justify-between h-20 px-10 bg-white ">
           <div className="relative w-full max-w-md">
             <FaSearch className="absolute text-gray-600 -translate-y-1/2 left-3 top-1/2" />
