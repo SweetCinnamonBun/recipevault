@@ -7,7 +7,7 @@ export type Recipe = {
   servingSize: number;
   averageRating: number;
   ratingCount: number;
-  imageUrl: string;
+  imageUrl?: string;
   createdAt: string;
   categories: Category[];
   ingredients: Ingredient[];
@@ -20,7 +20,7 @@ export type RecipeCreate = {
   cookingTime: string;
   difficulty: string;
   servingSize: string;
-  imageUrl: string;
+  imageUrl?: string;
 };
 
 

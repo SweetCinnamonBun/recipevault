@@ -62,12 +62,12 @@ const UsersRecipes = ({ handleDelete }: UsersRecipesProps) => {
                     <FaEdit className="w-5 h-5 text-black" />
                   </div>
                 </Link>
-                <div className="flex justify-center py-2 mr-5 bg-red-100 rounded-lg cursor-pointer w-11 hover:bg-red-500">
+                <button className="flex justify-center py-2 mr-5 bg-red-100 rounded-lg cursor-pointer w-11 hover:bg-red-500">
                   <FaTrash
                     className="w-5 h-5 text-black"
-                    onClick={() => handleDelete(recipe.id, recipe.imageUrl)}
+                    onClick={() => handleDelete(recipe.id, recipe.imageUrl!)}
                   />
-                </div>
+                </button>
               </div>
             </div>
           </div>

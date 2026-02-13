@@ -53,6 +53,9 @@ const CreateRecipePage = () => {
     text: "",
   });
 
+  const DEFAULT_RECIPE_IMAGE =
+    "https://recipevaultstorage.blob.core.windows.net/recipevaultcontainer/0qC8V5ex.jpg";
+
   const recipePreview = useSelector((state: RootState) => state.recipe);
   const ingredientsPreview = useSelector(
     (state: RootState) => state.recipe.ingredients,
@@ -131,7 +134,8 @@ const CreateRecipePage = () => {
     setIsLoading(true);
 
     try {
-      let imageUrl = null;
+      let imageUrl: string = DEFAULT_RECIPE_IMAGE;
+
       if (imageFile) {
         const imageFormData = new FormData();
         imageFormData.append("ImageFile", imageFile);
@@ -221,381 +225,395 @@ const CreateRecipePage = () => {
 
   return (
     <>
-    <div className="relative">
-      <nav className="px-10">
-        <h1 className="flex items-center py-2 mt-8 text-2xl text-center bg-white rounded-lg w-52 ">
-          <FaPlus className="w-6 h-6 mx-3 text-red-500" /> Create Recipe
-        </h1>
-      </nav>
-      <div className="flex items-center justify-center  mb-[100px] px-14">
-        <form
-          onSubmit={handleSubmit(handleCreateRecipe)}
-          encType="multipart/form-data"
-          className="w-full px-10 py-4 mt-10 bg-white rounded-lg 2xl:w-10/12 "
-        >
-          <div className="flex flex-col">
-            <h2 className="mt-4 mb-4 text-2xl underline">Recipe details</h2>
-            <label className="mb-2 text-lg font-medium">Name:</label>
-            <input
-              className="p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-orange-300"
-              type="text"
-              {...register("name")}
-              required
-            />
-            {errors.name && (
-              <span className="mt-1 text-sm text-red-500">
-                {errors.name.message}
-              </span>
-            )}
-          </div>
-
-          <div className="my-4">
-            <label className="text-lg font-medium">Upload Image:</label>
-            <div
-              {...getRootProps()}
-              className="cursor-pointer border-2 border-dashed border-gray-300 rounded-lg p-2 flex items-center justify-center w-full lg:w-1/2 min-h-[300px] max-h-[305px] hover:bg-green-50 transition relative overflow-hidden my-4"
-            >
-              <input {...getInputProps()} />
-
-              {imageFile ? (
-                <div className="relative w-full h-full">
-                  <img
-                    src={URL.createObjectURL(imageFile)}
-                    alt="Preview"
-                    className="object-contain w-full h-full rounded-lg max-h-64"
-                  />
-                  <div className="absolute flex gap-2 transform -translate-x-1/2 bottom-4 left-1/2">
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setImageFile(null);
-                      }}
-                      className="flex items-center justify-center w-12 h-12 text-white bg-orange-400 rounded hover:bg-red-600"
-                    >
-                      <FaTrash className="w-6 h-6"/>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        document
-                          .querySelector<HTMLInputElement>('input[type="file"]')
-                          ?.click();
-                      }}
-                      className="flex items-center justify-center w-12 h-12 text-white bg-orange-400 rounded hover:bg-blue-600"
-                    >
-                      <FaEdit className="w-6 h-6"/>
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <span className="text-gray-500">
-                  Drag & drop or click to select an image
+      <div className="relative">
+        <nav className="px-10">
+          <h1 className="flex items-center py-2 mt-8 text-2xl text-center bg-white rounded-lg w-52 ">
+            <FaPlus className="w-6 h-6 mx-3 text-red-500" /> Create Recipe
+          </h1>
+        </nav>
+        <div className="flex items-center justify-center  mb-[100px] px-14">
+          <form
+            onSubmit={handleSubmit(handleCreateRecipe)}
+            encType="multipart/form-data"
+            className="w-full px-10 py-4 mt-10 bg-white rounded-lg 2xl:w-10/12 "
+          >
+            <div className="flex flex-col">
+              <h2 className="mt-4 mb-4 text-2xl underline">Recipe details</h2>
+              <label className="mb-2 text-lg font-medium">Name:</label>
+              <input
+                className="p-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-orange-300"
+                type="text"
+                {...register("name")}
+                required
+              />
+              {errors.name && (
+                <span className="mt-1 text-sm text-red-500">
+                  {errors.name.message}
                 </span>
               )}
             </div>
-          </div>
-
-          <div className="my-4">
-            <label className="flex items-center gap-2 mb-2 text-lg font-medium">
-              Cooking Time:
-            </label>
-            <div className="flex items-center space-x-3">
-              <div className="relative w-24">
-                <input
-                  type="number"
-                  className="w-full px-4 py-3 transition-shadow border border-gray-300 rounded-lg"
-                  {...register("cookingTime")}
-                  required
-                />
-              </div>
-
-              <select
-                value={timeUnit}
-                onChange={handleUnitChange}
-                className="px-4 py-3 bg-white border border-gray-300 rounded-lg"
+            {/* Image selection */}
+            <div className="my-4">
+              <label className="text-lg font-medium">Upload Image:</label>
+              <div
+                {...getRootProps()}
+                className="cursor-pointer border-2 border-dashed border-gray-300 rounded-lg p-2 flex items-center justify-center w-full lg:w-1/2 min-h-[300px] max-h-[305px] hover:bg-green-50 transition relative overflow-hidden my-4"
               >
-                <option value="min">Minutes</option>
-                <option value="h">Hours</option>
+                <input {...getInputProps()} />
+
+                {imageFile ? (
+                  <div className="relative w-full h-full">
+                    <img
+                      src={URL.createObjectURL(imageFile)}
+                      alt="Preview"
+                      className="object-contain w-full h-full rounded-lg max-h-64"
+                    />
+                    <div className="absolute flex gap-2 transform -translate-x-1/2 bottom-4 left-1/2">
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setImageFile(null);
+                        }}
+                        className="flex items-center justify-center w-12 h-12 text-white bg-orange-400 rounded hover:bg-red-600"
+                      >
+                        <FaTrash className="w-6 h-6" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          document
+                            .querySelector<HTMLInputElement>(
+                              'input[type="file"]',
+                            )
+                            ?.click();
+                        }}
+                        className="flex items-center justify-center w-12 h-12 text-white bg-orange-400 rounded hover:bg-blue-600"
+                      >
+                        <FaEdit className="w-6 h-6" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center w-full h-full">
+                    <img
+                      src={DEFAULT_RECIPE_IMAGE}
+                      alt="Placeholder"
+                      className="object-contain w-full h-full rounded-lg max-h-64 opacity-80"
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="my-4">
+              <label className="flex items-center gap-2 mb-2 text-lg font-medium">
+                Cooking Time:
+              </label>
+              <div className="flex items-center space-x-3">
+                <div className="relative w-24">
+                  <input
+                    type="number"
+                    className="w-full px-4 py-3 transition-shadow border border-gray-300 rounded-lg"
+                    {...register("cookingTime")}
+                    required
+                  />
+                </div>
+
+                <select
+                  value={timeUnit}
+                  onChange={handleUnitChange}
+                  className="px-4 py-3 bg-white border border-gray-300 rounded-lg"
+                >
+                  <option value="min">Minutes</option>
+                  <option value="h">Hours</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="my-4">
+              <label className="text-lg font-medium">Difficulty:</label>
+              <select
+                {...register("difficulty")}
+                className="w-full p-2 bg-white border border-gray-300 rounded-lg"
+              >
+                <option value="Easy">Easy</option>
+                <option value="Medium">Medium</option>
+                <option value="Hard">Hard</option>
               </select>
             </div>
-          </div>
-
-          <div className="my-4">
-            <label className="text-lg font-medium">Difficulty:</label>
-            <select
-              {...register("difficulty")}
-              className="w-full p-2 bg-white border border-gray-300 rounded-lg"
-            >
-              <option value="Easy">Easy</option>
-              <option value="Medium">Medium</option>
-              <option value="Hard">Hard</option>
-            </select>
-          </div>
-          <div className="flex flex-col my-4">
-            <label className="text-lg font-medium">Serving Size:</label>
-            <input
-              type="number"
-              className="w-24 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              {...register("servingSize")} // Update the state when serving size changes
-              required
-            />
-          </div>
-
-          <div className="my-4">
-            <label className="text-lg font-medium">Description:</label>
-            <textarea
-              className="w-full h-40 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              {...register("description")}
-              required
-            />
-            {errors.description && (
-              <span className="mt-1 text-sm text-red-500">
-                {errors.description.message}
-              </span>
-            )}
-          </div>
-          <h2 className="mt-10 mb-2 text-2xl underline">Categories</h2>
-          <div className="">
-            <div className="w-[550px] bg-white  h-full py-4 ">
-              <h1 className="text-lg">Select Categories:</h1>
-              <div className="flex flex-wrap gap-2 my-5 gap-y-3">
-                {categories?.map((category: Category, index: number) => (
-                  <span
-                    key={index}
-                    onClick={() => handleCategorySelection(category)}
-                    className="px-4 py-2 rounded-lg cursor-pointer text-md from-orange-200 to-orange-300 bg-gradient-to-r hover:from-orange-200 hover:to-orange-200"
-                  >
-                    {category.name}
-                  </span>
-                ))}
-              </div>
-              <p className="mx-2 mt-5 italic">Selected categories:</p>
-              <div className="flex flex-wrap gap-2 p-4">
-                {selectedCategories.map((category) => (
-                  <span
-                    key={category.id}
-                    className="px-4 py-2 rounded-lg cursor-pointer text-md bg-gradient-to-r from-green-300 to-green-400 hover:bg-red-400"
-                    onClick={() => handleCategoryRemoval(category.id)}
-                  >
-                    {category.name} ✕
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col w-full min-h-screen ">
-            <h1 className="w-full py-2 mb-8 text-2xl underline bg-white rounded-lg">
-              Create Ingredients and Instructions
-            </h1>
-            <section className="grid w-full grid-cols-2  gap-x-8 min-h-[700px]">
-              {/* Ingredients Section */}
-              <div className="p-6 bg-white rounded-lg shadow-lg">
-                <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
-                {/* Preview Section */}
-                <ul className="p-2 space-y-4 list-disc">
-                  {ingredients.map((ingredient, index) => (
-                    <li key={index} className="space-x-2 text-xl">
-                      <span>{ingredient.quantity}</span>
-                      <span>{ingredient.unit}</span>
-                      <span>{ingredient.name}</span>
-                    </li>
-                  ))}
-                </ul>
-                {/* Input Section */}
-                <div className="flex flex-col mt-4 gap-y-2">
-                  <input
-                    type="text"
-                    placeholder="Quantity"
-                    value={newIngredient.quantity}
-                    onChange={(e) =>
-                      setNewIngredient({
-                        ...newIngredient,
-                        quantity: e.target.value,
-                      })
-                    }
-                    className="p-2 border border-gray-400 rounded"
-                  />
-                  <select
-                    value={newIngredient.unit}
-                    onChange={(e) =>
-                      setNewIngredient({
-                        ...newIngredient,
-                        unit: e.target.value,
-                      })
-                    }
-                    className="h-10 p-2 bg-white border border-gray-400 rounded-md focus:ring-2 focus:ring-green-400 focus:outline-none"
-                  >
-                    <option value="" disabled>
-                      Select Unit
-                    </option>
-                    <option value="g">Grams (g)</option>
-                    <option value="kg">Kilograms (kg)</option>
-                    <option value="ml">Milliliters (ml)</option>
-                    <option value="L">Liters (L)</option>
-                    <option value="tsp">Teaspoon (tsp)</option>
-                    <option value="tbsp">Tablespoon (tbsp)</option>
-                    <option value="cup">Cup</option>
-                    <option value="oz">Ounces (oz)</option>
-                    <option value="lb">Pounds (lb)</option>
-                    <option value="pcs">Pieces (pcs)</option>
-                  </select>
-                  <input
-                    type="text"
-                    placeholder="Name"
-                    value={newIngredient.name}
-                    onChange={(e) =>
-                      setNewIngredient({
-                        ...newIngredient,
-                        name: e.target.value,
-                      })
-                    }
-                    className="p-2 border border-gray-400 rounded"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddIngredient}
-                    className="px-4 py-2 mt-4 text-white bg-green-500 rounded hover:bg-green-600"
-                  >
-                    Add Ingredient
-                  </button>
-                </div>
-              </div>
-
-              {/* Instructions Section */}
-              <div className="p-6 bg-white rounded-lg shadow-lg">
-                <h2 className="my-2 text-2xl font-bold">Instructions</h2>
-                {/* Preview Section */}
-                <ul className="p-2 space-y-4 list-disc">
-                  {instructions.map((instruction, index) => (
-                    <li key={index} className="text-xl">
-                      {instruction.text}
-                    </li>
-                  ))}
-                </ul>
-                {/* Input Section */}
-                <div className="flex flex-col mt-4 gap-y-2">
-                  <textarea
-                    placeholder="Instruction"
-                    value={newInstruction.text}
-                    onChange={(e) =>
-                      setNewInstruction({
-                        ...newInstruction,
-                        text: e.target.value,
-                      })
-                    }
-                    className="w-full p-2 border border-gray-400 rounded"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddInstruction}
-                    className="px-4 py-2 mt-4 text-white bg-green-500 rounded hover:bg-green-600"
-                  >
-                    Add Instruction
-                  </button>
-                </div>
-              </div>
-            </section>
-          </div>
-          <button
-            type="button"
-            onClick={handlePreview}
-            className="flex items-center justify-center gap-2 p-3 mt-10 text-white bg-blue-500 rounded-2xl w-52 mb-14 hover:bg-blue-600"
-          >
-            {" "}
-            <MdOutlinePreview className="w-6 h-6" />
-            Preview Recipe
-          </button>
-          <button
-            type="submit"
-            className={`w-full p-3 text-white transition  rounded-lg hover:bg-blue-600 ${
-              isLoading ? "bg-green-100" : "bg-green-500"
-            } `}
-            disabled={isLoading}
-          >
-            {isLoading ? <ClipLoader color="#fff" size={20} /> : "Create Recipe"}
-          </button>
-        </form>
-      </div>
-      {isModalOpen && (
-        <RecipePreviewModal onClose={() => setIsModalOpen(false)}>
-          <div className="flex flex-col items-center max-h-[90vh] overflow-y-auto bg-[#FFF1DB]">
-            <h1 className="my-16 text-3xl">{recipePreview?.name}</h1>
-            <div className="flex justify-between px-5 py-5 mt-2 mb-8 w-96 gap-x-5">
-              <div className="">
-                <div className="flex flex-col items-center">
-                  <MdAccessTime className="w-8 h-8" />
-                  <span className="text-lg">{recipePreview?.cookingTime}</span>
-                  <span className="text-md">Cooking time</span>
-                </div>
-              </div>
-              <div className="">
-                <div className="flex flex-col items-center">
-                  <PiShootingStarLight className="w-8 h-8" />
-                  <span className="text-lg">{recipePreview?.difficulty}</span>
-                  <span className="text-md">Difficulty</span>
-                </div>
-              </div>
-              <div className="">
-                <div className="flex flex-col items-center">
-                  <PiForkKnifeFill className="w-8 h-8" />
-                  <span className="text-lg">{recipePreview?.servingSize}</span>
-                  <span className="text-md">Serving Size</span>
-                </div>
-              </div>
-            </div>
-            <figure className="w-full sm:w-3/4 px-1 lg:w-[70%] [@media(min-width:1100px)]:w-[70%] [@media(min-width:1300px)]:w-[70%] 2xl:w-[50%] [@media(min-width:1750px)]:w-[70%]">
-              <img
-                src={recipePreview?.imageUrl}
-                alt={recipePreview?.name}
-                className="w-full h-[380px] md:h-[520px] rounded-xl"
+            <div className="flex flex-col my-4">
+              <label className="text-lg font-medium">Serving Size:</label>
+              <input
+                type="number"
+                className="w-24 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                {...register("servingSize")} // Update the state when serving size changes
+                required
               />
-            </figure>
-            <div className="flex flex-wrap justify-center mt-12 gap-y-5">
-              {recipePreview?.categories.map(
-                (category: Category, index: number) => (
-                  <span
-                    key={index}
-                    className="px-4 py-2 ml-4 bg-[#00FF9C] rounded-lg"
-                  >
-                    {category.name}
-                  </span>
-                ),
+            </div>
+
+            <div className="my-4">
+              <label className="text-lg font-medium">Description:</label>
+              <textarea
+                className="w-full h-40 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                {...register("description")}
+                required
+              />
+              {errors.description && (
+                <span className="mt-1 text-sm text-red-500">
+                  {errors.description.message}
+                </span>
               )}
             </div>
-            <section className="w-11/12 my-10 2xl:px-52">
-              <div className="w-full p-8 text-xl bg-white shadow-lg rounded-xl h-96">
-                {recipePreview?.description}
-              </div>
-            </section>
-            <section className="grid w-11/12 grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 min-h-[624px] 2xl:px-52 mb-20">
-              {/* Ingredients */}
-              <div className="flex flex-col p-6 shadow-lg rounded-lg bg-[#F8FAE5]">
-                <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
-                <ul className="flex-1 p-2 space-y-4 overflow-y-auto list-disc">
-                  {recipePreview?.ingredients.map((ingredient, index) => (
-                    <li key={index} className="space-x-2 text-xl">
-                      <span>{ingredient.quantity}</span>
-                      <span>{ingredient.unit}</span>
-                      <span>{ingredient.name}</span>
-                    </li>
+            <h2 className="mt-10 mb-2 text-2xl underline">Categories</h2>
+            <div className="">
+              <div className="w-[550px] bg-white  h-full py-4 ">
+                <h1 className="text-lg">Select Categories:</h1>
+                <div className="flex flex-wrap gap-2 my-5 gap-y-3">
+                  {categories?.map((category: Category, index: number) => (
+                    <span
+                      key={index}
+                      onClick={() => handleCategorySelection(category)}
+                      className="px-4 py-2 rounded-lg cursor-pointer text-md from-orange-200 to-orange-300 bg-gradient-to-r hover:from-orange-200 hover:to-orange-200"
+                    >
+                      {category.name}
+                    </span>
                   ))}
-                </ul>
+                </div>
+                <p className="mx-2 mt-5 italic">Selected categories:</p>
+                <div className="flex flex-wrap gap-2 p-4">
+                  {selectedCategories.map((category) => (
+                    <span
+                      key={category.id}
+                      className="px-4 py-2 rounded-lg cursor-pointer text-md bg-gradient-to-r from-green-300 to-green-400 hover:bg-red-400"
+                      onClick={() => handleCategoryRemoval(category.id)}
+                    >
+                      {category.name} ✕
+                    </span>
+                  ))}
+                </div>
               </div>
+            </div>
+            <div className="flex flex-col w-full min-h-screen ">
+              <h1 className="w-full py-2 mb-8 text-2xl underline bg-white rounded-lg">
+                Create Ingredients and Instructions
+              </h1>
+              <section className="grid w-full grid-cols-2  gap-x-8 min-h-[700px]">
+                {/* Ingredients Section */}
+                <div className="p-6 bg-white rounded-lg shadow-lg">
+                  <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
+                  {/* Preview Section */}
+                  <ul className="p-2 space-y-4 list-disc">
+                    {ingredients.map((ingredient, index) => (
+                      <li key={index} className="space-x-2 text-xl">
+                        <span>{ingredient.quantity}</span>
+                        <span>{ingredient.unit}</span>
+                        <span>{ingredient.name}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {/* Input Section */}
+                  <div className="flex flex-col mt-4 gap-y-2">
+                    <input
+                      type="text"
+                      placeholder="Quantity"
+                      value={newIngredient.quantity}
+                      onChange={(e) =>
+                        setNewIngredient({
+                          ...newIngredient,
+                          quantity: e.target.value,
+                        })
+                      }
+                      className="p-2 border border-gray-400 rounded"
+                    />
+                    <select
+                      value={newIngredient.unit}
+                      onChange={(e) =>
+                        setNewIngredient({
+                          ...newIngredient,
+                          unit: e.target.value,
+                        })
+                      }
+                      className="h-10 p-2 bg-white border border-gray-400 rounded-md focus:ring-2 focus:ring-green-400 focus:outline-none"
+                    >
+                      <option value="" disabled>
+                        Select Unit
+                      </option>
+                      <option value="g">Grams (g)</option>
+                      <option value="kg">Kilograms (kg)</option>
+                      <option value="ml">Milliliters (ml)</option>
+                      <option value="L">Liters (L)</option>
+                      <option value="tsp">Teaspoon (tsp)</option>
+                      <option value="tbsp">Tablespoon (tbsp)</option>
+                      <option value="cup">Cup</option>
+                      <option value="oz">Ounces (oz)</option>
+                      <option value="lb">Pounds (lb)</option>
+                      <option value="pcs">Pieces (pcs)</option>
+                    </select>
+                    <input
+                      type="text"
+                      placeholder="Name"
+                      value={newIngredient.name}
+                      onChange={(e) =>
+                        setNewIngredient({
+                          ...newIngredient,
+                          name: e.target.value,
+                        })
+                      }
+                      className="p-2 border border-gray-400 rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddIngredient}
+                      className="px-4 py-2 mt-4 text-white bg-green-500 rounded hover:bg-green-600"
+                    >
+                      Add Ingredient
+                    </button>
+                  </div>
+                </div>
 
-              {/* Instructions */}
-              <div className="flex flex-col p-6 shadow-lg rounded-lg bg-[#F8FAE5]">
-                <h2 className="my-2 text-2xl font-bold">Instructions</h2>
-                <ul className="flex-1 p-2 space-y-4 overflow-y-auto list-disc">
-                  {recipePreview?.instructions.map((instruction, index) => (
-                    <li key={index} className="text-xl">
-                      {instruction.text}
-                    </li>
-                  ))}
-                </ul>
+                {/* Instructions Section */}
+                <div className="p-6 bg-white rounded-lg shadow-lg">
+                  <h2 className="my-2 text-2xl font-bold">Instructions</h2>
+                  {/* Preview Section */}
+                  <ul className="p-2 space-y-4 list-disc">
+                    {instructions.map((instruction, index) => (
+                      <li key={index} className="text-xl">
+                        {instruction.text}
+                      </li>
+                    ))}
+                  </ul>
+                  {/* Input Section */}
+                  <div className="flex flex-col mt-4 gap-y-2">
+                    <textarea
+                      placeholder="Instruction"
+                      value={newInstruction.text}
+                      onChange={(e) =>
+                        setNewInstruction({
+                          ...newInstruction,
+                          text: e.target.value,
+                        })
+                      }
+                      className="w-full p-2 border border-gray-400 rounded"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddInstruction}
+                      className="px-4 py-2 mt-4 text-white bg-green-500 rounded hover:bg-green-600"
+                    >
+                      Add Instruction
+                    </button>
+                  </div>
+                </div>
+              </section>
+            </div>
+            <button
+              type="button"
+              onClick={handlePreview}
+              className="flex items-center justify-center gap-2 p-3 mt-10 text-white bg-blue-500 rounded-2xl w-52 mb-14 hover:bg-blue-600"
+            >
+              {" "}
+              <MdOutlinePreview className="w-6 h-6" />
+              Preview Recipe
+            </button>
+            <button
+              type="submit"
+              className={`w-full p-3 text-white transition  rounded-lg hover:bg-blue-600 ${
+                isLoading ? "bg-green-100" : "bg-green-500"
+              } `}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ClipLoader color="#fff" size={20} />
+              ) : (
+                "Create Recipe"
+              )}
+            </button>
+          </form>
+        </div>
+        {isModalOpen && (
+          <RecipePreviewModal onClose={() => setIsModalOpen(false)}>
+            <div className="flex flex-col items-center max-h-[90vh] overflow-y-auto bg-[#FFF1DB]">
+              <h1 className="my-16 text-3xl">{recipePreview?.name}</h1>
+              <div className="flex justify-between px-5 py-5 mt-2 mb-8 w-96 gap-x-5">
+                <div className="">
+                  <div className="flex flex-col items-center">
+                    <MdAccessTime className="w-8 h-8" />
+                    <span className="text-lg">
+                      {recipePreview?.cookingTime}
+                    </span>
+                    <span className="text-md">Cooking time</span>
+                  </div>
+                </div>
+                <div className="">
+                  <div className="flex flex-col items-center">
+                    <PiShootingStarLight className="w-8 h-8" />
+                    <span className="text-lg">{recipePreview?.difficulty}</span>
+                    <span className="text-md">Difficulty</span>
+                  </div>
+                </div>
+                <div className="">
+                  <div className="flex flex-col items-center">
+                    <PiForkKnifeFill className="w-8 h-8" />
+                    <span className="text-lg">
+                      {recipePreview?.servingSize}
+                    </span>
+                    <span className="text-md">Serving Size</span>
+                  </div>
+                </div>
               </div>
-            </section>
-            {/* <button
+              <figure className="w-full sm:w-3/4 px-1 lg:w-[70%] [@media(min-width:1100px)]:w-[70%] [@media(min-width:1300px)]:w-[70%] 2xl:w-[50%] [@media(min-width:1750px)]:w-[70%]">
+                <img
+                  src={recipePreview?.imageUrl}
+                  alt={recipePreview?.name}
+                  className="w-full h-[380px] md:h-[520px] rounded-xl"
+                />
+              </figure>
+              <div className="flex flex-wrap justify-center mt-12 gap-y-5">
+                {recipePreview?.categories.map(
+                  (category: Category, index: number) => (
+                    <span
+                      key={index}
+                      className="px-4 py-2 ml-4 bg-[#00FF9C] rounded-lg"
+                    >
+                      {category.name}
+                    </span>
+                  ),
+                )}
+              </div>
+              <section className="w-11/12 my-10 2xl:px-52">
+                <div className="w-full p-8 text-xl bg-white shadow-lg rounded-xl h-96">
+                  {recipePreview?.description}
+                </div>
+              </section>
+              <section className="grid w-11/12 grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 min-h-[624px] 2xl:px-52 mb-20">
+                {/* Ingredients */}
+                <div className="flex flex-col p-6 shadow-lg rounded-lg bg-[#F8FAE5]">
+                  <h2 className="my-2 text-2xl font-bold">Ingredients</h2>
+                  <ul className="flex-1 p-2 space-y-4 overflow-y-auto list-disc">
+                    {recipePreview?.ingredients.map((ingredient, index) => (
+                      <li key={index} className="space-x-2 text-xl">
+                        <span>{ingredient.quantity}</span>
+                        <span>{ingredient.unit}</span>
+                        <span>{ingredient.name}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Instructions */}
+                <div className="flex flex-col p-6 shadow-lg rounded-lg bg-[#F8FAE5]">
+                  <h2 className="my-2 text-2xl font-bold">Instructions</h2>
+                  <ul className="flex-1 p-2 space-y-4 overflow-y-auto list-disc">
+                    {recipePreview?.instructions.map((instruction, index) => (
+                      <li key={index} className="text-xl">
+                        {instruction.text}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+              {/* <button
                 className={`px-6 py-3 text-xl  rounded-lg my-14 ${
                   isLoading ? "bg-green-100" : "bg-green-400"
                 }`}
@@ -604,12 +622,11 @@ const CreateRecipePage = () => {
               >
                 Create Recipe
               </button> */}
-          </div>
-        </RecipePreviewModal>
-      )}
-      <CreatingRecipeModal isOpen={isCreating} />
-    </div>
-      
+            </div>
+          </RecipePreviewModal>
+        )}
+        <CreatingRecipeModal isOpen={isCreating} />
+      </div>
     </>
   );
 };

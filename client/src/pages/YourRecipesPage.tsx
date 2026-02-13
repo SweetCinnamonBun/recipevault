@@ -16,19 +16,27 @@ const YourRecipesPage = () => {
   //  const { usersRecipes, isLoading } = useUsers();
   const { deleteRecipe } = useRecipes();
   const { deleteImage } = useImages();
+  
+  const DEFAULT_RECIPE_IMAGE =
+    "https://recipevaultstorage.blob.core.windows.net/recipevaultcontainer/0qC8V5ex.jpg";
 
   const handleDeleteRecipe = async (recipeId: number, imageUrl: string) => {
     try {
-      const fileName = imageUrl.split("/").pop();
+      // Only delete from blob if NOT the placeholder
+      if (imageUrl !== DEFAULT_RECIPE_IMAGE) {
+        const fileName = imageUrl.split("/").pop();
 
-      if (fileName) {
-        await deleteImage.mutateAsync(fileName);
-        await deleteRecipe.mutateAsync(recipeId);
+        if (fileName) {
+          await deleteImage.mutateAsync(fileName);
+        }
       }
-    } catch (error) {
+
+      await deleteRecipe.mutateAsync(recipeId);
+    } catch (error: any) {
       const errorMessage =
         error.response?.data?.message ||
         "An error occurred while deleting the recipe or image.";
+
       toast.error(errorMessage);
     }
   };
