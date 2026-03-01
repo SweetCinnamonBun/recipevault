@@ -19,7 +19,7 @@ type AddIngredient = { quantity: string; unit: string; name: string };
 type AddInstruction = { text: string };
 
 const UpdateRecipePage = () => {
-    const { id } = useParams();
+  const { id } = useParams();
   const { recipe, updateRecipe } = useRecipes(id);
   const { categories } = useCategories();
 
@@ -40,10 +40,14 @@ const UpdateRecipePage = () => {
     name: "",
   });
   const [instructions, setInstructions] = useState<AddInstruction[]>([]);
-  const [newInstruction, setNewInstruction] = useState<AddInstruction>({ text: "" });
+  const [newInstruction, setNewInstruction] = useState<AddInstruction>({
+    text: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
+  const DEFAULT_RECIPE_IMAGE =
+    "https://recipevaultstorage.blob.core.windows.net/recipevaultcontainer/0qC8V5ex.jpg";
 
-  const {postImage} = useImages()
+  const { postImage } = useImages();
 
   // Load recipe into state
   useEffect(() => {
@@ -79,7 +83,9 @@ const UpdateRecipePage = () => {
     try {
       const fileName = imageUrl.split("/").pop();
       if (!fileName) return;
-      const res = await fetch(`/api/images/delete?fileName=${fileName}`, { method: "DELETE" });
+      const res = await fetch(`/api/images/delete?fileName=${fileName}`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("Failed to delete image");
     } catch (err) {
       console.error("Image delete failed:", err);
@@ -93,11 +99,14 @@ const UpdateRecipePage = () => {
   };
 
   const handleCategoryRemoval = (categoryId: number) => {
-    setSelectedCategories(selectedCategories.filter((c) => c.id !== categoryId));
+    setSelectedCategories(
+      selectedCategories.filter((c) => c.id !== categoryId),
+    );
   };
 
   const handleAddIngredient = () => {
-    if (!newIngredient.name || !newIngredient.quantity || !newIngredient.unit) return;
+    if (!newIngredient.name || !newIngredient.quantity || !newIngredient.unit)
+      return;
     setIngredients([...ingredients, newIngredient]);
     setNewIngredient({ quantity: "", unit: "", name: "" });
   };
@@ -127,7 +136,9 @@ const UpdateRecipePage = () => {
         const formData = new FormData();
         formData.append("ImageFile", imageFile);
         imageUrl = await postImage.mutateAsync(formData);
-        if (existingImageUrl) await deleteImageByUrl(existingImageUrl);
+        if (existingImageUrl && existingImageUrl !== DEFAULT_RECIPE_IMAGE) {
+          await deleteImageByUrl(existingImageUrl);
+        }
       }
 
       const fullCookingTime = `${cookingTimeValue} ${timeUnit}`;
@@ -145,14 +156,12 @@ const UpdateRecipePage = () => {
       };
 
       await updateRecipe.mutateAsync(updatedData);
-     
     } catch (err) {
       console.error(err);
     } finally {
       setIsLoading(false);
     }
   };
-
 
   return (
     <div className="relative">
@@ -168,7 +177,7 @@ const UpdateRecipePage = () => {
           className="w-full px-10 py-4 mt-10 bg-white rounded-lg 2xl:w-10/12"
           onSubmit={handleSubmit}
         >
-           {/* Name */}
+          {/* Name */}
           <div className="flex flex-col my-4">
             <label className="mb-2 text-lg font-medium">Name:</label>
             <input
@@ -191,7 +200,11 @@ const UpdateRecipePage = () => {
               {imageFile || existingImageUrl ? (
                 <div className="relative w-full h-full">
                   <img
-                    src={imageFile ? URL.createObjectURL(imageFile) : existingImageUrl!}
+                    src={
+                      imageFile
+                        ? URL.createObjectURL(imageFile)
+                        : existingImageUrl!
+                    }
                     alt="Recipe"
                     className="object-contain w-full h-full rounded-lg max-h-64"
                   />
@@ -200,7 +213,9 @@ const UpdateRecipePage = () => {
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        document.querySelector<HTMLInputElement>('input[type="file"]')?.click();
+                        document
+                          .querySelector<HTMLInputElement>('input[type="file"]')
+                          ?.click();
                       }}
                       className="flex items-center justify-center w-12 h-12 text-white bg-orange-400 rounded hover:bg-orange-500"
                     >
@@ -209,14 +224,18 @@ const UpdateRecipePage = () => {
                   </div>
                 </div>
               ) : (
-                <span className="text-gray-500">Drag & drop or click to select an image</span>
+                <span className="text-gray-500">
+                  Drag & drop or click to select an image
+                </span>
               )}
             </div>
           </div>
 
           {/* Cooking time */}
           <div className="my-4">
-            <label className="flex items-center gap-2 mb-2 text-lg font-medium">Cooking Time:</label>
+            <label className="flex items-center gap-2 mb-2 text-lg font-medium">
+              Cooking Time:
+            </label>
             <div className="flex items-center space-x-3">
               <input
                 type="number"
