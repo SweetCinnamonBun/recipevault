@@ -1,4 +1,11 @@
-import { FaBook, FaEdit, FaPlus, FaSearch, FaTrash, FaUserCircle } from "react-icons/fa";
+import {
+  FaBook,
+  FaEdit,
+  FaPlus,
+  FaSearch,
+  FaTrash,
+  FaUserCircle,
+} from "react-icons/fa";
 import { HiOutlineBuildingStorefront } from "react-icons/hi2";
 import { GrAnalytics } from "react-icons/gr";
 import { Link, Outlet } from "react-router";
@@ -16,14 +23,13 @@ import { RootState } from "@/store/store";
 import DashboardSidebar from "@/components/DashboardSidebar";
 
 const DashboardPage = () => {
-
   const user = useSelector((state: RootState) => state.auth.user);
 
   return (
     <section className="grid grid-cols-[270px_1fr] min-h-screen">
       <DashboardSidebar user={user} />
       <section className="mb-10">
-      <header className="flex items-center justify-between h-20 px-10 bg-white ">
+        <header className="flex items-center justify-between h-20 px-10 bg-white ">
           <div className="relative w-full max-w-md">
             <FaSearch className="absolute text-gray-600 -translate-y-1/2 left-3 top-1/2" />
             <input
