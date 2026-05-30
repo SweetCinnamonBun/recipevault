@@ -1,7 +1,4 @@
 using API.Mappings;
-using API.Middleware;
-using API.Repositories;
-using API.Repositories.Interfaces;
 using API.Services;
 using Core.Entities;
 using Infrastructure.Data;
@@ -9,77 +6,77 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
-
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-var logger = new LoggerConfiguration().WriteTo.Console().MinimumLevel.Information().CreateLogger();
+// ---------------- LOGGING ----------------
 builder.Logging.ClearProviders();
-builder.Logging.AddSerilog(logger);
+builder.Logging.AddSerilog(
+    new LoggerConfiguration()
+        .WriteTo.Console()
+        .MinimumLevel.Information()
+        .CreateLogger()
+);
 
+// ---------------- SERVICES ----------------
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
-
+// DB
 builder.Services.AddDbContext<BlogContext>(opt =>
 {
     opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+// CORS (optional for API testing tools)
 builder.Services.AddCors();
 
-builder.Services.AddSingleton<AzureBlobStorageService>(provider =>
-{
-    var configuration = provider.GetRequiredService<IConfiguration>();
-    return new AzureBlobStorageService(configuration);
-});
-
-
-builder.Services.AddSwaggerGen();
+// Swagger (THIS IS REQUIRED)
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
+// App services
+builder.Services.AddSingleton<AzureBlobStorageService>();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+
 builder.Services.AddAuthorization();
+
 builder.Services.AddIdentityApiEndpoints<AppUser>()
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<BlogContext>();
 
-// builder.Services.AddScoped<IRecipeRepository, SQLRecipeRepository>();
-
 var app = builder.Build();
 
+// ================= PIPELINE =================
+
+// Swagger FIRST (critical)
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
+        c.RoutePrefix = "swagger";
+    });
+}
+
+// HTTPS
+app.UseHttpsRedirection();
+
+// CORS
 app.UseCors(x => x
     .AllowAnyHeader()
     .AllowAnyMethod()
     .AllowCredentials()
-    .WithOrigins("http://localhost:5173", "https://localhost:5173"));
+    .WithOrigins("http://localhost:5173"));
 
-app.UseHttpsRedirection();
-
+// AUTH
 app.UseAuthorization();
 
-
-
-
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.UseSwaggerUI(options =>
- {
-     options.SwaggerEndpoint("/openapi/v1.json", "api");
- });
-}
-;
-
-
-// ✅ Static files AFTER routing
+// // STATIC FILES (safe now since no SPA)
 app.UseStaticFiles();
-app.UseDefaultFiles();
 
-// ✅ API endpoints
+// ROUTES
 app.MapControllers();
-app.MapGroup("api").MapIdentityApi<AppUser>();
 
-app.MapFallbackToController("Index", "Fallback");
+app.MapGroup("api").MapIdentityApi<AppUser>();
 
 app.Run();
