@@ -157,8 +157,8 @@ const RecipePage = () => {
 
   return (
     <div className="min-h-screen ">
-      <section className="flex flex-col items-center px-3 lg:px-24 xl:px-44">
-        <div className="grid w-full gap-6 xl:grid-cols-2 xl:mt-8">
+      <section className="flex flex-col items-center px-3 lg:px-24 xl:px-60">
+        <div className="grid w-full gap-16 xl:grid-cols-1 xl:mt-20 xl:px-80">
           <figure className="w-full px-1 mt-8 lg:mt-0  h-80 md:h-[596px] ">
             <img
               src={recipe?.imageUrl}
@@ -288,32 +288,33 @@ const RecipePage = () => {
           </div>
         </div>
         {/* Ingredients section */}
-        <section className="w-full mt-14 xl:w-3/5 xl:self-start">
-          <div className=" px-4 py-2 pb-6 rounded-lg bg-[white] shadow-md">
-            <h2 className="text-xl font-bold ">Ingredients</h2>
-            <ul className="px-4 mt-4 space-y-1 list-disc ">
-              {recipe?.ingredients.map(
-                (ingredient: Ingredient, index: number) => (
-                  <li key={index} className="text-lg">
-                    {[ingredient.quantity, ingredient.unit, ingredient.name]
-                      .filter(Boolean)
-                      .join(" ")}
-                  </li>
-                ),
-              )}
-            </ul>
-          </div>
-        </section>
-        <section className="w-full mt-10 xl:w-3/5 xl:self-start">
-          <h2 className="text-xl font-bold">Cooking instructions</h2>
+        <div className="grid w-full grid-cols-2">
+          <section className="w-full mt-14 ">
+            <div className=" px-4 py-2 pb-6 rounded-lg bg-[white] shadow-md">
+              <h2 className="text-xl font-bold ">Ingredients</h2>
+              <ul className="px-4 mt-4 space-y-1 list-disc ">
+                {recipe?.ingredients.map(
+                  (ingredient: Ingredient, index: number) => (
+                    <li key={index} className="text-lg">
+                      {[ingredient.quantity, ingredient.unit, ingredient.name]
+                        .filter(Boolean)
+                        .join(" ")}
+                    </li>
+                  ),
+                )}
+              </ul>
+            </div>
+          </section>
+          <section className="w-full mt-10 ">
+            <h2 className="text-xl font-bold">Cooking instructions</h2>
 
-          <div className="py-2 rounded-lg ">
-            <ul className="mt-4 space-y-2">
-              {recipe?.instructions.map(
-                (instruction: Instruction, index: number) => (
-                  <li
-                    key={instruction.id}
-                    className="
+            <div className="py-2 rounded-lg ">
+              <ul className="mt-4 space-y-2">
+                {recipe?.instructions.map(
+                  (instruction: Instruction, index: number) => (
+                    <li
+                      key={instruction.id}
+                      className="
               px-4 py-3
               text-lg
               bg-white
@@ -323,22 +324,24 @@ const RecipePage = () => {
               items-center
               gap-3
             "
-                  >
-                    <span className="px-1 font-semibold">{index + 1}.</span>
-                    <p className="min-w-0 break-words">{instruction.text}</p>
-                  </li>
-                ),
-              )}
-            </ul>
-          </div>
-        </section>
+                    >
+                      <span className="px-1 font-semibold">{index + 1}.</span>
+                      <p className="min-w-0 break-words">{instruction.text}</p>
+                    </li>
+                  ),
+                )}
+              </ul>
+            </div>
+          </section>
+        </div>
+
         {/* More recipes from author */}
         <section className="mt-60 card-carousel">
           {/* <CardCarousel title="More Recipes from author"  /> */}
         </section>
       </section>
       {/* Comments section */}
-      <div className="w-full px-3 bg-white md:px-10 lg:px-24 xl:px-44">
+      <div className="w-full px-3 bg-white md:px-10 lg:px-24 xl:px-60">
         <section className="py-6 mx-auto mt-10 bg-white rounded-lg">
           <h2 className="text-2xl font-bold">Comments</h2>
 

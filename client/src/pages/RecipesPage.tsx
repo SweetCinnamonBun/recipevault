@@ -110,7 +110,7 @@ const RecipesPage = () => {
   };
 
   return (
-    <section className="px-5 mb-40 md:px-12">
+    <section className="px-5 mb-40 md:px-12 lg:px-60">
       {/* Search Bar + Mobile Filter Button */}
       <div className="flex flex-col gap-4 mt-6 md:flex-row md:justify-between lg:hidden">
         <div className="relative w-full md:w-96">
