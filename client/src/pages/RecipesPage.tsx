@@ -110,7 +110,7 @@ const RecipesPage = () => {
   };
 
   return (
-    <section className="px-5 mb-40 md:px-12 lg:px-60">
+    <section className="px-5 mb-40 sm:px-6 md:px-14 lg:px-24 xl:px-44 2xl:px-60">
       {/* Search Bar + Mobile Filter Button */}
       <div className="flex flex-col gap-4 mt-6 md:flex-row md:justify-between lg:hidden">
         <div className="relative w-full md:w-96">
@@ -274,7 +274,7 @@ const RecipesPage = () => {
         </aside>
 
         {/* Recipe Grid */}
-        <div className="grid grid-cols-1 gap-y-5 md:grid-cols-[250px_1fr] lg:grid-cols-3 gap-x-6 mt-8 lg:mt-0">
+        <div className="grid grid-cols-1 gap-y-5 md:grid-cols-[250px_1fr] lg:grid-cols-2 2xl:grid-cols-3 gap-x-6 mt-8 lg:mt-0">
           {isLoading ? (
             <div className="flex items-center justify-center w-full h-96">
               <ClipLoader color="#000" size={50} />

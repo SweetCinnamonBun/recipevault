@@ -58,7 +58,7 @@ const HomePage = () => {
   return (
     <section className="">
       {/* HERO */}
-      <section className=" lg:px-24 xl:px-60">
+      <section className=" sm:px-6 md:px-14 lg:px-24 xl:px-44 2xl:px-60">
         <section
           className="bg-hero-mobile relative w-full h-[580px] flex items-center 
     bg-cover bg-center bg-no-repeat lg:bg-none lg:flex"
@@ -68,7 +68,7 @@ const HomePage = () => {
 
           <div className="relative z-10 grid items-center grid-cols-1 gap-12 lg:grid-cols-[1fr_2fr] w-full">
             {/* Text Section */}
-            <div className="space-y-6 text-center text-white lg:text-left lg:text-gray-900">
+            <div className="p-2 space-y-6 text-center text-white lg:text-left lg:text-gray-900">
               <h1 className="text-4xl font-bold lg:text-5xl">RecipeVault</h1>
 
               <p className="max-w-md mx-auto text-lg lg:mx-0">
@@ -93,11 +93,11 @@ const HomePage = () => {
       </section>
 
       {/* Carousel section */}
-      <section className="px-4 pt-20 pb-24 mb-10 bg-[rgb(255,220,195)] sm:px-6 md:px-14 lg:px-24 xl:px-60">
+      <section className="px-4 pt-20 pb-24 mb-10 bg-[rgb(255,220,195)] sm:px-6 md:px-14 lg:px-24 xl:px-44 2xl:px-60">
         <CardCarousel title="Trending recipes" recipes={recipes} />
       </section>
       {/* POPULAR RECIPES */}
-      <section className="px-4 mt-20 mb-10 sm:px-6 md:px-14 lg:px-24 xl:px-60">
+      <section className="px-4 mt-20 mb-10 sm:px-6 md:px-14 lg:px-24 xl:px-44 2xl:px-60">
         <div className="flex items-center justify-between mb-10">
           <h2 className="text-2xl font-semibold sm:text-3xl">Popular Recipes</h2>
 
@@ -116,7 +116,7 @@ const HomePage = () => {
               <ClipLoader color="#0a0301" size={50} />
             </div>
           ) : (
-            <div className="grid gap-x-6 gap-y-10 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid gap-x-6 gap-y-10 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
               {recipes.map((recipe) => (
                 <Link
                   key={recipe.id}

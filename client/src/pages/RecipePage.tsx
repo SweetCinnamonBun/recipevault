@@ -157,8 +157,8 @@ const RecipePage = () => {
 
   return (
     <div className="min-h-screen ">
-      <section className="flex flex-col items-center px-3 lg:px-24 xl:px-60">
-        <div className="grid w-full gap-16 xl:grid-cols-1 xl:mt-20 xl:px-80">
+      <section className="flex flex-col items-center px-3 lg:px-24 2xl:px-60">
+        <div className="grid w-full gap-16 xl:grid-cols-1 xl:mt-20 xl:px-56 2xl:px-80">
           <figure className="w-full px-1 mt-8 lg:mt-0  h-80 md:h-[596px] ">
             <img
               src={recipe?.imageUrl}
@@ -288,24 +288,40 @@ const RecipePage = () => {
           </div>
         </div>
         {/* Ingredients section */}
-        <div className="grid w-full grid-cols-2">
-          <section className="w-full mt-14 ">
-            <div className=" px-4 py-2 pb-6 rounded-lg bg-[white] shadow-md">
-              <h2 className="text-xl font-bold ">Ingredients</h2>
-              <ul className="px-4 mt-4 space-y-1 list-disc ">
+        <div className="grid w-full grid-cols-2 gap-6 mt-14 xl:px-44">
+          <section className="w-full">
+            <h2 className="text-xl font-bold">Ingredients</h2>
+
+            <div className="py-2 rounded-lg">
+              <ul className="mt-4 space-y-2">
                 {recipe?.ingredients.map(
                   (ingredient: Ingredient, index: number) => (
-                    <li key={index} className="text-lg">
-                      {[ingredient.quantity, ingredient.unit, ingredient.name]
-                        .filter(Boolean)
-                        .join(" ")}
+                    <li
+                      key={index}
+                      className="
+              px-4 py-3
+              text-lg
+              bg-white
+              rounded-md
+              grid
+              grid-cols-[max-content_1fr]
+              items-center
+              gap-3
+            "
+                    >
+                      <span className="px-1 font-semibold">•</span>
+                      <p className="min-w-0 break-words">
+                        {[ingredient.quantity, ingredient.unit, ingredient.name]
+                          .filter(Boolean)
+                          .join(" ")}
+                      </p>
                     </li>
                   ),
                 )}
               </ul>
             </div>
           </section>
-          <section className="w-full mt-10 ">
+          <section className="w-full">
             <h2 className="text-xl font-bold">Cooking instructions</h2>
 
             <div className="py-2 rounded-lg ">
