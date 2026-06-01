@@ -21,6 +21,7 @@ import RecipeStars from "@/components/RecipeStars";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import DashboardSidebar from "@/components/DashboardSidebar";
+import DashboardSmallSidebar from "@/components/DashboardSmallSidebar";
 
 const DashboardPage = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -28,6 +29,7 @@ const DashboardPage = () => {
   return (
     <section className="grid grid-cols-[270px_1fr] min-h-screen">
       <DashboardSidebar user={user} />
+      <DashboardSmallSidebar />
       <section className="mb-10">
         <header className="flex items-center justify-between h-20 px-10 bg-white ">
           <div className="relative w-full max-w-md">
