@@ -113,6 +113,17 @@ const RecipesPage = () => {
   return (
     <section className="px-5 mb-40 sm:px-6 md:px-14 lg:px-24 xl:px-44 2xl:px-60">
       <h1 className="mt-8 text-2xl font-semibold lg:text-3xl lg:ml-5">All recipes</h1>
+      {/* Desktop search bar */}
+      <div className="relative hidden w-full ml-auto -mb-6 md:w-96 lg:block">
+          <FaSearch className="absolute text-gray-700 -translate-y-1/2 left-5 top-1/2" />
+          <input
+            type="text"
+            className="w-full h-12 pl-12 pr-3 border border-gray-300 rounded-3xl"
+            placeholder="Search recipes..."
+            value={query}
+            onChange={(e) => handleSearchChange(e.target.value)}
+          />
+        </div>
       {/* Search Bar + Mobile Filter Button */}
       <div className="flex flex-col gap-4 mt-6 md:flex-row md:justify-between lg:hidden">
         <div className="relative w-full md:w-96">
@@ -277,7 +288,7 @@ const RecipesPage = () => {
         </aside>
 
         {/* Recipe Grid */}
-        <div className="grid grid-cols-1 gap-y-5 md:grid-cols-2 2xl:grid-cols-3 gap-x-6 lg:mt-0">
+        <div className="grid grid-cols-1 gap-y-5 md:grid-cols-2 2xl:grid-cols-3 gap-x-6 lg:mt-0 auto-rows-[404px]">
           {isLoading ? (
             <div className="flex items-center justify-center w-full h-96">
               <ClipLoader color="#000" size={50} />

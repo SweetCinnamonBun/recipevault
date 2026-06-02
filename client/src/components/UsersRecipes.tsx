@@ -18,7 +18,7 @@ const UsersRecipes = ({ handleDelete }: UsersRecipesProps) => {
       {usersRecipes?.map((recipe: Recipe) => (
         <div
           key={recipe.id}
-          className="w-full h-[402px] bg-white rounded-xl cursor-pointer"
+          className="w-full h-[384px] bg-white rounded-xl cursor-pointer"
         >
           <Link
             to={`/recipe/${recipe.id}`}
