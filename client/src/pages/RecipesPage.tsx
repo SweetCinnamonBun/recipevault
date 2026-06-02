@@ -7,8 +7,9 @@ import agent from "@/lib/api/agent";
 import { useFetchRecipes } from "@/lib/hooks/useRecipes";
 import RecipeCard from "@/components/RecipeCard";
 import { ClipLoader } from "react-spinners";
-import { FaSearch } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaSearch } from "react-icons/fa";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
+import clsx from "clsx";
 
 export type Filters = {
   search?: string;
@@ -110,20 +111,34 @@ const RecipesPage = () => {
     setQuery("");
   };
 
+  const handlePageChange = (page: number) => {
+    setFilters((prev) => ({
+      ...prev,
+      page,
+    }));
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <section className="px-5 mb-40 sm:px-6 md:px-14 lg:px-24 xl:px-44 2xl:px-60">
-      <h1 className="mt-8 text-2xl font-semibold lg:text-3xl lg:ml-5">All recipes</h1>
+      <h1 className="mt-8 text-2xl font-semibold lg:text-3xl lg:ml-5">
+        All recipes
+      </h1>
       {/* Desktop search bar */}
       <div className="relative hidden w-full ml-auto -mb-6 md:w-96 lg:block">
-          <FaSearch className="absolute text-gray-700 -translate-y-1/2 left-5 top-1/2" />
-          <input
-            type="text"
-            className="w-full h-12 pl-12 pr-3 border border-gray-300 rounded-3xl"
-            placeholder="Search recipes..."
-            value={query}
-            onChange={(e) => handleSearchChange(e.target.value)}
-          />
-        </div>
+        <FaSearch className="absolute text-gray-700 -translate-y-1/2 left-5 top-1/2" />
+        <input
+          type="text"
+          className="w-full h-12 pl-12 pr-3 border border-gray-300 rounded-3xl"
+          placeholder="Search recipes..."
+          value={query}
+          onChange={(e) => handleSearchChange(e.target.value)}
+        />
+      </div>
       {/* Search Bar + Mobile Filter Button */}
       <div className="flex flex-col gap-4 mt-6 md:flex-row md:justify-between lg:hidden">
         <div className="relative w-full md:w-96">
@@ -299,7 +314,46 @@ const RecipesPage = () => {
             ))
           )}
         </div>
+        
       </div>
+      {recipes?.totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-20">
+            <button
+              disabled={filters.page === 1}
+              onClick={() => handlePageChange((filters.page || 1) - 1)}
+              className="p-2 text-sm font-medium bg-white border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <FaChevronLeft />
+            </button>
+
+            <div className="flex items-center gap-2 overflow-x-auto">
+              {Array.from({ length: recipes.totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={clsx(
+                      "min-w-[40px] h-10 rounded-full text-sm font-medium transition",
+                      page === filters.page
+                        ? "bg-black text-white"
+                        : "bg-white border hover:bg-gray-50",
+                    )}
+                  >
+                    {page}
+                  </button>
+                ),
+              )}
+            </div>
+
+            <button
+              disabled={filters.page === recipes.totalPages}
+              onClick={() => handlePageChange((filters.page || 1) + 1)}
+              className="p-2 text-sm font-medium bg-white border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <FaChevronRight />
+            </button>
+          </div>
+        )}
 
       {/* Mobile Filter Drawer */}
       {drawerOpen && (
