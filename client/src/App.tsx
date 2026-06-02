@@ -31,6 +31,10 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
+        path: "/all-recipes",
+        element: <RecipesPage />,
+      },
+      {
         path: "/recipe/:id",
         element: <RecipePage />,
       },
@@ -74,10 +78,6 @@ const router = createBrowserRouter([
             path: "/your-recipes",
             element: <UsersRecipesPage />,
           },
-          {
-            path: "/all-recipes",
-            element: <RecipesPage />,
-          },
         ],
       },
     ],
@@ -87,7 +87,7 @@ const router = createBrowserRouter([
     element: <ProtectedRoute />,
     children: [
       {
-        element: <DashboardPage />, 
+        element: <DashboardPage />,
         children: [
           {
             index: true,
@@ -99,8 +99,8 @@ const router = createBrowserRouter([
           },
           {
             path: "update-recipe/:id",
-            element: <UpdateRecipePage />
-          }
+            element: <UpdateRecipePage />,
+          },
         ],
       },
     ],

@@ -33,12 +33,12 @@ const FilterDrawer = ({ onApply, initialFilters, categoriesList }: Props) => {
   };
 
   return (
-    <div className="flex flex-col h-full p-5 overflow-auto bg-white">
+    <div className="flex flex-col h-[85vh] p-5  bg-white">
       <h3 className="mb-4 text-xl font-bold">Filter Recipes</h3>
 
       {/* Categories */}
       <div className="mb-6">
-        <h4 className="mb-2 font-semibold">Categories</h4>
+        <h4 className="my-4 text-lg font-semibold">Categories</h4>
         <div className="flex flex-col gap-2 overflow-auto text-lg max-h-60">
           {categoriesList.map((cat) => (
             <label key={cat.id} className="flex items-center">
@@ -46,7 +46,7 @@ const FilterDrawer = ({ onApply, initialFilters, categoriesList }: Props) => {
                 type="checkbox"
                 checked={categories.includes(cat.name)}
                 onChange={() => toggleCategory(cat.name)}
-                className="w-5 h-5 mr-2 accent-black"
+                className="mr-2 w-7 h-7 accent-black"
               />
               {cat.name}
             </label>
@@ -56,14 +56,14 @@ const FilterDrawer = ({ onApply, initialFilters, categoriesList }: Props) => {
 
       {/* Sort Options */}
       <div className="mb-6">
-        <h4 className="mb-2 font-semibold">Sort By</h4>
+        <h4 className="mb-2 text-lg font-semibold">Sort By</h4>
         <label className="flex items-center mb-2">
           <input
             type="radio"
             name="sort"
             checked={sortBy === "createdAt-desc"}
             onChange={() => setSortBy("createdAt-desc")}
-            className="mr-2"
+            className="w-6 h-6 mr-2"
           />
           Newest
         </label>
@@ -73,18 +73,18 @@ const FilterDrawer = ({ onApply, initialFilters, categoriesList }: Props) => {
             name="sort"
             checked={sortBy === "createdAt-asc"}
             onChange={() => setSortBy("createdAt-asc")}
-            className="mr-2"
+            className="w-6 h-6 mr-2"
           />
           Oldest
         </label>
       </div>
 
       <button
-        className="w-full py-2 mt-auto text-white bg-black rounded-md"
-        onClick={handleApply}
-      >
-        Apply Filters
-      </button>
+  className="w-full py-2 mt-auto mb-10 font-medium text-white transition-all duration-300 rounded-md shadow-md bg-gradient-to-r from-orange-500 via-orange-400 to-amber-400 hover:from-orange-600 hover:via-orange-500 hover:to-amber-500 hover:shadow-lg"
+  onClick={handleApply}
+>
+  Apply Filters
+</button>
     </div>
   );
 };

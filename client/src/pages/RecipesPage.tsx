@@ -8,6 +8,7 @@ import { useFetchRecipes } from "@/lib/hooks/useRecipes";
 import RecipeCard from "@/components/RecipeCard";
 import { ClipLoader } from "react-spinners";
 import { FaSearch } from "react-icons/fa";
+import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 
 export type Filters = {
   search?: string;
@@ -111,26 +112,28 @@ const RecipesPage = () => {
 
   return (
     <section className="px-5 mb-40 sm:px-6 md:px-14 lg:px-24 xl:px-44 2xl:px-60">
+      <h1 className="mt-8 text-2xl font-semibold lg:text-3xl lg:ml-5">All recipes</h1>
       {/* Search Bar + Mobile Filter Button */}
       <div className="flex flex-col gap-4 mt-6 md:flex-row md:justify-between lg:hidden">
         <div className="relative w-full md:w-96">
-          <FaSearch className="absolute text-gray-700 -translate-y-1/2 left-3 top-1/2" />
+          <FaSearch className="absolute text-gray-700 -translate-y-1/2 left-5 top-1/2" />
           <input
             type="text"
-            className="w-full h-10 pl-10 pr-3 border border-gray-300 rounded-lg"
+            className="w-full h-12 pl-12 pr-3 border border-gray-300 rounded-lg"
             placeholder="Search recipes..."
             value={query}
             onChange={(e) => handleSearchChange(e.target.value)}
           />
         </div>
         <button
-          className="px-4 py-2 border rounded-md md:hidden"
+          className="flex items-center gap-2 px-4 py-2 text-lg font-semibold text-gray-700 transition-colors bg-white border border-gray-300 rounded-lg shadow-sm lg:hidden hover:bg-gray-50 active:bg-gray-100"
           onClick={() => setDrawerOpen(true)}
         >
+          <HiOutlineAdjustmentsHorizontal className="w-6 h-6" />
           Filters
         </button>
       </div>
-      <div className="flex items-center justify-between pl-5 mt-20">
+      <div className="flex items-center justify-between pl-5 mt-6">
         <div className="flex items-center justify-center">
           {(filters.search ||
             filters.categories?.length ||
@@ -200,9 +203,9 @@ const RecipesPage = () => {
       </div>
 
       {/* Main Layout */}
-      <div className="border border-amber-100 grid grid-cols-1 md:grid-cols-[250px_1fr] gap-6 mt-8">
+      <div className="border border-amber-100 grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-6 mt-8">
         {/* Sidebar Filters (Desktop Only) */}
-        <aside className="flex-col hidden px-5 md:flex gap-y-10">
+        <aside className="flex-col hidden px-5 lg:flex gap-y-10">
           <div>
             <h2 className="mb-5 text-2xl font-semibold text-gray-400">
               Filter by:
@@ -274,7 +277,7 @@ const RecipesPage = () => {
         </aside>
 
         {/* Recipe Grid */}
-        <div className="grid grid-cols-1 gap-y-5 md:grid-cols-[250px_1fr] lg:grid-cols-2 2xl:grid-cols-3 gap-x-6 mt-8 lg:mt-0">
+        <div className="grid grid-cols-1 gap-y-5 md:grid-cols-2 2xl:grid-cols-3 gap-x-6 lg:mt-0">
           {isLoading ? (
             <div className="flex items-center justify-center w-full h-96">
               <ClipLoader color="#000" size={50} />

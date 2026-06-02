@@ -58,7 +58,7 @@ const HomePage = () => {
   return (
     <section className="">
       {/* HERO */}
-      <section className=" sm:px-6 md:px-14 lg:px-24 xl:px-44 2xl:px-60">
+      <section className="lg:px-24 xl:px-44 2xl:px-60">
         <section
           className="bg-hero-mobile relative w-full h-[580px] flex items-center 
     bg-cover bg-center bg-no-repeat lg:bg-none lg:flex"

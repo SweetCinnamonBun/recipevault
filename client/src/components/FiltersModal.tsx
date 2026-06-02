@@ -25,7 +25,7 @@ const FiltersModal = ({ children, onClose }: FiltersModalProps) => {
       onClick={handleOverlayClick}
     >
       {/* Modal */}
-      <div className="w-full bg-white rounded-t-3xl shadow-xl max-h-[90%] overflow-auto px-6 pt-6 pb-12">
+      <div className="w-full bg-white rounded-t-3xl shadow-xl max-h-[94%] px-6 pt-6 pb-12">
         {/* Close Button */}
         <div className="flex justify-end">
           <button
