@@ -15,7 +15,8 @@ export const useRecipes = (id?: string) => {
             return response.data;
         },
         staleTime: 20_000,
-        refetchOnWindowFocus: false
+        refetchOnWindowFocus: false,
+        enabled: !!id,
     })
 
     const createRecipe = useMutation({

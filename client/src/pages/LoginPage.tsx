@@ -103,7 +103,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex h-[100vh] w-full items-center justify-center">
-      <div className="relative w-[450px] rounded-lg bg-white shadow">
+      <div className="relative w-[450px] rounded-3xl bg-white shadow">
         <div className="px-5 pt-5 pb-5">
           <h1 className="pt-4 pb-10 text-3xl font-semibold text-center text-gray-600">
             Login
@@ -140,7 +140,7 @@ const LoginPage = () => {
             {errMsg && <p className="text-red-600">{errMsg}</p>}
             <button
               type="submit"
-              className="w-full py-2 text-lg font-semibold text-white bg-black rounded-sm"
+              className="w-full py-2 my-2 text-lg font-semibold text-white bg-black rounded-3xl"
             >
               Log in
             </button>
@@ -148,7 +148,7 @@ const LoginPage = () => {
           </form>
             <button
             onClick={handleDemoLogin}
-            className="w-full py-2 mt-4 text-lg font-semibold text-white bg-blue-500 rounded-sm"
+            className="w-full py-2 mt-4 text-lg font-semibold text-white bg-gradient-to-r from-red-800 to-red-400 rounded-3xl"
           >
             Login as Demo User
           </button>
