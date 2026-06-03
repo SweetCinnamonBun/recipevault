@@ -29,7 +29,7 @@ const logout = async () => {
       <Menu>
         <MenuButton className="flex items-center gap-2">
           <FaUserCircle size={34} className="text-gray-600" />
-          <span className="font-medium text-gray-700">
+          <span className="hidden font-medium text-gray-700 lg:block">
             {user?.profileName ?? "Guest"}
           </span>
         </MenuButton>

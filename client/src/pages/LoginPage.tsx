@@ -140,7 +140,7 @@ const LoginPage = () => {
             {errMsg && <p className="text-red-600">{errMsg}</p>}
             <button
               type="submit"
-              className="w-full py-2 my-2 text-lg font-semibold text-white bg-black rounded-3xl"
+              className="w-full py-2 my-2 text-lg font-semibold text-white bg-black rounded-3xl hover:opacity-70"
             >
               Log in
             </button>
@@ -148,7 +148,7 @@ const LoginPage = () => {
           </form>
             <button
             onClick={handleDemoLogin}
-            className="w-full py-2 mt-4 text-lg font-semibold text-white bg-gradient-to-r from-red-800 to-red-400 rounded-3xl"
+            className="w-full py-2 mt-4 text-lg font-semibold text-white bg-gradient-to-r from-red-800 to-red-400 rounded-3xl hover:opacity-70"
           >
             Login as Demo User
           </button>

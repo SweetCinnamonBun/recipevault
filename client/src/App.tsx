@@ -45,35 +45,35 @@ const router = createBrowserRouter([
         element: <RegisterPage />,
       },
       // Protected routes
-      {
-        element: <ProtectedRoute />, // ProtectedRoute acts as a layout route
-        children: [
-          {
-            path: "/create-recipe",
-            element: <CreateRecipePage />,
-          },
-          {
-            path: "/add-categories",
-            element: <SelectCategoriesPage />,
-          },
-          {
-            path: "/ingredients-and-instructions",
-            element: <CreateIngredientsAndInstructionsPage />,
-          },
-          {
-            path: "/recipe-preview",
-            element: <RecipePreviewPage />,
-          },
-          {
-            path: "/update-recipe/:id",
-            element: <UpdateRecipePage />,
-          },
-          {
-            path: "/favorites",
-            element: <FavoritesPage />,
-          },
-        ],
-      },
+      // {
+      //   element: <ProtectedRoute />, // ProtectedRoute acts as a layout route
+      //   children: [
+      //     {
+      //       path: "/create-recipe",
+      //       element: <CreateRecipePage />,
+      //     },
+      //     {
+      //       path: "/add-categories",
+      //       element: <SelectCategoriesPage />,
+      //     },
+      //     {
+      //       path: "/ingredients-and-instructions",
+      //       element: <CreateIngredientsAndInstructionsPage />,
+      //     },
+      //     {
+      //       path: "/recipe-preview",
+      //       element: <RecipePreviewPage />,
+      //     },
+      //     {
+      //       path: "/update-recipe/:id",
+      //       element: <UpdateRecipePage />,
+      //     },
+      //     {
+      //       path: "/favorites",
+      //       element: <FavoritesPage />,
+      //     },
+      //   ],
+      // },
     ],
   },
   {

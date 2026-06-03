@@ -48,14 +48,14 @@ const YourRecipesPage = () => {
 
   return (
     <>
-      <nav className="px-10">
+      <nav className="px-4  lg:px-10">
         <h1 className="flex items-center py-2 mt-8 text-2xl text-center bg-white rounded-lg w-52">
           <FaBook className="w-6 h-6 mx-3 text-green-500" />
           Your Recipes
         </h1>
       </nav>
 
-      <main className="px-10 mt-8">
+      <main className="px-4 mt-8 lg:px-10">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 justify-items-center">
           {isLoading ? (
             <div className="col-span-full flex items-center justify-center min-h-[60vh]">

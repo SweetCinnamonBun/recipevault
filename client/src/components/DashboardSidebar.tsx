@@ -11,7 +11,7 @@ interface DashboardSidebarProps {
 
 const DashboardSidebar = ({user}: DashboardSidebarProps) => {
   return (
-    <aside className="bg-white">
+    <aside className="hidden bg-white lg:block">
         <div className="sticky top-0 flex flex-col h-screen px-2">
           <Link to="/" className="p-10 text-2xl text-center">
             RecipeVault
