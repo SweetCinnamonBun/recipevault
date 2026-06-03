@@ -9,21 +9,21 @@ export const useUsers = () => {
 
     const dispatch = useDispatch();
 
-    const { data: usersRecipes, isLoading } = useQuery({
-        queryKey: ["users-recipes"],
-        queryFn: async () => {
+    // const { data: usersRecipes, isLoading } = useQuery({
+    //     queryKey: ["users-recipes"],
+    //     queryFn: async () => {
 
-            await new Promise((resolve) => setTimeout(resolve, 3000))
+    //         await new Promise((resolve) => setTimeout(resolve, 3000))
 
-            const response = await agent.get<Recipe[]>("/api/recipes/my-recipes", {
-                withCredentials: true,
-            })
-            return response.data;
-        },
-        // staleTime: 1000 * 60 * 10,
-        // refetchOnWindowFocus: false,
+    //         const response = await agent.get<Recipe[]>("/api/recipes/my-recipes", {
+    //             withCredentials: true,
+    //         })
+    //         return response.data;
+    //     },
+    //     // staleTime: 1000 * 60 * 10,
+    //     // refetchOnWindowFocus: false,
         
-    })
+    // })
 
     const { data: currentUser, isLoading:isLoadingUser } = useQuery({
         queryKey: ["current-user"],
@@ -39,8 +39,7 @@ export const useUsers = () => {
     })
 
     return {
-        usersRecipes,
-        isLoading,
+        
         currentUser,
         isLoadingUser
     }

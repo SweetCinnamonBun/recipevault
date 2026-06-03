@@ -15,9 +15,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import FavoritesPage from "./pages/FavoritesPage";
-import UsersRecipesPage from "./pages/UsersRecipesPage";
 import DashboardPage from "./pages/DashboardPage";
-import FakeProtectedRoute from "./components/FakeProtectedRoute";
 import YourRecipesPage from "./pages/YourRecipesPage";
 import RecipesPage from "./pages/RecipesPage";
 
@@ -73,10 +71,6 @@ const router = createBrowserRouter([
           {
             path: "/favorites",
             element: <FavoritesPage />,
-          },
-          {
-            path: "/your-recipes",
-            element: <UsersRecipesPage />,
           },
         ],
       },

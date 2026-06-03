@@ -1,22 +1,27 @@
-import RecipeStars from "@/components/RecipeStars";
 import UsersRecipes from "@/components/UsersRecipes";
 import UsersRecipesSkeleton from "@/components/UsersRecipesSkeleton";
 import { useImages } from "@/lib/hooks/useImages";
 import { useRecipes } from "@/lib/hooks/useRecipes";
-import { useUsers } from "@/lib/hooks/useUsers";
-import { Recipe } from "@/types/Recipe";
-import React, { Suspense } from "react";
-import { FaBook, FaEdit, FaTrash } from "react-icons/fa";
-import { MdAccessTime } from "react-icons/md";
-import { PiForkKnifeFill } from "react-icons/pi";
-import { Link } from "react-router";
+import { useUsersRecipes } from "@/lib/hooks/useUsersRecipes";
+import React from "react";
+import { FaBook } from "react-icons/fa";
+import {
+  BarLoader,
+  ClimbingBoxLoader,
+  FadeLoader,
+  GridLoader,
+  MoonLoader,
+  PuffLoader,
+  PulseLoader,
+  RingLoader,
+} from "react-spinners";
 import { toast } from "react-toastify";
 
 const YourRecipesPage = () => {
-  //  const { usersRecipes, isLoading } = useUsers();
+  const { usersRecipes, isLoading } = useUsersRecipes();
   const { deleteRecipe } = useRecipes();
   const { deleteImage } = useImages();
-  
+
   const DEFAULT_RECIPE_IMAGE =
     "https://recipevaultstorage.blob.core.windows.net/recipevaultcontainer/0qC8V5ex.jpg";
 
@@ -40,20 +45,28 @@ const YourRecipesPage = () => {
       toast.error(errorMessage);
     }
   };
+
   return (
     <>
       <nav className="px-10">
-        <h1 className="flex items-center py-2 mt-8 text-2xl text-center bg-white rounded-lg w-52 ">
-          <FaBook className="w-6 h-6 mx-3 text-green-500" /> Your Recipes
+        <h1 className="flex items-center py-2 mt-8 text-2xl text-center bg-white rounded-lg w-52">
+          <FaBook className="w-6 h-6 mx-3 text-green-500" />
+          Your Recipes
         </h1>
       </nav>
+
       <main className="px-10 mt-8">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 justify-items-center">
-          <>
-            <Suspense fallback={<UsersRecipesSkeleton />}>
-              <UsersRecipes handleDelete={handleDeleteRecipe} />
-            </Suspense>
-          </>
+          {isLoading ? (
+            <div className="col-span-full flex items-center justify-center min-h-[60vh]">
+              <GridLoader color="#f97316" />
+            </div>
+          ) : (
+            <UsersRecipes
+              recipes={usersRecipes}
+              handleDelete={handleDeleteRecipe}
+            />
+          )}
         </div>
       </main>
     </>
