@@ -17,11 +17,13 @@ import { Recipe } from "@/types/Recipe";
 import { MdAccessTime } from "react-icons/md";
 import { PiForkKnifeFill } from "react-icons/pi";
 import RecipeStars from "@/components/RecipeStars";
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import DashboardSidebar from "@/components/DashboardSidebar";
 import DashboardSmallSidebar from "@/components/DashboardSmallSidebar";
+import ProfileDropdown from "@/components/ProfileDropdown";
 
 const DashboardPage = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -41,10 +43,11 @@ const DashboardPage = () => {
             />
           </div>
           <div className="flex items-center gap-3 ml-6">
-            <FaUserCircle size={34} className="text-gray-600" />
+            {/* <FaUserCircle size={34} className="text-gray-600" />
             <span className="font-medium text-gray-700">
               {user?.profileName ?? "Guest"}
-            </span>
+            </span> */}
+            <ProfileDropdown  />
           </div>
         </header>
         <Outlet />

@@ -58,20 +58,20 @@ const HomePage = () => {
   return (
     <section className="">
       {/* HERO */}
-      <section className="lg:px-24 xl:px-44 2xl:px-60">
+      <section className="">
         <section
-          className="bg-hero-mobile relative w-full h-[580px] flex items-center 
-    bg-cover bg-center bg-no-repeat lg:bg-none lg:flex"
+          className="bg-hero-mobile relative w-full h-[580px] lg:h-[620px] flex items-center 
+    bg-cover bg-center bg-no-repeat "
         >
           {/* Overlay for mobile */}
-          <div className="absolute inset-0 bg-black/70 filter backdrop-grayscale lg:hidden"></div>
+          <div className="absolute inset-0 bg-black/70 filter backdrop-grayscale "></div>
 
-          <div className="relative z-10 grid items-center grid-cols-1 gap-12 lg:grid-cols-[1fr_2fr] w-full">
+          <div className="relative z-10 grid items-center w-full grid-cols-1 gap-12">
             {/* Text Section */}
-            <div className="p-2 space-y-6 text-center text-white lg:text-left lg:text-gray-900">
+            <div className="p-2 space-y-6 text-center text-white ">
               <h1 className="text-4xl font-bold lg:text-5xl">RecipeVault</h1>
 
-              <p className="max-w-md mx-auto text-lg lg:mx-0">
+              <p className="max-w-md mx-auto text-lg ">
                 Save, organize, and access your favorite recipes anytime. Build
                 your personal recipe collection in one secure place.
               </p>
@@ -85,9 +85,9 @@ const HomePage = () => {
             </div>
 
             {/* Desktop Image */}
-            <figure className="justify-end hidden lg:flex">
+            {/* <figure className="justify-end hidden lg:flex">
               <img src={HeroImg} alt="Hero" className="w-full max-w-[700px]" />
-            </figure>
+            </figure> */}
           </div>
         </section>
       </section>

@@ -157,8 +157,8 @@ const RecipePage = () => {
 
   return (
     <div className="min-h-screen ">
-      <section className="flex flex-col items-center px-3 lg:px-24 2xl:px-60">
-        <div className="grid w-full gap-16 xl:grid-cols-1 xl:mt-20 xl:px-56 2xl:px-80">
+      <section className="flex flex-col items-center px-3">
+        <div className="grid w-full gap-6 lg:gap-16 xl:grid-cols-1 xl:mt-20 xl:px-56 2xl:px-80">
           <figure className="w-full px-1 mt-8 lg:mt-0  h-80 md:h-[596px] ">
             <img
               src={recipe?.imageUrl}
@@ -288,8 +288,8 @@ const RecipePage = () => {
           </div>
         </div>
         {/* Ingredients section */}
-        <div className="grid w-full grid-cols-2 gap-6 mt-14 xl:px-44">
-          <section className="w-full">
+        <div className="grid w-full grid-cols-1 gap-6 mt-14 md:grid-cols-2 xl:px-44">
+          <section className="w-full min-w-0">
             <h2 className="text-xl font-bold">Ingredients</h2>
 
             <div className="py-2 rounded-lg">
@@ -299,15 +299,15 @@ const RecipePage = () => {
                     <li
                       key={index}
                       className="
-              px-4 py-3
-              text-lg
-              bg-white
-              rounded-md
-              grid
-              grid-cols-[max-content_1fr]
-              items-center
-              gap-3
-            "
+                px-4 py-3
+                text-base md:text-lg
+                bg-white
+                rounded-md
+                grid
+                grid-cols-[max-content_1fr]
+                items-start
+                gap-3
+              "
                     >
                       <span className="px-1 font-semibold">•</span>
                       <p className="min-w-0 break-words">
@@ -321,25 +321,26 @@ const RecipePage = () => {
               </ul>
             </div>
           </section>
-          <section className="w-full">
+
+          <section className="w-full min-w-0">
             <h2 className="text-xl font-bold">Cooking instructions</h2>
 
-            <div className="py-2 rounded-lg ">
+            <div className="py-2 rounded-lg">
               <ul className="mt-4 space-y-2">
                 {recipe?.instructions.map(
                   (instruction: Instruction, index: number) => (
                     <li
                       key={instruction.id}
                       className="
-              px-4 py-3
-              text-lg
-              bg-white
-              rounded-md
-              grid
-              grid-cols-[max-content_1fr]
-              items-center
-              gap-3
-            "
+                px-4 py-3
+                text-base md:text-lg
+                bg-white
+                rounded-md
+                grid
+                grid-cols-[max-content_1fr]
+                items-start
+                gap-3
+              "
                     >
                       <span className="px-1 font-semibold">{index + 1}.</span>
                       <p className="min-w-0 break-words">{instruction.text}</p>
@@ -357,15 +358,15 @@ const RecipePage = () => {
         </section>
       </section>
       {/* Comments section */}
-      <div className="w-full px-3 bg-white md:px-10 lg:px-24 xl:px-60">
-        <section className="py-6 mx-auto mt-10 bg-white rounded-lg">
+      <div className="w-full px-3 bg-white lg:px-24 2xl:px-72">
+        <section className="py-6 mx-auto mt-10 bg-white rounded-lg ">
           <h2 className="text-2xl font-bold">Comments</h2>
 
           {/* Comment Submission Form */}
           {user && (
-            <form onSubmit={handleSubmitComment} className="mt-4">
+            <form onSubmit={handleSubmitComment} className="flex flex-col mt-4">
               <textarea
-                className="w-full p-2 border border-gray-300 rounded-lg"
+                className="w-full p-3 border-2 border-gray-300 border-dashed rounded-lg lg:w-1/2 h-36"
                 placeholder="Write a comment..."
                 value={newComment.content}
                 onChange={(e) =>
@@ -379,7 +380,7 @@ const RecipePage = () => {
               />
               <button
                 type="submit"
-                className={`px-4 py-2 mt-2 text-white rounded-lg ${
+                className={`px-4 py-2 mt-4 text-white rounded-lg self-start ${
                   addComment.isPending
                     ? "bg-gray-500 cursor-not-allowed"
                     : "bg-black"
@@ -401,7 +402,7 @@ const RecipePage = () => {
               comments?.map((comment: RecipeComment) => (
                 <div
                   key={comment.id}
-                  className="pt-4 my-2 space-y-2 border-b border-gray-300 pb-7"
+                  className="pt-4 my-2 space-y-2 border-b border-gray-300 lg:w-1/2 pb-7"
                 >
                   <div className="flex justify-between">
                     <strong>{comment.user?.userName || "Anonymous"}:</strong>
