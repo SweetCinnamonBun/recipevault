@@ -28,7 +28,7 @@ const DashboardSmallSidebar = ({ showSidebar, toggleSidebar }: Props) => {
     showSidebar ? "translate-x-0" : "-translate-x-full"
   )}
       >
-        <div className="relative flex flex-col h-full gap-8 p-6 text-xl">
+        <div className="relative flex flex-col h-full gap-4 p-3 text-xl">
 
           {/* CLOSE */}
           <button
@@ -52,7 +52,7 @@ const DashboardSmallSidebar = ({ showSidebar, toggleSidebar }: Props) => {
           <Link
             to="/dashboard"
             onClick={toggleSidebar}
-            className="flex items-center gap-3 font-semibold"
+            className="flex items-center gap-3 px-2 py-3 font-semibold rounded-lg bg-amber-200 hover:bg-amber-100 mt-7"
           >
             <FaBook className="w-6 h-6" />
             <span>Your recipes</span>
@@ -61,7 +61,7 @@ const DashboardSmallSidebar = ({ showSidebar, toggleSidebar }: Props) => {
           <Link
             to="/dashboard/create-recipe"
             onClick={toggleSidebar}
-            className="flex items-center gap-3 font-semibold"
+            className="flex items-center gap-3 px-2 py-3 font-semibold rounded-lg bg-amber-200 hover:bg-amber-100"
           >
             <FaPlus className="w-6 h-6" />
             <span>Create Recipe</span>
