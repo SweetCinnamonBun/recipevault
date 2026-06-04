@@ -165,16 +165,16 @@ const UpdateRecipePage = () => {
 
   return (
     <div className="relative">
-      <nav className="px-10">
+      <nav className="px-4 lg:px-10">
         <h1 className="flex items-center py-2 mt-8 text-2xl text-center bg-white rounded-lg w-52 ">
           <FaPlus className="w-6 h-6 mx-3 text-purple-500" /> Update Recipe
         </h1>
       </nav>
 
-      <div className="flex items-center justify-center  mb-[100px] px-14">
+      <div className="px-4 flex items-center justify-center  mb-[100px] lg:px-14">
         <form
           encType="multipart/form-data"
-          className="w-full px-10 py-4 mt-10 bg-white rounded-lg 2xl:w-10/12"
+          className="w-full px-4 py-4 mt-10 bg-white rounded-lg lg:px-10 2xl:w-10/12"
           onSubmit={handleSubmit}
         >
           {/* Name */}
@@ -293,7 +293,7 @@ const UpdateRecipePage = () => {
           </div>
           <h2 className="mt-10 mb-2 text-2xl underline">Categories</h2>
           <div className="">
-            <div className="w-[550px] bg-white  h-full py-4 ">
+            <div className="max-w-[550px] bg-white  h-full py-4 ">
               <h1 className="text-lg">Selected Categories:</h1>
               <div className="flex flex-wrap gap-2 my-5 gap-y-3">
                 {selectedCategories?.map((category, index) => (
@@ -324,7 +324,7 @@ const UpdateRecipePage = () => {
             <h1 className="w-full py-2 mb-8 text-2xl underline bg-white rounded-lg">
               Create Ingredients and Instructions
             </h1>
-            <section className="grid w-full grid-cols-2  gap-x-8 min-h-[700px]">
+            <section className="grid w-full grid-cols-1 gap-y-4 lg:grid-cols-2  gap-x-8 min-h-[700px]">
               {/* Ingredients Section */}
               <div className="p-6 bg-white rounded-lg shadow-lg">
                 <h2 className="my-2 text-2xl font-bold">Ingredients</h2>

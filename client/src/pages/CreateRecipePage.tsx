@@ -243,7 +243,7 @@ const CreateRecipePage = () => {
           <form
             onSubmit={handleSubmit(handleCreateRecipe)}
             encType="multipart/form-data"
-            className="w-full px-10 py-4 mt-10 bg-white rounded-lg 2xl:w-10/12 "
+            className="w-full px-4 py-4 mt-10 bg-white rounded-lg lg:px-10 2xl:w-10/12 "
           >
             <div className="flex flex-col">
               <h2 className="mt-4 mb-4 text-2xl underline">Recipe details</h2>
