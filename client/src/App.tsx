@@ -18,6 +18,7 @@ import FavoritesPage from "./pages/FavoritesPage";
 import DashboardPage from "./pages/DashboardPage";
 import YourRecipesPage from "./pages/YourRecipesPage";
 import RecipesPage from "./pages/RecipesPage";
+import DashboardProfilePage from "./pages/DashboardProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -95,6 +96,10 @@ const router = createBrowserRouter([
             path: "update-recipe/:id",
             element: <UpdateRecipePage />,
           },
+          {
+            path: "profile",
+            element: <DashboardProfilePage />
+          }
         ],
       },
     ],
