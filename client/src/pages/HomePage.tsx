@@ -78,7 +78,7 @@ const HomePage = () => {
 
               <Link
                 to="/register"
-                className="inline-block px-6 py-3 text-white transition bg-red-500 rounded-lg hover:bg-gray-800"
+                className="inline-block px-6 py-3 text-white transition bg-red-500 rounded-xl hover:bg-gray-800"
               >
                 Create Account
               </Link>
