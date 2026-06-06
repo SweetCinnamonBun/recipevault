@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import clsx from "clsx";
 import { FaBook, FaPlus } from "react-icons/fa";
+import { MdFastfood } from "react-icons/md";
 
 type Props = {
   showSidebar: boolean;
@@ -44,8 +45,9 @@ const DashboardSmallSidebar = ({ showSidebar, toggleSidebar }: Props) => {
             onClick={toggleSidebar}
             className="flex items-center mt-6 text-xl"
           >
-            <div className="w-10 h-10 bg-black rounded-full" />
-            <span className="ml-2 italic font-bold">RecipeVault</span>
+            <MdFastfood className="w-10 h-10 mr-2 bg-black rounded-full" color="orange" />
+                        RecipeVault
+         
           </Link>
 
           {/* LINKS */}

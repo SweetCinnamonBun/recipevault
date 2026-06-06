@@ -4,6 +4,7 @@ import { GrAnalytics } from 'react-icons/gr'
 import { Link } from 'react-router'
 import TestPfpImg from "@/assets/images/pexels-ella-olsson-572949-1640777.jpg";
 import { User } from '@/types/Recipe';
+import { MdFastfood } from 'react-icons/md';
 
 interface DashboardSidebarProps {
     user: User | null
@@ -13,7 +14,8 @@ const DashboardSidebar = ({user}: DashboardSidebarProps) => {
   return (
     <aside className="hidden bg-white lg:block">
         <div className="sticky top-0 flex flex-col h-screen px-2">
-          <Link to="/" className="p-10 text-2xl text-center">
+          <Link to="/" className="inline-flex items-center p-10 text-2xl text-center">
+           <MdFastfood className="w-10 h-10 mr-2 bg-black rounded-full" color="orange" />
             RecipeVault
           </Link>
 

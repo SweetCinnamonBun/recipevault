@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "@/store/authSlice";
 import { FaHome, FaHeart, FaBars, FaTimes } from "react-icons/fa";
-import { MdDashboard } from "react-icons/md";
+import { MdDashboard, MdFastfood } from "react-icons/md";
 import { IoFastFood } from "react-icons/io5";
 
 const Navbar = () => {
@@ -42,7 +42,9 @@ const Navbar = () => {
         <div className="flex items-center justify-between ">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <div className="w-10 h-10 bg-black rounded-full" />
+           
+            <MdFastfood className="w-10 h-10 bg-black rounded-full" color="orange" />
+        
             <span className="ml-2 text-lg italic font-bold">RecipeVault</span>
           </Link>
 
