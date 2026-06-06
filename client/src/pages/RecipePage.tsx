@@ -9,7 +9,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { MdAccessTime } from "react-icons/md";
 import { PiForkKnifeFill, PiShootingStarLight } from "react-icons/pi";
-import { FaHeart } from "react-icons/fa";
+import { FaCross, FaHeart, FaPlus } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import RatingModal from "@/components/RatingModal";
 import { toast } from "react-toastify";
@@ -157,22 +157,55 @@ const RecipePage = () => {
 
   return (
     <div className="min-h-screen ">
-      <section className="flex flex-col items-center px-3">
-        <div className="grid w-full gap-6 lg:gap-16 xl:grid-cols-1 xl:mt-20 xl:px-56 2xl:px-80">
-          <figure className="w-full px-1 mt-8 lg:mt-0  h-80 md:h-[596px] ">
+      <section className="flex flex-col items-center px-3 mx-auto sm:px-10 lg:w-3/4 xl:w-3/5 2xl:w-1/2">
+        <div className="grid w-full gap-6 lg:gap-16 xl:grid-cols-1 xl:mt-20 ">
+          {/* Recipe image */}
+          <figure className="w-full px-1 mt-8 h-80 sm:h-[460px]  md:h-[596px] ">
             <img
               src={recipe?.imageUrl}
               alt={recipe?.name}
               className="object-center w-full h-full rounded-xl"
             />
           </figure>
+          {/* Recipe rating */}
+          <div className="relative flex flex-col items-center">
+              {isLoadingRatings ? (
+                <p>loading ratings...</p>
+              ) : (
+                <RecipePageStars averageRating={recipeRatings} />
+              )}
 
-          <div className="px-2 bg-orange-200 lg:p-4 rounded-xl">
+              <div className="mt-3">
+                {recipe?.ratingCount === 0 ? (
+                  <span>No ratings for this recipe</span>
+                ) : (
+                  <span className="">
+                    {recipe?.ratingCount} ratings. Average:{" "}
+                    {recipe?.averageRating}
+                  </span>
+                )}
+              </div>
+             
+               <button
+                  className="absolute right-5 p-1 font-bold bg-gradient-to-r from-red-700 to-red-400 text-white rounded-full top-[10px]"
+                  onClick={() => setIsRatingModalOpen(true)}
+                >
+                  <FaPlus />
+                </button>
+                {isRatingModalOpen && (
+                  <RatingModal
+                    onSubmit={handleRatingSubmit}
+                    onClose={() => setIsRatingModalOpen(false)}
+                  />
+                )} 
+            </div>
+          <div className="px-2 pb-4 bg-orange-200 lg:p-4 rounded-xl">
+            {/* Recipe name */}
             <h1 className="self-start mx-2 mt-4 text-2xl md:text-3xl xl:mt-2">
               {recipe?.name}
             </h1>
             {/* Categories */}
-            <div className="flex flex-wrap self-start gap-1 mt-10">
+            <div className="flex flex-wrap self-start gap-1 mt-4 lg:mt-10">
               {recipe?.categories.map((category: Category, index: number) => (
                 <span
                   key={index}
@@ -183,7 +216,7 @@ const RecipePage = () => {
               ))}
             </div>
             {/* Recipe basic info */}
-            <div className="flex flex-wrap w-full py-5 mt-2 gap-y-3 gap-x-2">
+            <div className="flex flex-wrap w-full py-5 gap-y-3 gap-x-2">
               <div className="">
                 <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
                   <div className="px-2 py-2 bg-white rounded-full">
@@ -234,61 +267,22 @@ const RecipePage = () => {
                 {recipe?.description}
               </div>
             </section>
-
-            {/* <div className="flex flex-col items-center mt-20">
-          {isLoadingRatings ? (
-            <p>loading ratings...</p>
-          ) : (
-            <RecipePageStars averageRating={recipeRatings} />
-          )}
-
-          <div className="mt-3">
-            {recipe?.ratingCount === 0 ? (
-              <span>No ratings for this recipe</span>
-            ) : (
-              <span className="">
-                {recipe?.ratingCount} ratings. Average: {recipe?.averageRating}
-              </span>
-            )}
           </div>
-          <div className="mt-8">
-            <button
-              className="px-4 py-2 font-bold bg-yellow-300 rounded-lg"
-              onClick={() => setIsRatingModalOpen(true)}
-            >
-              Rate this recipe
-            </button>
-            {isRatingModalOpen && (
-              <RatingModal
-                onSubmit={handleRatingSubmit}
-                onClose={() => setIsRatingModalOpen(false)}
-              />
-            )}
-          </div>
-        </div> */}
-            <section className="flex items-center justify-end w-full my-6">
-              {/* <button
-                type="button"
-                className="px-3 py-2 text-sm text-white bg-red-600 rounded-2xl"
-              >
-                Download Recipe PDF
-              </button> */}
-            </section>
-            {/* <div className="flex flex-col items-center gap-2 mt-14">
-          <FaHeart
-            className={`w-7 h-7 cursor-pointer ${
-              isFavorite ? "text-red-500" : "text-black"
-            }`}
-            onClick={handleFavoriteToggle}
-          />
-          <span>
-            {isFavorite ? "Remove from favorites" : "Add to your favorites"}
-          </span>
-        </div> */}
+
+          <div className="flex flex-col items-center gap-2 my-6">
+            <FaHeart
+              className={`w-7 h-7 cursor-pointer ${
+                isFavorite ? "text-red-500" : "text-black"
+              }`}
+              onClick={handleFavoriteToggle}
+            />
+            <span>
+              {isFavorite ? "Remove from favorites" : "Add to your favorites"}
+            </span>
           </div>
         </div>
         {/* Ingredients section */}
-        <div className="grid w-full grid-cols-1 gap-6 mt-14 md:grid-cols-2 xl:px-44">
+        <div className="grid w-full grid-cols-1 gap-6 xl:w-[1000px] mt-14 md:grid-cols-2 ">
           <section className="w-full min-w-0">
             <h2 className="text-xl font-bold">Ingredients</h2>
 

@@ -1,4 +1,4 @@
-import { FaSearch } from "react-icons/fa";
+import { FaBars, FaSearch } from "react-icons/fa";
 import { Outlet } from "react-router";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
@@ -31,7 +31,7 @@ const DashboardPage = () => {
         <header className="flex items-center justify-between w-full h-16 px-4 bg-white lg:hidden">
           {/* left: mobile menu already inside sidebar component */}
           <button onClick={toggleSidebar} className="text-2xl">
-            ☰
+            <FaBars />
           </button>
 
           {/* center: title */}

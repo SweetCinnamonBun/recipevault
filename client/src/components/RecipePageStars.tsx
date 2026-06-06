@@ -9,7 +9,7 @@ const RecipePageStars = ({averageRating}: {averageRating: number}) => {
             <FaStar
                 key={i}
                 className="w-10 h-10"
-                color={i < Math.round(averageRating) ? "#f8ec07" : "black"}
+                color={i < Math.round(averageRating) ? "#f8ec04" : "black"}
             />
         ))}
     </div>

@@ -37,12 +37,6 @@ const DashboardSidebar = ({user}: DashboardSidebarProps) => {
               </Link>
             </li>
           </ul>
-
-          <div className="grid mt-auto border-t border-gray-300 h-28 place-items-center">
-            <div className="flex items-center w-full gap-4">
-              <button className='w-full py-3 border border-gray-500 rounded-2xl'>Log out</button>
-            </div>
-          </div>
         </div>
       </aside>
   )
