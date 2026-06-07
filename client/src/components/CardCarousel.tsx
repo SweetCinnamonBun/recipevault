@@ -4,6 +4,7 @@ import { MdAccessTime } from "react-icons/md";
 import { PiForkKnifeFill } from "react-icons/pi";
 import useEmblaCarousel from "embla-carousel-react";
 import { Category, Recipe } from "@/types/Recipe";
+import { Link } from "react-router-dom";
 
 interface Props {
   title?: string;
@@ -41,52 +42,54 @@ const CardCarousel = ({ title, recipes }: Props) => {
         <div className="embla__viewport" ref={emblaRef}>
           <div className="embla__container">
             {recipes.map((recipe) => (
-              <div key={recipe.id} className="embla__slide">
-                <div className="overflow-hidden transition bg-white shadow rounded-xl hover:shadow-md">
-                  <figure className="w-full h-72">
-                    <img
-                      src={recipe.imageUrl}
-                      alt={recipe.name}
-                      className="object-cover w-full h-full"
-                    />
-                  </figure>
+              <div key={recipe.id} className="embla__slide hover:shadow-lg">
+                <Link to={`/recipe/${recipe.id}`}>
+                  <div className="overflow-hidden transition bg-white shadow rounded-xl hover:shadow-md">
+                    <figure className="w-full h-72">
+                      <img
+                        src={recipe.imageUrl}
+                        alt={recipe.name}
+                        className="object-cover w-full h-full"
+                      />
+                    </figure>
 
-                  <div className="px-4 pb-4 mt-2 space-y-2">
-                    <h3 className="text-xl font-medium">{recipe.name}</h3>
-                    <div className="flex gap-2">
-                      {recipe.categories
-                        ?.slice(0, 2)
-                        .map((category: Category) => (
-                          <span
-                            key={category.slug}
-                            className="px-3 py-1 text-sm bg-green-300 rounded-xl"
-                          >
-                            {category.name}
-                          </span>
-                        ))}
-                    </div>
-                    <div className="flex gap-3 text-sm">
-                      <div className="flex items-center gap-1">
-                        <div className="px-1 py-1 rounded-full">
-                          <MdAccessTime className="w-4 h-4" />
-                        </div>
-                        <span>{recipe.cookingTime}</span>
+                    <div className="px-4 pb-4 mt-2 space-y-2">
+                      <h3 className="text-xl font-medium">{recipe.name}</h3>
+                      <div className="flex gap-2">
+                        {recipe.categories
+                          ?.slice(0, 2)
+                          .map((category: Category) => (
+                            <span
+                              key={category.slug}
+                              className="px-3 py-1 text-sm bg-green-300 rounded-xl"
+                            >
+                              {category.name}
+                            </span>
+                          ))}
                       </div>
-                      <div className="flex items-center gap-1">
-                        <div className="px-1 py-1 rounded-full">
-                          <PiForkKnifeFill className="w-4 h-4" />
+                      <div className="flex gap-3 text-sm">
+                        <div className="flex items-center gap-1">
+                          <div className="px-1 py-1 rounded-full">
+                            <MdAccessTime className="w-4 h-4" />
+                          </div>
+                          <span>{recipe.cookingTime}</span>
                         </div>
-                        <span>{recipe.servingSize}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <div className="px-1 py-1 rounded-full">
-                          <FaStar className="w-4 h-4 text-yellow-400" />
+                        <div className="flex items-center gap-1">
+                          <div className="px-1 py-1 rounded-full">
+                            <PiForkKnifeFill className="w-4 h-4" />
+                          </div>
+                          <span>{recipe.servingSize}</span>
                         </div>
-                        <span>{recipe.averageRating}</span>
+                        <div className="flex items-center gap-1">
+                          <div className="px-1 py-1 rounded-full">
+                            <FaStar className="w-4 h-4 text-yellow-400" />
+                          </div>
+                          <span>{recipe.averageRating}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               </div>
             ))}
           </div>
