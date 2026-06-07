@@ -12,6 +12,7 @@ import HeroImg from "@/assets/images/pexels-ella-olsson-572949-1640777.jpg";
 import { IoFastFood } from "react-icons/io5";
 import CardCarousel from "@/components/CardCarousel";
 import Newsletter from "@/components/Newsletter";
+import SummaryImg from "@/assets/images/pexels-ella-olsson-572949-1640777.jpg";
 
 const HomePage = () => {
   const { ref, inView } = useInView();
@@ -99,7 +100,9 @@ const HomePage = () => {
       {/* POPULAR RECIPES */}
       <section className="px-4 mt-20 mb-10 sm:px-6 md:px-14 lg:px-24 xl:px-44 2xl:px-60">
         <div className="flex items-center justify-between mb-10">
-          <h2 className="text-2xl font-semibold sm:text-3xl">Popular Recipes</h2>
+          <h2 className="text-2xl font-semibold sm:text-3xl">
+            Popular Recipes
+          </h2>
 
           <Link
             to="/all-recipes"
@@ -180,6 +183,41 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
+      {/* Summary section */}
+      <section className="flex flex-col gap-16 px-4 my-20 sm:px-6 md:px-14 lg:px-24 xl:px-44 2xl:px-60">
+        <div className="grid items-center justify-center grid-cols-1 gap-y-3 lg:grid-cols-2 lg:gap-x-14">
+          <div className="order-2 space-y-2 lg:max-w-lg lg:order-1 justify-self-center">
+            <h2 className="text-2xl lg:text-3xl">Create delicious recipes</h2>
+            <p className="lg:max-w-md">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+              Obcaecati hic numquam perspiciatis aut odio fugit pariatur
+              expedita, repellat totam optio reprehenderit molestiae quo
+              provident iure, fugiat veritatis consequuntur sunt placeat alias
+              quae!
+            </p>
+          </div>
+          <figure className="order-1">
+            <img src={SummaryImg} alt="image 1" className="object-contain w-full rounded-lg" />
+          </figure>
+        </div>
+        <div className="grid items-center grid-cols-1 gap-y-3 lg:grid-cols-2 lg:gap-x-14">
+          <div className="order-2 space-y-2 lg:max-w-lg justify-self-center">
+            <h2 className="text-2xl lg:text-3xl">Create delicious recipes</h2>
+            <p className="self-end lg:max-w-lg">
+              Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+              Obcaecati hic numquam perspiciatis aut odio fugit pariatur
+              expedita, repellat totam optio reprehenderit molestiae quo
+              provident iure, fugiat veritatis consequuntur sunt placeat alias
+              quae!
+            </p>
+          </div>
+          <figure className="order-1">
+            <img src={SummaryImg} alt="image 1" className="object-contain w-full rounded-lg" />
+          </figure>
+        </div>
+      </section>
+
       {/* Newsletter section */}
       <Newsletter />
     </section>
