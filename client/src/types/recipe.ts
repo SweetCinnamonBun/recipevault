@@ -8,6 +8,7 @@ export type Recipe = {
   averageRating: number;
   ratingCount: number;
   imageUrl?: string;
+  isPublic: boolean;
   createdAt: string;
   categories: Category[];
   ingredients: Ingredient[];
@@ -76,6 +77,7 @@ export type RecipeUpdate = {
   difficulty: string;
   servingSize: number;
   imageUrl: string;
+  isPublic: boolean;
   categories: Category[];       
   ingredients: Ingredient[];    
   instructions: Instruction[];

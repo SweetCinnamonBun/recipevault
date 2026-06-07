@@ -1,3 +1,4 @@
+import RecipeCard from "@/components/RecipeCard";
 import RecipeStars from "@/components/RecipeStars";
 import { Recipe } from "@/types/Recipe";
 import React, { useEffect, useState } from "react";
@@ -44,7 +45,7 @@ const FavoritesPage = () => {
   }, []);
 
   return (
-    <div className="px-4 mb-20 2xl:px-20">
+    <div className="px-4 mb-20 md:px-14 lg:px-24 xl:px-44 2xl:px-60">
           <h1 className="flex items-center py-2 mt-10 text-2xl text-center bg-white rounded-lg w-52 ">
             <FaHeart className="w-6 h-6 mx-3 text-red-500" /> Your Favorites
           </h1>
@@ -53,45 +54,9 @@ const FavoritesPage = () => {
             <ClipLoader color="#0a0301" size={50} />
           </div>
           ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-14 justify-items-center">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mt-14 ">
             {recipes.map((recipe: Recipe) => (
-              <div
-                key={recipe.id}
-                className="w-full max-w-sm h-[420px] bg-white rounded-xl cursor-pointer"
-              >
-                <Link to={`/recipe/${recipe.id}`} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
-                  <figure className="w-full h-60">
-                    <img
-                      src={recipe.imageUrl}
-                      alt={recipe.name}
-                      className="object-cover w-full h-full rounded-t-xl"
-                    />
-                  </figure>
-                </Link>
-                <div className="px-3 py-2">
-                <h2 className="py-2 text-xl text-red-700">{recipe.name}</h2>
-                  <div className="flex items-center gap-2">
-                    {recipe.categories?.slice(0, 2).map((category) => (
-                      <span className="px-3 py-1 bg-[#00FF9C] rounded-lg">
-                        {category.name}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex gap-5 mt-2">
-                    <div className="flex items-center gap-1">
-                      <MdAccessTime className="w-7 h-7" />
-                      <p>{recipe.cookingTime}</p>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <PiForkKnifeFill className="w-7 h-7" />
-                      <p>{recipe.servingSize}</p>
-                    </div>
-                  </div>
-                  <div className="flex pt-2 ">
-                    <RecipeStars averageRating={recipe.averageRating || 0} />
-                  </div>
-                </div>
-              </div>
+               <RecipeCard key={recipe.id} recipe={recipe} />
             ))}
           </div>
           )}

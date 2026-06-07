@@ -31,6 +31,9 @@ namespace API.DTOs
         [Required]
         public string ImageUrl { get; set; } = string.Empty;
 
+        public bool IsPublic { get; set; }
+
+
         // public ICollection<Category> Categories { get; set; } = [];
         // public List<IngredientDto> Ingredients { get; set; }
         // public List<InstructionDto> Instructions { get; set; }

@@ -61,18 +61,12 @@ const CreateRecipePage = () => {
     setInstructions((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const user = useSelector((state) => state.auth.user)
+  const user = useSelector((state) => state.auth.user);
 
   const DEFAULT_RECIPE_IMAGE =
     "https://recipevaultstorage.blob.core.windows.net/recipevaultcontainer/0qC8V5ex.jpg";
 
   const recipePreview = useSelector((state: RootState) => state.recipe);
-  const ingredientsPreview = useSelector(
-    (state: RootState) => state.recipe.ingredients,
-  );
-  const instructionsPreview = useSelector(
-    (state: RootState) => state.recipe.instructions,
-  );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -83,12 +77,15 @@ const CreateRecipePage = () => {
     register,
     handleSubmit,
     getValues,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<RecipeSchema>({
     mode: "onTouched",
     resolver: zodResolver(recipeSchema),
     defaultValues: {
       difficulty: "Easy",
+      isPublic: false,
     },
   });
 
@@ -104,6 +101,8 @@ const CreateRecipePage = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const isPublic = watch("isPublic");
 
   const handleUnitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setTimeUnit(e.target.value);
@@ -534,10 +533,41 @@ const CreateRecipePage = () => {
                 </div>
               </section>
             </div>
+            <div className="space-y-3">
+              <label className="flex items-start gap-3 p-4 border cursor-pointer rounded-xl">
+                <input
+                  type="radio"
+                  checked={isPublic === false}
+                  onChange={() => setValue("isPublic", false)}
+                  className="mt-1"
+                />
+                <div>
+                  <p className="font-medium">Private</p>
+                  <p className="text-sm text-gray-500">
+                    Only you can see this recipe
+                  </p>
+                </div>
+              </label>
+
+              <label className="flex items-start gap-3 p-4 border cursor-pointer rounded-xl">
+                <input
+                  type="radio"
+                  checked={isPublic === true}
+                  onChange={() => setValue("isPublic", true)}
+                  className="mt-1"
+                />
+                <div>
+                  <p className="font-medium">Public</p>
+                  <p className="text-sm text-gray-500">
+                    Anyone can view this recipe
+                  </p>
+                </div>
+              </label>
+            </div>
             <button
               type="button"
               onClick={handlePreview}
-              className="flex items-center justify-center gap-2 p-3 mt-10 text-white bg-blue-500 rounded-2xl w-52 mb-14 hover:bg-blue-600"
+              className="flex items-center justify-center gap-2 p-3 mt-10 text-white bg-blue-500 bg-gradient-to-b from-orange-600 to-orange-400 rounded-2xl w-52 mb-14 hover:bg-blue-600"
             >
               {" "}
               <MdOutlinePreview className="w-6 h-6" />
@@ -561,84 +591,90 @@ const CreateRecipePage = () => {
         {isModalOpen && (
           <RecipePreviewModal onClose={() => setIsModalOpen(false)}>
             <section className="flex flex-col items-center px-3 max-h-[90vh] overflow-y-auto bg-[#FFF1DB]">
-                    <div className="grid w-full gap-6 lg:gap-16 xl:grid-cols-1 xl:mt-20 xl:px-36 2xl:px-64">
-                      <figure className="w-full px-1 mt-8 lg:mt-0  h-80 md:h-[596px] ">
-                        <img
-                          src={recipePreview?.imageUrl || DEFAULT_RECIPE_IMAGE}
-                          alt={recipePreview?.name}
-                          className="object-center w-full h-full rounded-xl"
-                        />
-                      </figure>
-            
-                      <div className="px-2 bg-orange-200 lg:p-4 rounded-xl">
-                        <h1 className="self-start mx-2 mt-4 text-2xl md:text-3xl xl:mt-2">
-                          {recipePreview?.name}
-                        </h1>
-                        {/* Categories */}
-                        <div className="flex flex-wrap self-start gap-1 mt-10">
-                          {recipePreview?.categories.map((category: Category, index: number) => (
-                            <span
-                              key={index}
-                              className="px-4 py-2 text-sm ml-1 bg-[#00FF9C] rounded-3xl"
-                            >
-                              {category.name}
-                            </span>
-                          ))}
+              <div className="grid w-full gap-6 lg:gap-16 xl:grid-cols-1 xl:mt-20 xl:px-36 2xl:px-64">
+                <figure className="w-full px-1 mt-8 lg:mt-0  h-80 md:h-[596px] ">
+                  <img
+                    src={recipePreview?.imageUrl || DEFAULT_RECIPE_IMAGE}
+                    alt={recipePreview?.name}
+                    className="object-center w-full h-full rounded-xl"
+                  />
+                </figure>
+
+                <div className="px-2 bg-orange-200 lg:p-4 rounded-xl">
+                  <h1 className="self-start mx-2 mt-4 text-2xl md:text-3xl xl:mt-2">
+                    {recipePreview?.name}
+                  </h1>
+                  {/* Categories */}
+                  <div className="flex flex-wrap self-start gap-1 mt-10">
+                    {recipePreview?.categories.map(
+                      (category: Category, index: number) => (
+                        <span
+                          key={index}
+                          className="px-4 py-2 text-sm ml-1 bg-[#00FF9C] rounded-3xl"
+                        >
+                          {category.name}
+                        </span>
+                      ),
+                    )}
+                  </div>
+                  {/* Recipe basic info */}
+                  <div className="flex flex-wrap w-full py-5 mt-2 gap-y-3 gap-x-2">
+                    <div className="">
+                      <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
+                        <div className="px-2 py-2 bg-white rounded-full">
+                          <MdAccessTime className="w-6 h-6 " />
                         </div>
-                        {/* Recipe basic info */}
-                        <div className="flex flex-wrap w-full py-5 mt-2 gap-y-3 gap-x-2">
-                          <div className="">
-                            <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
-                              <div className="px-2 py-2 bg-white rounded-full">
-                                <MdAccessTime className="w-6 h-6 " />
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-sm md:text-md">Cooking time</span>
-                                <span className="text-md md:text-lg">
-                                  {recipePreview?.cookingTime}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="">
-                            <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
-                              <div className="px-2 py-2 bg-white rounded-full">
-                                <PiShootingStarLight className="w-6 h-6" />
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-sm md:text-md">Difficulty</span>
-                                <span className="text-md md:text-lg">
-                                  {recipePreview?.difficulty}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="">
-                            <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
-                              <div className="px-2 py-2 bg-white rounded-full">
-                                <PiForkKnifeFill className="w-6 h-6" />
-                              </div>
-                              <div className="flex flex-col">
-                                <span className="text-sm md:text-md">Serving Size</span>
-                                <span className="text-md md:text-lg">
-                                  {recipePreview?.servingSize}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex self-start mb-4">
-                          <span className="text-md">
-                            <em>Recipe by:</em> <strong>{user.profileName}</strong>
+                        <div className="flex flex-col">
+                          <span className="text-sm md:text-md">
+                            Cooking time
+                          </span>
+                          <span className="text-md md:text-lg">
+                            {recipePreview?.cookingTime}
                           </span>
                         </div>
-                        <section className="w-full">
-                          <div className="w-full p-6 text-lg bg-white shadow-lg rounded-xl h-96 lg:h-56">
-                            {recipePreview?.description}
-                          </div>
-                        </section>
-            
-                        {/* <div className="flex flex-col items-center mt-20">
+                      </div>
+                    </div>
+                    <div className="">
+                      <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
+                        <div className="px-2 py-2 bg-white rounded-full">
+                          <PiShootingStarLight className="w-6 h-6" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-sm md:text-md">Difficulty</span>
+                          <span className="text-md md:text-lg">
+                            {recipePreview?.difficulty}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="">
+                      <div className="grid grid-cols-[max-content_1fr] items-center gap-2">
+                        <div className="px-2 py-2 bg-white rounded-full">
+                          <PiForkKnifeFill className="w-6 h-6" />
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-sm md:text-md">
+                            Serving Size
+                          </span>
+                          <span className="text-md md:text-lg">
+                            {recipePreview?.servingSize}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex self-start mb-4">
+                    <span className="text-md">
+                      <em>Recipe by:</em> <strong>{user.profileName}</strong>
+                    </span>
+                  </div>
+                  <section className="w-full">
+                    <div className="w-full p-6 text-lg bg-white shadow-lg rounded-xl h-96 lg:h-56">
+                      {recipePreview?.description}
+                    </div>
+                  </section>
+
+                  {/* <div className="flex flex-col items-center mt-20">
                       {isLoadingRatings ? (
                         <p>loading ratings...</p>
                       ) : (
@@ -669,15 +705,15 @@ const CreateRecipePage = () => {
                         )}
                       </div>
                     </div> */}
-                        <section className="flex items-center justify-end w-full my-6">
-                          {/* <button
+                  <section className="flex items-center justify-end w-full my-6">
+                    {/* <button
                             type="button"
                             className="px-3 py-2 text-sm text-white bg-red-600 rounded-2xl"
                           >
                             Download Recipe PDF
                           </button> */}
-                        </section>
-                        {/* <div className="flex flex-col items-center gap-2 mt-14">
+                  </section>
+                  {/* <div className="flex flex-col items-center gap-2 mt-14">
                       <FaHeart
                         className={`w-7 h-7 cursor-pointer ${
                           isFavorite ? "text-red-500" : "text-black"
@@ -688,20 +724,20 @@ const CreateRecipePage = () => {
                         {isFavorite ? "Remove from favorites" : "Add to your favorites"}
                       </span>
                     </div> */}
-                      </div>
-                    </div>
-                    {/* Ingredients section */}
-                    <div className="grid w-full grid-cols-1 gap-6 mt-14 md:grid-cols-2 xl:px-44">
-                      <section className="w-full min-w-0">
-                        <h2 className="text-xl font-bold">Ingredients</h2>
-            
-                        <div className="py-2 rounded-lg">
-                          <ul className="mt-4 space-y-2">
-                            {recipePreview?.ingredients.map(
-                              (ingredient: Ingredient, index: number) => (
-                                <li
-                                  key={index}
-                                  className="
+                </div>
+              </div>
+              {/* Ingredients section */}
+              <div className="grid w-full grid-cols-1 gap-6 mt-14 md:grid-cols-2 xl:px-44">
+                <section className="w-full min-w-0">
+                  <h2 className="text-xl font-bold">Ingredients</h2>
+
+                  <div className="py-2 rounded-lg">
+                    <ul className="mt-4 space-y-2">
+                      {recipePreview?.ingredients.map(
+                        (ingredient: Ingredient, index: number) => (
+                          <li
+                            key={index}
+                            className="
                             px-4 py-3
                             text-base md:text-lg
                             bg-white
@@ -711,30 +747,34 @@ const CreateRecipePage = () => {
                             items-start
                             gap-3
                           "
-                                >
-                                  <span className="px-1 font-semibold">•</span>
-                                  <p className="min-w-0 break-words">
-                                    {[ingredient.quantity, ingredient.unit, ingredient.name]
-                                      .filter(Boolean)
-                                      .join(" ")}
-                                  </p>
-                                </li>
-                              ),
-                            )}
-                          </ul>
-                        </div>
-                      </section>
-            
-                      <section className="w-full min-w-0">
-                        <h2 className="text-xl font-bold">Cooking instructions</h2>
-            
-                        <div className="py-2 rounded-lg">
-                          <ul className="mt-4 space-y-2">
-                            {recipePreview?.instructions.map(
-                              (instruction: Instruction, index: number) => (
-                                <li
-                                  key={instruction.id}
-                                  className="
+                          >
+                            <span className="px-1 font-semibold">•</span>
+                            <p className="min-w-0 break-words">
+                              {[
+                                ingredient.quantity,
+                                ingredient.unit,
+                                ingredient.name,
+                              ]
+                                .filter(Boolean)
+                                .join(" ")}
+                            </p>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                </section>
+
+                <section className="w-full min-w-0">
+                  <h2 className="text-xl font-bold">Cooking instructions</h2>
+
+                  <div className="py-2 rounded-lg">
+                    <ul className="mt-4 space-y-2">
+                      {recipePreview?.instructions.map(
+                        (instruction: Instruction, index: number) => (
+                          <li
+                            key={instruction.id}
+                            className="
                             px-4 py-3
                             text-base md:text-lg
                             bg-white
@@ -744,22 +784,26 @@ const CreateRecipePage = () => {
                             items-start
                             gap-3
                           "
-                                >
-                                  <span className="px-1 font-semibold">{index + 1}.</span>
-                                  <p className="min-w-0 break-words">{instruction.text}</p>
-                                </li>
-                              ),
-                            )}
-                          </ul>
-                        </div>
-                      </section>
-                    </div>
-            
-                    {/* More recipes from author */}
-                    <section className="mt-60 card-carousel">
-                      {/* <CardCarousel title="More Recipes from author"  /> */}
-                    </section>
-                  </section>
+                          >
+                            <span className="px-1 font-semibold">
+                              {index + 1}.
+                            </span>
+                            <p className="min-w-0 break-words">
+                              {instruction.text}
+                            </p>
+                          </li>
+                        ),
+                      )}
+                    </ul>
+                  </div>
+                </section>
+              </div>
+
+              {/* More recipes from author */}
+              <section className="mt-60 card-carousel">
+                {/* <CardCarousel title="More Recipes from author"  /> */}
+              </section>
+            </section>
           </RecipePreviewModal>
         )}
         <CreatingRecipeModal isOpen={isCreating} />

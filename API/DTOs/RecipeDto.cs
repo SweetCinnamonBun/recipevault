@@ -21,6 +21,7 @@ namespace API.DTOs
         public int ServingSize { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public required string ImageUrl { get; set; }
+        public bool IsPublic { get; set; }
         public double? AverageRating { get; set; }
         public int? RatingCount { get; set; }
         public ICollection<RecipeRatingDto> Ratings { get; set; } = [];

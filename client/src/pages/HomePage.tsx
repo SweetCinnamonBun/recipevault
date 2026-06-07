@@ -185,7 +185,7 @@ const HomePage = () => {
       </section>
 
       {/* Summary section */}
-      <section className="flex flex-col gap-16 px-4 my-20 sm:px-6 md:px-14 lg:px-24 xl:px-44 2xl:px-60">
+      <section className="flex flex-col gap-32 px-4 my-40 sm:px-6 md:px-14 lg:px-24 xl:px-44 2xl:px-60">
         <div className="grid items-center justify-center grid-cols-1 gap-y-3 lg:grid-cols-2 lg:gap-x-14">
           <div className="order-2 space-y-2 lg:max-w-lg lg:order-1 justify-self-center">
             <h2 className="text-2xl lg:text-3xl">Create delicious recipes</h2>

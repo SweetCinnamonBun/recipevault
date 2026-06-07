@@ -16,6 +16,7 @@ namespace API.DTOs
         public required string Difficulty { get; set; }
         public int ServingSize { get; set; }
         public required string ImageUrl { get; set; }
+        public bool IsPublic { get; set; }
         public ICollection<CategoryDto> Categories { get; set; } = [];
         public ICollection<InstructionDto> Instructions { get; set; } = [];
         public ICollection<IngredientDto> Ingredients { get; set; } = [];

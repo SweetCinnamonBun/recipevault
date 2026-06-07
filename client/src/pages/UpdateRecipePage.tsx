@@ -32,6 +32,7 @@ const UpdateRecipePage = () => {
   const [timeUnit, setTimeUnit] = useState("min");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null);
+  const [isPublic, setIsPublic] = useState(true);
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const [ingredients, setIngredients] = useState<AddIngredient[]>([]);
   const [newIngredient, setNewIngredient] = useState<AddIngredient>({
@@ -60,6 +61,7 @@ const UpdateRecipePage = () => {
       setIngredients(recipe.ingredients || []);
       setInstructions(recipe.instructions || []);
       setExistingImageUrl(recipe.imageUrl ?? null);
+      setIsPublic(recipe.isPublic);
 
       if (recipe.cookingTime) {
         const [value, unit] = recipe.cookingTime.split(" ");
@@ -150,6 +152,7 @@ const UpdateRecipePage = () => {
         servingSize,
         cookingTime: fullCookingTime,
         imageUrl,
+        isPublic,
         categories: selectedCategories,
         ingredients,
         instructions,
@@ -457,6 +460,37 @@ const UpdateRecipePage = () => {
                 </div>
               </div>
             </section>
+          </div>
+          <div className="mb-10 space-y-3">
+            <label className="flex items-start gap-3 p-4 border cursor-pointer rounded-xl">
+              <input
+                type="radio"
+                checked={isPublic === false}
+                onChange={() => setIsPublic(false)}
+                className="mt-1"
+              />
+              <div>
+                <p className="font-medium">Private</p>
+                <p className="text-sm text-gray-500">
+                  Only you can see this recipe
+                </p>
+              </div>
+            </label>
+
+            <label className="flex items-start gap-3 p-4 border cursor-pointer rounded-xl">
+              <input
+                type="radio"
+                checked={isPublic === true}
+                onChange={() => setIsPublic(true)}
+                className="mt-1"
+              />
+              <div>
+                <p className="font-medium">Public</p>
+                <p className="text-sm text-gray-500">
+                  Anyone can view this recipe
+                </p>
+              </div>
+            </label>
           </div>
           <button
             type="submit"

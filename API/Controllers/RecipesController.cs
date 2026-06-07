@@ -51,6 +51,8 @@ namespace API.Controllers
 
             var query = context.Recipes.AsQueryable();
 
+            query = query.Where(r => r.IsPublic);
+
             // Check if string is not empty
             if (!string.IsNullOrEmpty(search))
             {
@@ -106,6 +108,7 @@ namespace API.Controllers
                 ServingSize = recipe.ServingSize,
                 CreatedAt = recipe.CreatedAt,
                 ImageUrl = recipe.ImageUrl,
+                IsPublic = recipe.IsPublic,
                 AverageRating = recipe.Ratings.Any() ? recipe.Ratings.Average(r => r.Value) : 0,
                 Categories = recipe.Categories.Select(c => new CategoryDto { Name = c.Name, Slug = c.Slug }).ToList()
             })
@@ -167,6 +170,7 @@ namespace API.Controllers
                     Difficulty = recipeDto.Difficulty,
                     ServingSize = recipeDto.ServingSize,
                     ImageUrl = recipeDto.ImageUrl,
+                    IsPublic = recipeDto.IsPublic,
                     CreatedAt = DateTime.Now,
                     UserId = user.Id
                 };
@@ -213,6 +217,7 @@ namespace API.Controllers
             existingRecipe.Difficulty = updatedRecipeDto.Difficulty;
             existingRecipe.ServingSize = updatedRecipeDto.ServingSize;
             existingRecipe.ImageUrl = updatedRecipeDto.ImageUrl;
+            existingRecipe.IsPublic = updatedRecipeDto.IsPublic;
 
             // Update navigation properties
             UpdateIngredients(existingRecipe, updatedRecipeDto.Ingredients);
@@ -269,6 +274,7 @@ namespace API.Controllers
                 ServingSize = recipe.ServingSize,
                 CreatedAt = recipe.CreatedAt,
                 ImageUrl = recipe.ImageUrl,
+                IsPublic = recipe.IsPublic,
 
                 AverageRating = recipe.Ratings.Any() ? recipe.Ratings.Average(r => r.Value) : 0,
                 RatingCount = recipe.Ratings.Count(),

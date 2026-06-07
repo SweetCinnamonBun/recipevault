@@ -15,6 +15,7 @@ namespace Core.Entities
         public required int ServingSize { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public required string ImageUrl { get; set; }
+        public bool IsPublic { get; set; }
 
         // public ICollection<Image> Images { get; set; } = [];
         public ICollection<Category> Categories { get; set; } = [];
