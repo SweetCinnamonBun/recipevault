@@ -13,6 +13,7 @@ import { IoFastFood } from "react-icons/io5";
 import CardCarousel from "@/components/CardCarousel";
 import Newsletter from "@/components/Newsletter";
 import SummaryImg from "@/assets/images/pexels-ella-olsson-572949-1640777.jpg";
+import NotFoundSection from "@/components/NotFoundSection";
 
 const HomePage = () => {
   const { ref, inView } = useInView();
@@ -216,8 +217,7 @@ const HomePage = () => {
             <img src={SummaryImg} alt="image 1" className="object-contain w-full rounded-lg" />
           </figure>
         </div>
-      </section>
-
+      </section>     
       {/* Newsletter section */}
       <Newsletter />
     </section>

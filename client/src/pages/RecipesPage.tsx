@@ -6,7 +6,7 @@ import { type Recipe, type Category } from "../types/Recipe";
 import agent from "@/lib/api/agent";
 import { useFetchRecipes } from "@/lib/hooks/useRecipes";
 import RecipeCard from "@/components/RecipeCard";
-import { ClipLoader } from "react-spinners";
+import { ClipLoader, GridLoader } from "react-spinners";
 import { FaChevronLeft, FaChevronRight, FaSearch } from "react-icons/fa";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import clsx from "clsx";
@@ -305,8 +305,15 @@ const RecipesPage = () => {
         {/* Recipe Grid */}
         <div className="grid grid-cols-1 gap-y-5 md:grid-cols-2 2xl:grid-cols-3 gap-x-6 lg:mt-0 auto-rows-[404px]">
           {isLoading ? (
-            <div className="flex items-center justify-center w-full h-96">
-              <ClipLoader color="#000" size={50} />
+            <div className="flex items-center justify-center w-full h-96 col-span-full">
+              <GridLoader color="#f97316"  />
+            </div>
+          ) : recipes?.recipes?.length === 0 ? (
+            <div className="flex flex-col items-center justify-center col-span-full h-96">
+              <h2 className="text-xl font-semibold">No recipes found</h2>
+              <p className="text-gray-500">
+                Try changing your filters or search criteria.
+              </p>
             </div>
           ) : (
             recipes?.recipes?.map((recipe: Recipe) => (
@@ -314,46 +321,45 @@ const RecipesPage = () => {
             ))
           )}
         </div>
-        
       </div>
       {recipes?.totalPages > 1 && (
-          <div className="flex items-center justify-center gap-2 mt-20">
-            <button
-              disabled={filters.page === 1}
-              onClick={() => handlePageChange((filters.page || 1) - 1)}
-              className="p-2 text-sm font-medium bg-white border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <FaChevronLeft />
-            </button>
+        <div className="flex items-center justify-center gap-2 mt-20">
+          <button
+            disabled={filters.page === 1}
+            onClick={() => handlePageChange((filters.page || 1) - 1)}
+            className="p-2 text-sm font-medium bg-white border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <FaChevronLeft />
+          </button>
 
-            <div className="flex items-center gap-2 overflow-x-auto">
-              {Array.from({ length: recipes.totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={clsx(
-                      "min-w-[40px] h-10 rounded-full text-sm font-medium transition",
-                      page === filters.page
-                        ? "bg-black text-white"
-                        : "bg-white border hover:bg-gray-50",
-                    )}
-                  >
-                    {page}
-                  </button>
-                ),
-              )}
-            </div>
-
-            <button
-              disabled={filters.page === recipes.totalPages}
-              onClick={() => handlePageChange((filters.page || 1) + 1)}
-              className="p-2 text-sm font-medium bg-white border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <FaChevronRight />
-            </button>
+          <div className="flex items-center gap-2 overflow-x-auto">
+            {Array.from({ length: recipes.totalPages }, (_, i) => i + 1).map(
+              (page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={clsx(
+                    "min-w-[40px] h-10 rounded-full text-sm font-medium transition",
+                    page === filters.page
+                      ? "bg-black text-white"
+                      : "bg-white border hover:bg-gray-50",
+                  )}
+                >
+                  {page}
+                </button>
+              ),
+            )}
           </div>
-        )}
+
+          <button
+            disabled={filters.page === recipes.totalPages}
+            onClick={() => handlePageChange((filters.page || 1) + 1)}
+            className="p-2 text-sm font-medium bg-white border rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <FaChevronRight />
+          </button>
+        </div>
+      )}
 
       {/* Mobile Filter Drawer */}
       {drawerOpen && (
